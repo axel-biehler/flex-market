@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1022222703700",
+    "project_id": "flex-market-cc177",
+    "storage_bucket": "flex-market-cc177.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1022222703700:android:8d017ff6015f27d4c6a1c1",
+        "android_client_info": {
+          "package_name": "com.example.flex_market"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFGk9neS9kC4Q8tyUGqqc3QFSVSVcA2vg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
