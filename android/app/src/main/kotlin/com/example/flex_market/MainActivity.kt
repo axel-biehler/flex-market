@@ -1,4 +1,4 @@
-package com.example.flex_market
+package com.example.flexmarket
 
 import io.flutter.embedding.android.FlutterActivity
 
