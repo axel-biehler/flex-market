@@ -19,6 +19,7 @@ class ExampleApp extends StatefulWidget {
 
 class _ExampleAppState extends State<ExampleApp> {
   UserProfile? _user;
+  Credentials? _credentials;
 
   late Auth0 auth0;
   late Auth0Web auth0Web;
@@ -38,15 +39,15 @@ class _ExampleAppState extends State<ExampleApp> {
     }
   }
 
-  Future<void> fetchData(String bearer) async {
+  Future<void> fetchData() async {
     final url = Uri.parse(
-        'https://bk8t5vbf25.execute-api.eu-west-3.amazonaws.com/dev/hello');
+        'https://x2rkz2iy7h.execute-api.eu-west-3.amazonaws.com/hello');
 
     try {
       final response = await http.get(
         url,
         headers: {
-          'Authorization': 'Bearer $bearer',
+          'Authorization': 'Bearer ${_credentials!.accessToken}',
         },
       );
 
@@ -63,18 +64,26 @@ class _ExampleAppState extends State<ExampleApp> {
   Future<void> login() async {
     try {
       if (kIsWeb) {
-        return auth0Web.loginWithRedirect(redirectUrl: 'http://localhost:3000');
+        return auth0Web.loginWithRedirect(
+            redirectUrl: 'http://localhost:3000',
+            audience: dotenv.env['AUTH0_AUDIENCE']);
       }
 
       var credentials = await auth0
           .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
-          .login();
+          .login(audience: dotenv.env['AUTH0_AUDIENCE'], scopes: {
+        'openid',
+        'profile',
+        'email',
+        'offline_access',
+        'read:products'
+      });
 
       setState(() {
         _user = credentials.user;
+        _credentials = credentials;
       });
-      print("credentials.accessToken: ${credentials.accessToken}");
-      await fetchData(credentials.accessToken);
+      await fetchData();
     } catch (e) {
       print(e);
     }
@@ -131,7 +140,15 @@ class _ExampleAppState extends State<ExampleApp> {
                         MaterialStateProperty.all<Color>(Colors.black),
                   ),
                   child: const Text('Login'),
-                )
+                ),
+          if (_user != null)
+            ElevatedButton(
+              onPressed: () => fetchData(),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.black),
+              ),
+              child: const Text('try request'),
+            )
         ]),
       )),
     );
