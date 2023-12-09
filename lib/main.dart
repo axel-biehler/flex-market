@@ -1,8 +1,8 @@
-import 'package:flex_market/data_provider.dart';
+import 'package:flex_market/utils/data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
-import 'flex_market_app.dart';
+import 'pages/flex_market_app.dart';
 
 class App extends StatelessWidget {
   final ThemeData theme = ThemeData();
@@ -27,6 +27,20 @@ class App extends StatelessWidget {
             fontWeight: FontWeight.bold,
             color: Color(0xFFC2C2C2),
             fontFamily: "Jost",
+          ),
+          bodySmall: TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.w300,
+            color: Color(0xFFC2C2C2),
+            fontFamily: "Jost",
+            letterSpacing: 3,
+          ),
+          labelMedium: TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFFC2C2C2),
+            fontFamily: "Jost",
+            letterSpacing: 3,
           ),
         ),
       ),

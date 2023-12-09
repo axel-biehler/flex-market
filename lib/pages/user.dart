@@ -1,5 +1,5 @@
-import 'package:flex_market/data_provider.dart';
-import 'package:flex_market/constants.dart';
+import 'package:flex_market/utils/data_provider.dart';
+import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
