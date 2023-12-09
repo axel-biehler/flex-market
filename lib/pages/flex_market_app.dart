@@ -40,11 +40,51 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
   int _currentIndex = 0;
 
   late final List<NavigationItem> navbarPages = <NavigationItem>[
-    NavigationItem(page: const HomeWidget(), icon: Image.asset('assets/home.png'), label: 'Home'),
-    NavigationItem(page: const NewPageWidget(), icon: Image.asset('assets/search.png'), label: 'Search'),
-    NavigationItem(page: const NewPageWidget(), icon: Image.asset('assets/fav.png'), label: 'Favorites'),
-    NavigationItem(page: const CartWidget(), icon: Image.asset('assets/cart.png'), label: 'Cart'),
-    NavigationItem(page: const UserWidget(), icon: Image.asset('assets/profile.png'), label: 'Profile'),
+    NavigationItem(
+      page: const HomeWidget(),
+      icon: Image.asset(
+        'assets/home.png',
+        height: 22,
+        width: 22,
+      ),
+      label: 'Home',
+    ),
+    NavigationItem(
+      page: const NewPageWidget(),
+      icon: Image.asset(
+        'assets/search.png',
+        height: 22,
+        width: 22,
+      ),
+      label: 'Search',
+    ),
+    NavigationItem(
+      page: const NewPageWidget(),
+      icon: Image.asset(
+        'assets/fav.png',
+        height: 22,
+        width: 22,
+      ),
+      label: 'Favorites',
+    ),
+    NavigationItem(
+      page: const CartWidget(),
+      icon: Image.asset(
+        'assets/cart.png',
+        height: 22,
+        width: 22,
+      ),
+      label: 'Cart',
+    ),
+    NavigationItem(
+      page: const UserWidget(),
+      icon: Image.asset(
+        'assets/profile.png',
+        height: 22,
+        width: 22,
+      ),
+      label: 'Profile',
+    ),
   ];
 
   void onItemTapped(int index) {
@@ -61,7 +101,10 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
     final UserProfile? user = dataProvider.user;
 
     if (user == null) {
-      return Scaffold(backgroundColor: Theme.of(context).primaryColor, body: const HeroWidget());
+      return Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
+        body: const HeroWidget(),
+      );
     } else {
       return Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
@@ -117,14 +160,18 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
             items: navbarPages
                 .asMap()
                 .map(
-                  (int index, NavigationItem item) => MapEntry<int, BottomNavigationBarItem>(
+                  (int index, NavigationItem item) =>
+                      MapEntry<int, BottomNavigationBarItem>(
                     index,
                     BottomNavigationBarItem(
                       icon: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: _currentIndex == index
                             ? BoxDecoration(
-                                border: Border.all(color: const Color(0xFFFF8E26), width: 2),
+                                border: Border.all(
+                                  color: const Color(0xFFFF8E26),
+                                  width: 2,
+                                ),
                                 color: const Color(0xFF3D3D3B),
                                 borderRadius: BorderRadius.circular(10),
                               )
