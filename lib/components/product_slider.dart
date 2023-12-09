@@ -5,31 +5,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+/// A custom linear gradient shader used for text styling.
 final Shader linearGradient = const LinearGradient(
-        colors: <Color>[Color.fromRGBO(255, 79, 64, 100), Color.fromRGBO(255, 68, 221, 100)], begin: Alignment.topLeft, end: Alignment.bottomRight)
-    .createShader(const Rect.fromLTWH(0.0, 0.0, 500.0, 70.0));
+  colors: <Color>[Color.fromRGBO(255, 79, 64, 100), Color.fromRGBO(255, 68, 221, 100)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+).createShader(const Rect.fromLTWH(0, 0, 500, 70));
 
+/// A widget that displays a slider of products.
+///
+/// This widget creates a horizontal list of product cards, each card displaying
+/// a product image, its price, and title. Each product card also includes an
+/// 'add to cart' button.
+///
+/// The widget requires a [title] and [subtitle] to be provided, which are displayed
+/// above the product slider.
 class ProductSliderWidget extends StatelessWidget {
-  final String title;
-  final String subtitle;
+  /// Creates a [ProductSliderWidget].
+  ///
+  /// Requires [title] and [subtitle] strings to be provided.
+  const ProductSliderWidget({required this.title, required this.subtitle, super.key});
 
-  const ProductSliderWidget({super.key, required this.title, required this.subtitle});
+  /// The title text displayed above the product list.
+  final String title;
+
+  /// The subtitle text displayed below the title.
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
-    final dataProvider = Provider.of<DataProvider>(context);
-    List<Product> products = dataProvider.mockProducts;
+    final DataProvider dataProvider = Provider.of<DataProvider>(context);
+    final List<Product> products = dataProvider.mockProducts;
 
     return Container(
       margin: const EdgeInsets.only(top: margin, left: margin / 2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           Container(
             margin: const EdgeInsets.only(left: margin),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Text>[
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -52,15 +69,15 @@ class ProductSliderWidget extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               itemCount: products.length,
               itemBuilder: (BuildContext context, int index) {
-                Product product = products[index];
+                final Product product = products[index];
                 return Card(
                   color: Theme.of(context).primaryColor,
                   child: Stack(
                     alignment: Alignment.bottomCenter,
-                    children: [
+                    children: <Widget>[
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                        children: <Widget>[
                           Image.asset(
                             product.imageUrl,
                             width: 150,

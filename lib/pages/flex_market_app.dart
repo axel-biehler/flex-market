@@ -1,23 +1,35 @@
+import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flex_market/pages/cart.dart';
+import 'package:flex_market/pages/hero.dart';
 import 'package:flex_market/pages/home.dart';
 import 'package:flex_market/pages/newpage.dart';
+import 'package:flex_market/pages/user.dart';
 import 'package:flex_market/utils/data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-import 'hero.dart';
-import 'user.dart';
-
+/// Represents an item in the navigation bar of the application.
 class NavigationItem {
-  final Widget page;
-  final Widget icon;
-  final String label;
-
+  /// Constructs a [NavigationItem] with the given [page], [icon], and [label].
   NavigationItem({required this.page, required this.icon, required this.label});
+
+  /// The page to navigate to when this item is tapped.
+  final Widget page;
+
+  /// The icon representing this navigation item.
+  final Widget icon;
+
+  /// The label text for this navigation item.
+  final String label;
 }
 
+/// The main application widget for FlexMarket.
+///
+/// This class manages the navigation and layout of the main screens
+/// in the application, including home, search, favorites, cart, and user profile.
 class FlexMarketApp extends StatefulWidget {
+  /// Constructs a [FlexMarketApp] Widget.
   const FlexMarketApp({super.key});
 
   @override
@@ -27,7 +39,7 @@ class FlexMarketApp extends StatefulWidget {
 class _FlexMarketAppState extends State<FlexMarketApp> {
   int _currentIndex = 0;
 
-  late final List<NavigationItem> navbarPages = [
+  late final List<NavigationItem> navbarPages = <NavigationItem>[
     NavigationItem(page: const HomeWidget(), icon: Image.asset('assets/home.png'), label: 'Home'),
     NavigationItem(page: const NewPageWidget(), icon: Image.asset('assets/search.png'), label: 'Search'),
     NavigationItem(page: const NewPageWidget(), icon: Image.asset('assets/fav.png'), label: 'Favorites'),
@@ -43,10 +55,10 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-    final dataProvider = Provider.of<DataProvider>(context);
-    final user = dataProvider.user;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final DataProvider dataProvider = Provider.of<DataProvider>(context);
+    final UserProfile? user = dataProvider.user;
 
     if (user == null) {
       return Scaffold(backgroundColor: Theme.of(context).primaryColor, body: const HeroWidget());
@@ -54,7 +66,7 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
       return Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
         body: Column(
-          children: [
+          children: <Widget>[
             Container(
               height: screenHeight * 0.12,
               width: double.infinity,
@@ -62,28 +74,27 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
                 border: Border(
                   bottom: BorderSide(
                     color: Color(0xFF3D3D3B),
-                    width: 1,
                   ),
                 ),
               ),
               child: Center(
                 child: SizedBox(
                   width: screenWidth * 0.60,
-                  child: SvgPicture.asset('assets/homebanner.svg', fit: BoxFit.contain),
+                  child: SvgPicture.asset('assets/homebanner.svg'),
                 ),
               ),
             ),
             SizedBox(
               height: screenHeight * 0.78,
               child: navbarPages[_currentIndex].page,
-            )
+            ),
           ],
         ),
         bottomNavigationBar: Container(
           height: screenHeight * 0.1,
           decoration: const BoxDecoration(
             border: Border(
-              top: BorderSide(color: Color(0xFF3D3D3B), width: 1),
+              top: BorderSide(color: Color(0xFF3D3D3B)),
             ),
           ),
           child: BottomNavigationBar(
@@ -105,23 +116,25 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
             selectedItemColor: const Color(0xFFFF8E26),
             items: navbarPages
                 .asMap()
-                .map((index, item) => MapEntry(
-                      index,
-                      BottomNavigationBarItem(
-                        icon: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: _currentIndex == index
-                              ? BoxDecoration(
-                                  border: Border.all(color: const Color(0xFFFF8E26), width: 2),
-                                  color: const Color(0xFF3D3D3B),
-                                  borderRadius: BorderRadius.circular(10),
-                                )
-                              : null,
-                          child: item.icon,
-                        ),
-                        label: item.label,
+                .map(
+                  (int index, NavigationItem item) => MapEntry<int, BottomNavigationBarItem>(
+                    index,
+                    BottomNavigationBarItem(
+                      icon: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: _currentIndex == index
+                            ? BoxDecoration(
+                                border: Border.all(color: const Color(0xFFFF8E26), width: 2),
+                                color: const Color(0xFF3D3D3B),
+                                borderRadius: BorderRadius.circular(10),
+                              )
+                            : null,
+                        child: item.icon,
                       ),
-                    ))
+                      label: item.label,
+                    ),
+                  ),
+                )
                 .values
                 .toList(),
           ),

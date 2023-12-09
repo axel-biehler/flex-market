@@ -1,2 +1,5 @@
-const double padding = 40.0;
-const double margin = 16.0;
+/// Standard padding used in the app layout
+const double padding = 40;
+
+/// Standard margin used in the app layout
+const double margin = 16;

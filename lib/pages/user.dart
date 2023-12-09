@@ -1,23 +1,29 @@
-import 'package:flex_market/utils/data_provider.dart';
+import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flex_market/utils/constants.dart';
+import 'package:flex_market/utils/data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+/// A widget that displays the user's profile information.
+///
+/// It shows the user's picture, name, email, and email verification status.
+/// Additionally, it provides a logout button.
 class UserWidget extends StatelessWidget {
+  /// Creates a [UserWidget].
   const UserWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<DataProvider>(context);
-    final user = authProvider.user;
-    final pictureUrl = user?.pictureUrl;
+    final DataProvider authProvider = Provider.of<DataProvider>(context);
+    final UserProfile? user = authProvider.user;
+    final Uri? pictureUrl = user?.pictureUrl;
 
     return Padding(
       padding: const EdgeInsets.all(padding / 2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           Container(
             margin: const EdgeInsets.only(top: margin),
             child: Text(
@@ -37,7 +43,7 @@ class UserWidget extends StatelessWidget {
             margin: const EdgeInsets.only(top: margin),
             color: Theme.of(context).primaryColor,
             child: Column(
-              children: [
+              children: <Widget>[
                 UserEntryWidget(propertyName: 'Name', propertyValue: user?.name),
                 UserEntryWidget(propertyName: 'Email', propertyValue: user?.email),
                 UserEntryWidget(propertyName: 'Email Verified', propertyValue: user?.isEmailVerified == true ? 'Yes' : 'No'),
@@ -60,18 +66,25 @@ class UserWidget extends StatelessWidget {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
   }
 }
 
+/// A widget that displays a single entry of user information.
+///
+/// It shows a [propertyName] and its [propertyValue] side by side.
 class UserEntryWidget extends StatelessWidget {
-  final String propertyName;
-  final String? propertyValue;
+  /// Creates a [UserEntryWidget] with a given [propertyName] and [propertyValue].
+  const UserEntryWidget({required this.propertyName, required this.propertyValue, super.key});
 
-  const UserEntryWidget({super.key, required this.propertyName, required this.propertyValue});
+  /// The name of the property to display (e.g., 'Name', 'Email').
+  final String propertyName;
+
+  /// The value of the property.
+  final String? propertyValue;
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +92,7 @@ class UserEntryWidget extends StatelessWidget {
       padding: const EdgeInsets.all(6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
+        children: <Text>[
           Text(
             propertyName,
             style: Theme.of(context).textTheme.titleMedium,
