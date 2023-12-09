@@ -1,10 +1,11 @@
+import 'package:flex_market/pages/cart.dart';
 import 'package:flex_market/pages/home.dart';
+import 'package:flex_market/pages/newpage.dart';
 import 'package:flex_market/utils/data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-import '../utils/constants.dart';
 import 'hero.dart';
 import 'user.dart';
 
@@ -28,9 +29,9 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
 
   late final List<NavigationItem> navbarPages = [
     NavigationItem(page: const HomeWidget(), icon: Image.asset('assets/home.png'), label: 'Home'),
-    NavigationItem(page: const HeroWidget(), icon: Image.asset('assets/search.png'), label: 'Search'),
-    NavigationItem(page: const HeroWidget(), icon: Image.asset('assets/fav.png'), label: 'Favorites'),
-    NavigationItem(page: const HeroWidget(), icon: Image.asset('assets/cart.png'), label: 'Cart'),
+    NavigationItem(page: const NewPageWidget(), icon: Image.asset('assets/search.png'), label: 'Search'),
+    NavigationItem(page: const NewPageWidget(), icon: Image.asset('assets/fav.png'), label: 'Favorites'),
+    NavigationItem(page: const CartWidget(), icon: Image.asset('assets/cart.png'), label: 'Cart'),
     NavigationItem(page: const UserWidget(), icon: Image.asset('assets/profile.png'), label: 'Profile'),
   ];
 
@@ -72,7 +73,10 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
                 ),
               ),
             ),
-            navbarPages[_currentIndex].page,
+            SizedBox(
+              height: screenHeight * 0.78,
+              child: navbarPages[_currentIndex].page,
+            )
           ],
         ),
         bottomNavigationBar: Container(

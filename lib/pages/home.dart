@@ -1,8 +1,5 @@
 import 'package:flex_market/components/ProductSlider.dart';
-import 'package:flex_market/utils/data_provider.dart';
-import 'package:flex_market/utils/product.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 final Shader linearGradient = const LinearGradient(
         colors: <Color>[Color.fromRGBO(255, 79, 64, 100), Color.fromRGBO(255, 68, 221, 100)], begin: Alignment.topLeft, end: Alignment.bottomRight)
@@ -19,14 +16,9 @@ class HomeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeght = MediaQuery.of(context).size.height;
-
-    return SizedBox(
-      height: screenHeght * 0.78,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [...sections.map((section) => section)],
-        ),
+    return SingleChildScrollView(
+      child: Column(
+        children: [...sections.map((section) => section)],
       ),
     );
   }
