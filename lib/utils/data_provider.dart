@@ -69,7 +69,7 @@ class DataProvider extends ChangeNotifier {
   Future<void> login() async {
     try {
       if (kIsWeb) {
-        return auth0Web.loginWithRedirect(redirectUrl: 'http://localhost:3000', audience: dotenv.env['AUTH0_AUDIENCE']);
+        return auth0Web.loginWithRedirect(redirectUrl: 'http://localhost:39213', audience: dotenv.env['AUTH0_AUDIENCE']);
       }
 
       var credentials = await auth0
@@ -87,7 +87,7 @@ class DataProvider extends ChangeNotifier {
   Future<void> logout() async {
     try {
       if (kIsWeb) {
-        await auth0Web.logout(returnToUrl: 'http://localhost:3000');
+        await auth0Web.logout(returnToUrl: 'http://localhost:39213');
       } else {
         await auth0.webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME']).logout();
         _user = null;

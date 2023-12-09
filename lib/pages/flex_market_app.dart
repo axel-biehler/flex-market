@@ -45,8 +45,8 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    final authProvider = Provider.of<DataProvider>(context);
-    final user = authProvider.user;
+    final dataProvider = Provider.of<DataProvider>(context);
+    final user = dataProvider.user;
 
     if (user == null) {
       return Scaffold(backgroundColor: Theme.of(context).primaryColor, body: const HeroWidget());
