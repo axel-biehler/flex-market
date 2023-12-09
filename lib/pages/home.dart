@@ -49,7 +49,7 @@ class HomeWidget extends StatelessWidget {
               ),
             ),
           ),
-          ...sections.map((ProductSliderWidget section) => section)
+          ...sections.map((ProductSliderWidget section) => section),
         ],
       ),
     );

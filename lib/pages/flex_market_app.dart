@@ -7,7 +7,6 @@ import 'package:flex_market/pages/search_page.dart';
 import 'package:flex_market/pages/user.dart';
 import 'package:flex_market/utils/data_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 /// Represents an item in the navigation bar of the application.
