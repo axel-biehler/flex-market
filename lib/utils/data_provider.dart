@@ -22,10 +22,12 @@ class DataProvider extends ChangeNotifier {
   final List<Product> _cart = <Product>[];
 
   /// Instance of Auth0 for user authentication.
-  final Auth0 auth0 = Auth0(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_CLIENT_ID']!);
+  final Auth0 auth0 =
+      Auth0(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_CLIENT_ID']!);
 
   /// Instance of Auth0Web for web-based authentication.
-  final Auth0Web auth0Web = Auth0Web(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_CLIENT_ID']!);
+  final Auth0Web auth0Web =
+      Auth0Web(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_WEB_CLIENT_ID']!);
 
   /// Getter for the current user.
   UserProfile? get user => _user;
@@ -35,15 +37,58 @@ class DataProvider extends ChangeNotifier {
 
   /// A list of mock products used for displaying in the UI.
   List<Product> mockProducts = <Product>[
-    Product(title: 'Air force one', imageUrl: 'assets/shoes.png', price: 189.90),
-    Product(title: 'Air force one', imageUrl: 'assets/shoes.png', price: 189.90),
-    Product(title: 'Air force one', imageUrl: 'assets/shoes.png', price: 189.90),
-    Product(title: 'Air force one', imageUrl: 'assets/shoes.png', price: 189.90),
-    Product(title: 'Air force one', imageUrl: 'assets/shoes.png', price: 189.90),
-    Product(title: 'Air force one', imageUrl: 'assets/shoes.png', price: 189.90),
-    Product(title: 'Air force one', imageUrl: 'assets/shoes.png', price: 189.90),
-    Product(title: 'Air force one', imageUrl: 'assets/shoes.png', price: 189.90),
+    Product(
+      title: 'Air force one',
+      imageUrl: 'assets/shoes.png',
+      price: 189.90,
+    ),
+    Product(
+      title: 'Air force one',
+      imageUrl: 'assets/shoes.png',
+      price: 189.90,
+    ),
+    Product(
+      title: 'Air force one',
+      imageUrl: 'assets/shoes.png',
+      price: 189.90,
+    ),
+    Product(
+      title: 'Air force one',
+      imageUrl: 'assets/shoes.png',
+      price: 189.90,
+    ),
+    Product(
+      title: 'Air force one',
+      imageUrl: 'assets/shoes.png',
+      price: 189.90,
+    ),
+    Product(
+      title: 'Air force one',
+      imageUrl: 'assets/shoes.png',
+      price: 189.90,
+    ),
+    Product(
+      title: 'Air force one',
+      imageUrl: 'assets/shoes.png',
+      price: 189.90,
+    ),
+    Product(
+      title: 'Air force one',
+      imageUrl: 'assets/shoes.png',
+      price: 189.90,
+    ),
   ];
+
+  /// Init Auth0Web for web-based authentication.
+  Future<Credentials?> initWebAuth() async {
+    if (kIsWeb) {
+      final Credentials? credentials = await auth0Web.onLoad();
+      _credentials = credentials;
+      _user = credentials?.user;
+      return credentials;
+    }
+    return null;
+  }
 
   /// Sets the current user and notifies listeners about the change.
   void setUser(UserProfile? user) {
@@ -71,7 +116,9 @@ class DataProvider extends ChangeNotifier {
 
   /// Fetches data from a specified API endpoint and handles the response.
   Future<void> fetchData() async {
-    final Uri url = Uri.parse('https://x2rkz2iy7h.execute-api.eu-west-3.amazonaws.com/hello');
+    final Uri url = Uri.parse(
+      'https://x2rkz2iy7h.execute-api.eu-west-3.amazonaws.com/hello',
+    );
 
     try {
       final http.Response response = await http.get(
@@ -101,11 +148,65 @@ class DataProvider extends ChangeNotifier {
   Future<void> login() async {
     try {
       if (kIsWeb) {
-        return auth0Web.loginWithRedirect(redirectUrl: 'http://localhost:39213', audience: dotenv.env['AUTH0_AUDIENCE']);
+        final Credentials credentials = await auth0Web.loginWithPopup();
+        _user = credentials.user;
+        _credentials = credentials;
+        await fetchData();
+        notifyListeners();
+        return;
       }
       final Credentials credentials = await auth0
           .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
-          .login(audience: dotenv.env['AUTH0_AUDIENCE'], scopes: <String>{'openid', 'profile', 'email', 'offline_access', 'read:products'});
+          .login(
+        audience: dotenv.env['AUTH0_AUDIENCE'],
+        scopes: <String>{
+          'openid',
+          'profile',
+          'email',
+          'offline_access',
+          'admin',
+        },
+        parameters: <String, String>{
+          'initial_screen': 'login',
+        },
+      );
+      _user = credentials.user;
+      _credentials = credentials;
+      await fetchData();
+      notifyListeners();
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
+
+  /// Handles user register using Auth0 authentication.
+  Future<void> register() async {
+    try {
+      if (kIsWeb) {
+        final Credentials credentials = await auth0Web.loginWithPopup();
+        _user = credentials.user;
+        _credentials = credentials;
+        await fetchData();
+        notifyListeners();
+        return;
+      }
+      final Credentials credentials = await auth0
+          .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
+          .login(
+        audience: dotenv.env['AUTH0_AUDIENCE'],
+        scopes: <String>{
+          'openid',
+          'profile',
+          'email',
+          'offline_access',
+          'read:products',
+        },
+        parameters: <String, String>{
+          'initial_screen': 'signup',
+        },
+      );
       _user = credentials.user;
       _credentials = credentials;
       await fetchData();
@@ -121,9 +222,11 @@ class DataProvider extends ChangeNotifier {
   Future<void> logout() async {
     try {
       if (kIsWeb) {
-        await auth0Web.logout(returnToUrl: 'http://localhost:39213');
+        await auth0Web.logout(returnToUrl: dotenv.env['AUTH0_REDIRECT_URI']);
       } else {
-        await auth0.webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME']).logout();
+        await auth0
+            .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
+            .logout();
         _user = null;
         notifyListeners();
       }
