@@ -7,7 +7,10 @@ import 'package:provider/provider.dart';
 
 /// A custom linear gradient shader used for text styling.
 final Shader linearGradient = const LinearGradient(
-  colors: <Color>[Color.fromRGBO(255, 79, 64, 100), Color.fromRGBO(255, 68, 221, 100)],
+  colors: <Color>[
+    Color.fromRGBO(255, 79, 64, 100),
+    Color.fromRGBO(255, 68, 221, 100),
+  ],
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
 ).createShader(const Rect.fromLTWH(0, 0, 500, 70));
@@ -38,7 +41,7 @@ class HeroWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Flex market',
+                  'Flex Market',
                   style: GoogleFonts.spaceGrotesk(
                     foreground: Paint()..shader = linearGradient,
                     fontSize: 80,
@@ -47,20 +50,40 @@ class HeroWidget extends StatelessWidget {
                   ),
                 ),
                 Center(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: margin * 16),
-                    child: ElevatedButton(
-                      onPressed: authProvider.login,
-                      child: Text(
-                        'Login',
-                        style: GoogleFonts.spaceGrotesk(
-                          color: Theme.of(context).primaryColor,
-                          fontSize: 24,
-                          height: 0.8,
-                          fontWeight: FontWeight.w500,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Container(
+                        margin: const EdgeInsets.only(top: margin * 16),
+                        child: ElevatedButton(
+                          onPressed: authProvider.login,
+                          child: Text(
+                            'Login',
+                            style: GoogleFonts.spaceGrotesk(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 24,
+                              height: 0.8,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      Container(
+                        margin: const EdgeInsets.only(top: margin),
+                        child: ElevatedButton(
+                          onPressed: authProvider.register,
+                          child: Text(
+                            'Register',
+                            style: GoogleFonts.spaceGrotesk(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 24,
+                              height: 0.8,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
