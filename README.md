@@ -113,4 +113,4 @@ This architecture is designed to support the scalability of the application, wit
 
 ### Deployment
 
-// TODO
+Codemagic automates the process of building and testing the app. For deployment, the Android version is distributed via Firebase App Distribution, while the web version is hosted as a static site on Amazon S3.

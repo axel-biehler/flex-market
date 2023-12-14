@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flex_market/pages/flex_market_app.dart';
 import 'package:flex_market/utils/data_provider.dart';
 import 'package:flutter/material.dart';
@@ -16,10 +18,12 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    unawaited(context.read<DataProvider>().initWebAuth());
     return MaterialApp(
       theme: theme.copyWith(
         primaryColor: const Color(0xFF121212),
-        colorScheme: theme.colorScheme.copyWith(secondary: const Color(0xFFC2C2C2)),
+        colorScheme:
+            theme.colorScheme.copyWith(secondary: const Color(0xFFC2C2C2)),
         textTheme: const TextTheme(
           titleMedium: TextStyle(
             fontSize: 20,
