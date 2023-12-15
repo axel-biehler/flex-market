@@ -33,7 +33,7 @@ class HomeWidget extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            height: screenHeight * 0.12,
+            height: screenHeight * 0.10,
             width: double.infinity,
             decoration: const BoxDecoration(
               border: Border(
