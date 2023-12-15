@@ -5,32 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-/// A custom linear gradient shader used for text styling.
-final Shader linearGradient = const LinearGradient(
-  colors: <Color>[Color.fromRGBO(255, 79, 64, 100), Color.fromRGBO(255, 68, 221, 100)],
-  begin: Alignment.topLeft,
-  end: Alignment.bottomRight,
-).createShader(const Rect.fromLTWH(0, 0, 500, 70));
-
 /// A widget that displays the products market as favorites vertically.
 ///
 /// This widget creates a vertical list of product cards, each card displaying
 /// a product image, its price, and title. Each product card also includes an
 /// option to add or remove the product from favorites.
-///
-/// The widget requires a [title] and [subtitle] to be provided, which are displayed
-/// above the product list.
 class FavoritesProductsWidget extends StatelessWidget {
   /// Creates a [FavoritesProductsWidget].
-  ///
-  /// Requires [title] and [subtitle] strings to be provided.
-  const FavoritesProductsWidget({required this.title, required this.subtitle, super.key});
-
-  /// The title text displayed above the product list.
-  final String title;
-
-  /// The subtitle text displayed below the title.
-  final String subtitle;
+  const FavoritesProductsWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +32,13 @@ class FavoritesProductsWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Text>[
                 Text(
-                  title,
+                  'Your favorites',
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
                         fontStyle: FontStyle.italic,
                       ),
                 ),
                 Text(
-                  subtitle,
+                  '45 items',
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         fontSize: 14,
                         fontStyle: FontStyle.italic,

@@ -1,5 +1,6 @@
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:auth0_flutter/auth0_flutter_web.dart';
+import 'package:flex_market/utils/enums.dart';
 import 'package:flex_market/utils/product.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -22,12 +23,10 @@ class DataProvider extends ChangeNotifier {
   final List<Product> _cart = <Product>[];
 
   /// Instance of Auth0 for user authentication.
-  final Auth0 auth0 =
-      Auth0(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_CLIENT_ID']!);
+  final Auth0 auth0 = Auth0(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_CLIENT_ID']!);
 
   /// Instance of Auth0Web for web-based authentication.
-  final Auth0Web auth0Web =
-      Auth0Web(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_WEB_CLIENT_ID']!);
+  final Auth0Web auth0Web = Auth0Web(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_WEB_CLIENT_ID']!);
 
   /// Getter for the current user.
   UserProfile? get user => _user;
@@ -41,41 +40,49 @@ class DataProvider extends ChangeNotifier {
       title: 'Air force one',
       imageUrl: 'assets/shoes.png',
       price: 189.90,
+      size: ItemSize.l,
     ),
     Product(
       title: 'Air force one',
       imageUrl: 'assets/shoes.png',
       price: 189.90,
+      size: ItemSize.m,
     ),
     Product(
       title: 'Air force one',
       imageUrl: 'assets/shoes.png',
       price: 189.90,
+      size: ItemSize.xl,
     ),
     Product(
       title: 'Air force one',
       imageUrl: 'assets/shoes.png',
       price: 189.90,
+      size: ItemSize.s,
     ),
     Product(
       title: 'Air force one',
       imageUrl: 'assets/shoes.png',
       price: 189.90,
+      size: ItemSize.xl,
     ),
     Product(
       title: 'Air force one',
       imageUrl: 'assets/shoes.png',
       price: 189.90,
+      size: ItemSize.xxl,
     ),
     Product(
       title: 'Air force one',
       imageUrl: 'assets/shoes.png',
       price: 189.90,
+      size: ItemSize.l,
     ),
     Product(
       title: 'Air force one',
       imageUrl: 'assets/shoes.png',
       price: 189.90,
+      size: ItemSize.m,
     ),
   ];
 
@@ -155,9 +162,7 @@ class DataProvider extends ChangeNotifier {
         notifyListeners();
         return;
       }
-      final Credentials credentials = await auth0
-          .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
-          .login(
+      final Credentials credentials = await auth0.webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME']).login(
         audience: dotenv.env['AUTH0_AUDIENCE'],
         scopes: <String>{
           'openid',
@@ -192,9 +197,7 @@ class DataProvider extends ChangeNotifier {
         notifyListeners();
         return;
       }
-      final Credentials credentials = await auth0
-          .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
-          .login(
+      final Credentials credentials = await auth0.webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME']).login(
         audience: dotenv.env['AUTH0_AUDIENCE'],
         scopes: <String>{
           'openid',
@@ -224,9 +227,7 @@ class DataProvider extends ChangeNotifier {
       if (kIsWeb) {
         await auth0Web.logout(returnToUrl: dotenv.env['AUTH0_REDIRECT_URI']);
       } else {
-        await auth0
-            .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
-            .logout();
+        await auth0.webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME']).logout();
         _user = null;
         notifyListeners();
       }

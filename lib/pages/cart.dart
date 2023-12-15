@@ -1,3 +1,4 @@
+import 'package:flex_market/components/cart_products.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -33,6 +34,7 @@ class CartWidget extends StatelessWidget {
               ),
             ),
           ),
+          const CartProductsWidget(),
         ],
       ),
     );

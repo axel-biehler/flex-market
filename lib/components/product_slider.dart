@@ -5,13 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-/// A custom linear gradient shader used for text styling.
-final Shader linearGradient = const LinearGradient(
-  colors: <Color>[Color.fromRGBO(255, 79, 64, 100), Color.fromRGBO(255, 68, 221, 100)],
-  begin: Alignment.topLeft,
-  end: Alignment.bottomRight,
-).createShader(const Rect.fromLTWH(0, 0, 500, 70));
-
 /// A widget that displays a slider of products.
 ///
 /// This widget creates a horizontal list of product cards, each card displaying
