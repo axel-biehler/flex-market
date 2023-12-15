@@ -40,7 +40,7 @@ class SearchPageWidgetState extends State<SearchPageWidget> {
       child: Column(
         children: <Widget>[
           Container(
-            height: screenHeight * 0.12,
+            height: screenHeight * 0.10,
             width: double.infinity,
             decoration: const BoxDecoration(
               border: Border(
@@ -49,8 +49,7 @@ class SearchPageWidgetState extends State<SearchPageWidget> {
                 ),
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.only(top: padding),
+            child: Center(
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'Search...',

@@ -1,5 +1,6 @@
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flex_market/pages/cart.dart';
+import 'package:flex_market/pages/favorites.dart';
 import 'package:flex_market/pages/hero.dart';
 import 'package:flex_market/pages/home.dart';
 import 'package:flex_market/pages/newpage.dart';
@@ -59,7 +60,7 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
       label: 'Search',
     ),
     NavigationItem(
-      page: const NewPageWidget(),
+      page: const FavoritesWidget(),
       icon: Image.asset(
         'assets/fav.png',
         height: 22,
@@ -105,67 +106,65 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
         body: const HeroWidget(),
       );
     } else {
-      return Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
-        body: Column(
-          children: <Widget>[
-            SizedBox(
-              height: screenHeight * 0.90,
-              child: navbarPages[_currentIndex].page,
-            ),
-          ],
-        ),
-        bottomNavigationBar: Container(
-          height: screenHeight * 0.1,
-          decoration: const BoxDecoration(
-            border: Border(
-              top: BorderSide(color: Color(0xFF3D3D3B)),
-            ),
+      return SafeArea(
+        child: Scaffold(
+          backgroundColor: Theme.of(context).primaryColor,
+          body: Column(
+            children: <Widget>[
+              SizedBox(
+                height: screenHeight * 0.80,
+                child: navbarPages[_currentIndex].page,
+              ),
+            ],
           ),
-          child: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: onItemTapped,
-            type: BottomNavigationBarType.fixed,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            selectedIconTheme: const IconThemeData(
-              color: Color(0xFFFF8E26),
-              fill: 1,
-              size: 24,
+          bottomNavigationBar: Container(
+            height: screenHeight * 0.1,
+            decoration: const BoxDecoration(
+              border: Border(
+                top: BorderSide(color: Color(0xFF3D3D3B)),
+              ),
             ),
-            unselectedIconTheme: const IconThemeData(
-              size: 24,
-            ),
-            backgroundColor: Theme.of(context).primaryColor,
-            elevation: 0,
-            selectedItemColor: const Color(0xFFFF8E26),
-            items: navbarPages
-                .asMap()
-                .map(
-                  (int index, NavigationItem item) =>
-                      MapEntry<int, BottomNavigationBarItem>(
-                    index,
-                    BottomNavigationBarItem(
-                      icon: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: _currentIndex == index
-                            ? BoxDecoration(
-                                border: Border.all(
-                                  color: const Color(0xFFFF8E26),
-                                  width: 2,
-                                ),
-                                color: const Color(0xFF3D3D3B),
-                                borderRadius: BorderRadius.circular(10),
-                              )
-                            : null,
-                        child: item.icon,
+            child: BottomNavigationBar(
+              currentIndex: _currentIndex,
+              onTap: onItemTapped,
+              type: BottomNavigationBarType.fixed,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              selectedIconTheme: const IconThemeData(
+                color: Color(0xFFFF8E26),
+                fill: 1,
+                size: 24,
+              ),
+              unselectedIconTheme: const IconThemeData(
+                size: 24,
+              ),
+              backgroundColor: Theme.of(context).primaryColor,
+              elevation: 0,
+              selectedItemColor: const Color(0xFFFF8E26),
+              items: navbarPages
+                  .asMap()
+                  .map(
+                    (int index, NavigationItem item) => MapEntry<int, BottomNavigationBarItem>(
+                      index,
+                      BottomNavigationBarItem(
+                        icon: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: _currentIndex == index
+                              ? BoxDecoration(
+                                  border: Border.all(color: const Color(0xFFFF8E26), width: 2),
+                                  color: const Color(0xFF3D3D3B),
+                                  borderRadius: BorderRadius.circular(10),
+                                )
+                              : null,
+                          child: item.icon,
+                        ),
+                        label: item.label,
                       ),
-                      label: item.label,
                     ),
-                  ),
-                )
-                .values
-                .toList(),
+                  )
+                  .values
+                  .toList(),
+            ),
           ),
         ),
       );

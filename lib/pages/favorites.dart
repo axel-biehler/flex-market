@@ -1,12 +1,11 @@
+import 'package:flex_market/components/favorites_products.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// A widget that displays the user's shopping cart.
-///
-/// It presents a scrollable list of items that the user has added to their cart.
-class CartWidget extends StatelessWidget {
-  /// Creates a [CartWidget].
-  const CartWidget({super.key});
+/// Favorites page component
+class FavoritesWidget extends StatelessWidget {
+  /// Creates a new [FavoritesWidget]
+  const FavoritesWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +32,10 @@ class CartWidget extends StatelessWidget {
               ),
             ),
           ),
+          const FavoritesProductsWidget(
+            title: 'Your Favorites',
+            subtitle: '45 items',
+          )
         ],
       ),
     );

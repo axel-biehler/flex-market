@@ -16,7 +16,7 @@ final Shader linearGradient = const LinearGradient(
 ///
 /// This widget creates a horizontal list of product cards, each card displaying
 /// a product image, its price, and title. Each product card also includes an
-/// 'add to cart' button.
+/// option to add or remove the product from favorites.
 ///
 /// The widget requires a [title] and [subtitle] to be provided, which are displayed
 /// above the product slider.
@@ -96,10 +96,10 @@ class ProductSliderWidget extends StatelessWidget {
                         ],
                       ),
                       Positioned(
-                        right: 5,
-                        bottom: 45,
+                        right: 7,
+                        bottom: 15,
                         child: IconButton(
-                          icon: SvgPicture.asset('assets/add-to-cart.svg', width: 40),
+                          icon: SvgPicture.asset('assets/fav.svg', width: 40),
                           onPressed: () => dataProvider.addToCart(product),
                           highlightColor: Theme.of(context).colorScheme.secondary,
                         ),
