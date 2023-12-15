@@ -35,7 +35,7 @@ class FavoritesWidget extends StatelessWidget {
           const FavoritesProductsWidget(
             title: 'Your Favorites',
             subtitle: '45 items',
-          )
+          ),
         ],
       ),
     );

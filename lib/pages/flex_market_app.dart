@@ -3,7 +3,6 @@ import 'package:flex_market/pages/cart.dart';
 import 'package:flex_market/pages/favorites.dart';
 import 'package:flex_market/pages/hero.dart';
 import 'package:flex_market/pages/home.dart';
-import 'package:flex_market/pages/newpage.dart';
 import 'package:flex_market/pages/search_page.dart';
 import 'package:flex_market/pages/user.dart';
 import 'package:flex_market/utils/data_provider.dart';
