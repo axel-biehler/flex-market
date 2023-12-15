@@ -43,7 +43,7 @@ enum ItemSize {
   xxl
 }
 
-// Enum that contains the available categories
+/// Enum that contains the available categories
 enum Category {
   /// Tops
   tops,

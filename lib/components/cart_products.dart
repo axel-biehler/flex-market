@@ -2,7 +2,6 @@ import 'package:flex_market/utils/constants.dart';
 import 'package:flex_market/utils/data_provider.dart';
 import 'package:flex_market/utils/product.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 /// A widget that displays the products market as favorites vertically.
@@ -19,7 +18,6 @@ class CartProductsWidget extends StatelessWidget {
     final DataProvider dataProvider = Provider.of<DataProvider>(context);
     final List<Product> products = dataProvider.mockProducts;
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
       margin: const EdgeInsets.only(top: margin, left: margin / 2),
@@ -112,7 +110,7 @@ class CartProductsWidget extends StatelessWidget {
                                 horizontal: 4,
                                 vertical: 2,
                               ),
-                              child: Container(
+                              child: DecoratedBox(
                                 decoration: const BoxDecoration(
                                   borderRadius: BorderRadius.all(Radius.circular(7)),
                                   color: Color(0xFF3D3D3B), // Text color
@@ -122,7 +120,7 @@ class CartProductsWidget extends StatelessWidget {
                                   menuMaxHeight: 200,
                                   icon: Icon(Icons.arrow_drop_down, color: Theme.of(context).colorScheme.secondary),
                                   onChanged: (int? newValue) {
-                                    // TODO: Handle quantity edit
+                                    // TODO(arobine): Handle quantity edit.
                                   },
                                   items: List<int>.generate(25 + 101, (int i) => i).map<DropdownMenuItem<int>>((int value) {
                                     return DropdownMenuItem<int>(
@@ -137,7 +135,7 @@ class CartProductsWidget extends StatelessWidget {
                                     );
                                   }).toList(),
                                   dropdownColor: Theme.of(context).primaryColor,
-                                  underline: Container(), // Removes the underline
+                                  underline: Container(),
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.secondary, // Text color
                                   ),
@@ -145,22 +143,6 @@ class CartProductsWidget extends StatelessWidget {
                               ),
                             ),
                           ),
-
-                          // DropdownButton<int>(
-                          //   value: 25,
-                          //   icon: const Icon(Icons.arrow_drop_down),
-                          //   onChanged: (int? newValue) {
-                          //     // setState(() {
-                          //     // TODO handle quantity edit
-                          //     // });
-                          //   },
-                          //   items: List<int>.generate(25 + 101, (int i) => i).map<DropdownMenuItem<int>>((int value) {
-                          //     return DropdownMenuItem<int>(
-                          //       value: value,
-                          //       child: Text(value.toString()),
-                          //     );
-                          //   }).toList(),
-                          // ),
                         ],
                       ),
                     ],
@@ -173,7 +155,7 @@ class CartProductsWidget extends StatelessWidget {
             height: screenHeight * 0.1,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              // crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.only(
@@ -225,7 +207,7 @@ class CartProductsWidget extends StatelessWidget {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
