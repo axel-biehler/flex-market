@@ -1,5 +1,6 @@
 import 'package:flex_market/components/product_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 /// A custom linear gradient shader used for text styling.
 final Shader linearGradient = const LinearGradient(
@@ -25,9 +26,31 @@ class HomeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return SingleChildScrollView(
       child: Column(
-        children: <Widget>[...sections.map((ProductSliderWidget section) => section)],
+        children: <Widget>[
+          Container(
+            height: screenHeight * 0.12,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: Color(0xFF3D3D3B),
+                ),
+              ),
+            ),
+            child: Center(
+              child: SizedBox(
+                width: screenWidth * 0.60,
+                child: SvgPicture.asset('assets/homebanner.svg'),
+              ),
+            ),
+          ),
+          ...sections.map((ProductSliderWidget section) => section),
+        ],
       ),
     );
   }
