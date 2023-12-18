@@ -5,7 +5,7 @@ import 'package:flex_market/pages/hero.dart';
 import 'package:flex_market/pages/home.dart';
 import 'package:flex_market/pages/search_page.dart';
 import 'package:flex_market/pages/user.dart';
-import 'package:flex_market/utils/data_provider.dart';
+import 'package:flex_market/utils/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -96,10 +96,8 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final DataProvider dataProvider = Provider.of<DataProvider>(context);
-    final UserProfile? user = dataProvider.user;
 
-    if (user == null) {
+    if (context.watch<AuthProvider>().user == null) {
       return Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
         body: const HeroWidget(),

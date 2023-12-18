@@ -1,6 +1,6 @@
 import 'package:flex_market/utils/constants.dart';
-import 'package:flex_market/utils/data_provider.dart';
 import 'package:flex_market/utils/product.dart';
+import 'package:flex_market/utils/providers/data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -16,8 +16,7 @@ class FavoritesProductsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DataProvider dataProvider = Provider.of<DataProvider>(context);
-    final List<Product> products = dataProvider.mockProducts;
+    final List<Product> products = context.read<DataProvider>().mockProducts;
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -90,7 +89,7 @@ class FavoritesProductsWidget extends StatelessWidget {
                           bottom: 15,
                           child: IconButton(
                             icon: SvgPicture.asset('assets/fav.svg', width: 40),
-                            onPressed: () => dataProvider.addToCart(product),
+                            onPressed: () => context.read<DataProvider>().addToCart(product),
                             highlightColor: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
