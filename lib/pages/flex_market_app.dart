@@ -1,4 +1,3 @@
-import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flex_market/pages/cart.dart';
 import 'package:flex_market/pages/favorites.dart';
 import 'package:flex_market/pages/hero.dart';
