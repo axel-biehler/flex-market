@@ -65,7 +65,11 @@ class SearchPageWidgetState extends State<SearchPageWidget> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Image.asset('assets/search.png'),
+                      child: Image.asset(
+                        'assets/search.png',
+                        width: 22,
+                        height: 22,
+                      ),
                     ),
                   ),
                   suffixIcon: searchText.isNotEmpty

@@ -111,7 +111,7 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
           body: Column(
             children: <Widget>[
               SizedBox(
-                height: screenHeight * 0.80,
+                height: screenHeight * 0.87,
                 child: navbarPages[_currentIndex].page,
               ),
             ],
