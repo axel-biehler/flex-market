@@ -151,63 +151,6 @@ class CartProductsWidget extends StatelessWidget {
               },
             ),
           ),
-          SizedBox(
-            height: screenHeight * 0.1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              // crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 29,
-                  ),
-                  child: Text(
-                    'Total:',
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          fontSize: 14,
-                        ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 9,
-                  ),
-                  child: Text(
-                    r'$245,90',
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontStyle: FontStyle.italic,
-                        ),
-                  ),
-                ),
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: const Color(0xFF247100),
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(12)),
-                    color: Colors.transparent,
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Handle search action
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF247100),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: Text(
-                      'ORDER',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
