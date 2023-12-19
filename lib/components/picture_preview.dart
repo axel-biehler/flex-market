@@ -14,7 +14,7 @@ class PicturePreviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Preview Page')),
+      appBar: AppBar(title: const Text('Picture Preview')),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -22,6 +22,21 @@ class PicturePreviewPage extends StatelessWidget {
             Image.file(File(picture.path), fit: BoxFit.cover, width: 250),
             const SizedBox(height: 24),
             Text(picture.name),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Retake'),
+                ),
+                const SizedBox(width: 24),
+                ElevatedButton(
+                  // TODO(axel): implement the returned image to use for profile or add products.
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Use Picture'),
+                ),
+              ],
+            ),
           ],
         ),
       ),
