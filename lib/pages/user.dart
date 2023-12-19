@@ -6,6 +6,7 @@ import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 /// A widget that displays the user's profile information.
@@ -19,10 +20,24 @@ class UserWidget extends StatelessWidget {
   /// Key used for custom navigation flow inside each app section
   final GlobalKey<NavigatorState> navigatorKey;
 
+  /// Properties of the camera
+  late List<CameraDescription> cameras;
+
+  /// Camera controller
+  late CameraController controller;
+
+  /// Initializes the camera
+  Future<void> initCamera() async {
+    cameras = await availableCameras();
+    controller = CameraController(cameras[0], ResolutionPreset.medium);
+    await controller.initialize();
+    CameraPreview(controller);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final UserProfile? user = context.watch<AuthProvider>().user;
-    final Uri? pictureUrl = user?.pictureUrl;
+    final User? user = context.watch<AuthProvider>().userCustom;
+    final String? pictureUrl = user?.picture;
 
     return Padding(
       padding: const EdgeInsets.all(padding / 2),
@@ -39,9 +54,10 @@ class UserWidget extends StatelessWidget {
           if (pictureUrl != null)
             Container(
               margin: const EdgeInsets.only(top: margin),
+              alignment: Alignment.center,
               child: CircleAvatar(
-                radius: 56,
-                child: ClipOval(child: Image.network(pictureUrl.toString())),
+                radius: 70,
+                backgroundImage: NetworkImage(pictureUrl.toString()),
               ),
             ),
           Card(
@@ -56,10 +72,6 @@ class UserWidget extends StatelessWidget {
                 UserEntryWidget(
                   propertyName: 'Email',
                   propertyValue: user?.email,
-                ),
-                UserEntryWidget(
-                  propertyName: 'Email Verified',
-                  propertyValue: user?.isEmailVerified == true ? 'Yes' : 'No',
                 ),
               ],
             ),
@@ -101,8 +113,33 @@ class UserWidget extends StatelessWidget {
                     fontSize: 24,
                     height: 0.8,
                     fontWeight: FontWeight.w500,
+              child: Column(
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () async => initCamera(),
+                    child: Text(
+                      'Change profile picture',
+                      style: GoogleFonts.spaceGrotesk(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 24,
+                        height: 0.8,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
-                ),
+                  ElevatedButton(
+                    onPressed: context.read<AuthProvider>().logout,
+                    child: Text(
+                      'Logout',
+                      style: GoogleFonts.spaceGrotesk(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 24,
+                        height: 0.8,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
