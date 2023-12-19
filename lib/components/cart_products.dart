@@ -1,6 +1,6 @@
+import 'package:flex_market/models/product.dart';
+import 'package:flex_market/providers/cart_provider.dart';
 import 'package:flex_market/utils/constants.dart';
-import 'package:flex_market/utils/product.dart';
-import 'package:flex_market/utils/providers/data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +15,7 @@ class CartProductsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Product> products = context.watch<DataProvider>().mockProducts;
+    final List<Product> products = context.watch<CartProvider>().mockProducts;
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Container(
@@ -72,7 +72,10 @@ class CartProductsWidget extends StatelessWidget {
                               children: <Widget>[
                                 Text(
                                   '\$${product.price.toString()}',
-                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
+                                      .copyWith(
                                         fontStyle: FontStyle.italic,
                                       ),
                                 ),
@@ -80,14 +83,16 @@ class CartProductsWidget extends StatelessWidget {
                                   padding: const EdgeInsets.only(top: margin),
                                   child: Text(
                                     product.title,
-                                    style: Theme.of(context).textTheme.bodySmall,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: margin),
                                   child: Text(
                                     'Size: ${product.size.name.toUpperCase()}',
-                                    style: Theme.of(context).textTheme.bodySmall,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
                                   ),
                                 ),
                               ],

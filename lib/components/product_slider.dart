@@ -1,6 +1,6 @@
+import 'package:flex_market/models/product.dart';
+import 'package:flex_market/providers/cart_provider.dart';
 import 'package:flex_market/utils/constants.dart';
-import 'package:flex_market/utils/product.dart';
-import 'package:flex_market/utils/providers/data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +17,11 @@ class ProductSliderWidget extends StatelessWidget {
   /// Creates a [ProductSliderWidget].
   ///
   /// Requires [title] and [subtitle] strings to be provided.
-  const ProductSliderWidget({required this.title, required this.subtitle, super.key});
+  const ProductSliderWidget({
+    required this.title,
+    required this.subtitle,
+    super.key,
+  });
 
   /// The title text displayed above the product list.
   final String title;
@@ -27,7 +31,7 @@ class ProductSliderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Product> products = context.watch<DataProvider>().mockProducts;
+    final List<Product> products = context.watch<CartProvider>().mockProducts;
 
     return Container(
       margin: const EdgeInsets.only(top: margin, left: margin / 2),
@@ -77,7 +81,10 @@ class ProductSliderWidget extends StatelessWidget {
                           ),
                           Text(
                             '\$${product.price.toString()}',
-                            style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium!
+                                .copyWith(
                                   fontStyle: FontStyle.italic,
                                 ),
                           ),
@@ -92,8 +99,10 @@ class ProductSliderWidget extends StatelessWidget {
                         bottom: 15,
                         child: IconButton(
                           icon: SvgPicture.asset('assets/fav.svg', width: 40),
-                          onPressed: () => context.read<DataProvider>().addToCart(product),
-                          highlightColor: Theme.of(context).colorScheme.secondary,
+                          onPressed: () =>
+                              context.read<CartProvider>().addToCart(product),
+                          highlightColor:
+                              Theme.of(context).colorScheme.secondary,
                         ),
                       ),
                     ],

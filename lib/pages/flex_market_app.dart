@@ -1,10 +1,10 @@
 import 'package:flex_market/pages/cart.dart';
-import 'package:flex_market/pages/favorites.dart';
 import 'package:flex_market/pages/hero.dart';
 import 'package:flex_market/pages/home.dart';
+import 'package:flex_market/pages/item.dart';
 import 'package:flex_market/pages/search_page.dart';
 import 'package:flex_market/pages/user.dart';
-import 'package:flex_market/utils/providers/auth_provider.dart';
+import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -168,14 +168,18 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
               items: navbarPages
                   .asMap()
                   .map(
-                    (int index, NavigationItem item) => MapEntry<int, BottomNavigationBarItem>(
+                    (int index, NavigationItem item) =>
+                        MapEntry<int, BottomNavigationBarItem>(
                       index,
                       BottomNavigationBarItem(
                         icon: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: _currentIndex == index
                               ? BoxDecoration(
-                                  border: Border.all(color: const Color(0xFFFF8E26), width: 2),
+                                  border: Border.all(
+                                    color: const Color(0xFFFF8E26),
+                                    width: 2,
+                                  ),
                                   color: const Color(0xFF3D3D3B),
                                   borderRadius: BorderRadius.circular(10),
                                 )

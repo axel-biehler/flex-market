@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flex_market/pages/admin/admin_items.dart';
+import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/constants.dart';
-import 'package:flex_market/utils/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -49,9 +49,18 @@ class UserWidget extends StatelessWidget {
             color: Theme.of(context).primaryColor,
             child: Column(
               children: <Widget>[
-                UserEntryWidget(propertyName: 'Name', propertyValue: user?.name),
-                UserEntryWidget(propertyName: 'Email', propertyValue: user?.email),
-                UserEntryWidget(propertyName: 'Email Verified', propertyValue: user?.isEmailVerified == true ? 'Yes' : 'No'),
+                UserEntryWidget(
+                  propertyName: 'Name',
+                  propertyValue: user?.name,
+                ),
+                UserEntryWidget(
+                  propertyName: 'Email',
+                  propertyValue: user?.email,
+                ),
+                UserEntryWidget(
+                  propertyName: 'Email Verified',
+                  propertyValue: user?.isEmailVerified == true ? 'Yes' : 'No',
+                ),
               ],
             ),
           ),
@@ -108,7 +117,11 @@ class UserWidget extends StatelessWidget {
 /// It shows a [propertyName] and its [propertyValue] side by side.
 class UserEntryWidget extends StatelessWidget {
   /// Creates a [UserEntryWidget] with a given [propertyName] and [propertyValue].
-  const UserEntryWidget({required this.propertyName, required this.propertyValue, super.key});
+  const UserEntryWidget({
+    required this.propertyName,
+    required this.propertyValue,
+    super.key,
+  });
 
   /// The name of the property to display (e.g., 'Name', 'Email').
   final String propertyName;
