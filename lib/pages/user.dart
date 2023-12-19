@@ -6,7 +6,6 @@ import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 /// A widget that displays the user's profile information.
@@ -116,7 +115,13 @@ class UserWidget extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   ElevatedButton(
-                    onPressed: () async => initCamera(),
+                    onPressed: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute<Widget>(
+                          builder: (BuildContext context) => const CameraPage(),
+                        ),
+                      );
+                    },
                     child: Text(
                       'Change profile picture',
                       style: GoogleFonts.spaceGrotesk(

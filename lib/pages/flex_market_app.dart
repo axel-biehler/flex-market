@@ -141,7 +141,7 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
               ),
             ],
           ),
-          bottomNavigationBar: Container(
+          bottomNavigationBar: DecoratedBox(
             decoration: const BoxDecoration(
               border: Border(
                 top: BorderSide(color: Color(0xFF3D3D3B)),
