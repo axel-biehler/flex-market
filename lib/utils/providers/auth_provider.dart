@@ -55,7 +55,9 @@ class AuthProvider extends ChangeNotifier {
   Future<void> login() async {
     try {
       if (kIsWeb) {
-        final Credentials credentials = await auth0Web.loginWithPopup();
+        final Credentials credentials = await auth0Web.loginWithPopup(
+          audience: dotenv.env['AUTH0_AUDIENCE'],
+        );
         _user = credentials.user;
         _credentials = credentials;
         notifyListeners();
@@ -88,7 +90,9 @@ class AuthProvider extends ChangeNotifier {
   Future<void> register() async {
     try {
       if (kIsWeb) {
-        final Credentials credentials = await auth0Web.loginWithPopup();
+        final Credentials credentials = await auth0Web.loginWithPopup(
+          audience: dotenv.env['AUTH0_AUDIENCE'],
+        );
         _user = credentials.user;
         _credentials = credentials;
         notifyListeners();
