@@ -5,7 +5,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 /// Favorites page component
 class FavoritesWidget extends StatelessWidget {
   /// Creates a new [FavoritesWidget]
-  const FavoritesWidget({super.key});
+  const FavoritesWidget({required this.navigatorKey, super.key});
+
+  /// Key used for custom navigation flow inside each app section
+  final GlobalKey<NavigatorState> navigatorKey;
 
   @override
   Widget build(BuildContext context) {

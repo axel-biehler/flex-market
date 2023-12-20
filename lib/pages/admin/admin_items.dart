@@ -10,10 +10,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 /// add more of them.
 class AdminItemsWidget extends StatelessWidget {
   /// Creates a [AdminItemsWidget].
-  const AdminItemsWidget({required this.setCustomPage, super.key});
+  const AdminItemsWidget({required this.navigatorKey, super.key});
 
-  /// Callback passed to handle navigation
-  final void Function(Widget? page) setCustomPage;
+  /// Key used for custom navigation flow inside each app section
+  final GlobalKey<NavigatorState> navigatorKey;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class AdminItemsWidget extends StatelessWidget {
                               angle: pi,
                               child: SvgPicture.asset('assets/arrow.svg', height: 20),
                             ),
-                            onPressed: () => setCustomPage(null),
+                            onPressed: () => navigatorKey.currentState?.pop(),
                             highlightColor: Theme.of(context).colorScheme.secondary,
                           ),
                         ),

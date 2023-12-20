@@ -8,7 +8,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 /// It presents a scrollable list of items that the user has added to their cart.
 class CartWidget extends StatelessWidget {
   /// Creates a [CartWidget].
-  const CartWidget({super.key});
+  const CartWidget({required this.navigatorKey, super.key});
+
+  /// Key used for custom navigation flow inside each app section
+  final GlobalKey<NavigatorState> navigatorKey;
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flex_market/pages/admin/admin_items.dart';
 import 'package:flex_market/utils/constants.dart';
@@ -12,10 +14,10 @@ import 'package:provider/provider.dart';
 /// Additionally, it provides a logout button.
 class UserWidget extends StatelessWidget {
   /// Creates a [UserWidget].
-  const UserWidget({required this.setCustomPage, super.key});
+  const UserWidget({required this.navigatorKey, super.key});
 
-  /// Callback used to display other pages like the admin section
-  final void Function(Widget? page) setCustomPage;
+  /// Key used for custom navigation flow inside each app section
+  final GlobalKey<NavigatorState> navigatorKey;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +59,15 @@ class UserWidget extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.only(top: margin),
               child: ElevatedButton(
-                onPressed: () => setCustomPage(AdminItemsWidget(setCustomPage: setCustomPage)),
+                onPressed: () {
+                  unawaited(
+                    navigatorKey.currentState?.push(
+                      MaterialPageRoute<Widget>(
+                        builder: (BuildContext context) => AdminItemsWidget(navigatorKey: navigatorKey),
+                      ),
+                    ),
+                  );
+                },
                 child: Text(
                   'Open admin items',
                   style: GoogleFonts.spaceGrotesk(

@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 /// Search page with query options
 class SearchPageWidget extends StatefulWidget {
   /// Creates a new [SearchPageWidget].
-  const SearchPageWidget({super.key});
+  const SearchPageWidget({required this.navigatorKey, super.key});
+
+  /// Key used for custom navigation flow inside each app section
+  final GlobalKey<NavigatorState> navigatorKey;
 
   @override
   SearchPageWidgetState createState() => SearchPageWidgetState();
