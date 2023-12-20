@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flex_market/pages/admin/admin_items.dart';
-import 'package:flex_market/pages/favorites.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flex_market/utils/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
