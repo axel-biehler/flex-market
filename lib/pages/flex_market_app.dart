@@ -130,8 +130,7 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
           backgroundColor: Theme.of(context).primaryColor,
           body: Column(
             children: <Widget>[
-              SizedBox(
-                height: screenHeight * 0.87,
+              Expanded(
                 child: IndexedStack(
                   index: _currentIndex,
                   children: navbarPages.map<Widget>((NavigationItem item) {
