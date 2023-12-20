@@ -1,21 +1,20 @@
-import 'dart:async';
 import 'dart:math';
-import 'package:flex_market/components/admin_published_items.dart';
-import 'package:flex_market/pages/admin/admin_item_form.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// A widget that displays the user items if he is admin.
+/// A widget that displays the product form to add and edit items.
 ///
-/// It presents a scrollable list of items that the user sells and allows him to
-/// add more of them.
-class AdminItemsWidget extends StatelessWidget {
-  /// Creates a [AdminItemsWidget].
-  const AdminItemsWidget({required this.navigatorKey, super.key});
+/// A form to add or edit items.
+class AdminItemFormWidget extends StatelessWidget {
+  /// Creates a [AdminItemFormWidget].
+  const AdminItemFormWidget({required this.navigatorKey, required this.isEdit, super.key});
 
   /// Key used for custom navigation flow inside each app section
   final GlobalKey<NavigatorState> navigatorKey;
+
+  /// Boolean indicating if the form is in add or edit mode
+  final bool isEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +54,8 @@ class AdminItemsWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                'ITEMS',
+                                '${isEdit ? "MODIFY" : "ADD"} AN ITEM',
                                 style: Theme.of(context).textTheme.titleMedium!.copyWith(fontStyle: FontStyle.italic),
-                              ),
-                              Text(
-                                '45 items',
-                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ],
                           ),
@@ -69,37 +64,10 @@ class AdminItemsWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
-                  margin: const EdgeInsets.only(right: margin),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      unawaited(
-                        navigatorKey.currentState?.push(
-                          MaterialPageRoute<Widget>(
-                            builder: (BuildContext context) => AdminItemFormWidget(navigatorKey: navigatorKey, isEdit: false),
-                          ),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF247100),
-                      fixedSize: const Size(80, 30),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: Text(
-                      'ADD',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
-          const AdminPublishedItemsWidget(),
+          // const AdminPublishedItemsWidget(),
         ],
       ),
     );
