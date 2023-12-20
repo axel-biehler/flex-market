@@ -93,52 +93,34 @@ class CartProductsWidget extends StatelessWidget {
                               ],
                             ),
                           ),
-                          Container(
-                            margin: const EdgeInsets.only(top: margin),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                // color: Theme.of(context).colorScheme.secondary,
-                                color: const Color(0xFF3D3D3B), // Text color
-                              ),
-                              borderRadius: const BorderRadius.all(Radius.circular(10)),
-                              // color: const Color(0xFF3D3D3B),
-                              color: Colors.transparent,
+                          DecoratedBox(
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(7)),
+                              color: Color(0xFF3D3D3B), // Text color
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                                vertical: 2,
-                              ),
-                              child: DecoratedBox(
-                                decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.all(Radius.circular(7)),
-                                  color: Color(0xFF3D3D3B), // Text color
-                                ),
-                                child: DropdownButton<int>(
-                                  value: 25,
-                                  menuMaxHeight: 200,
-                                  icon: Icon(Icons.arrow_drop_down, color: Theme.of(context).colorScheme.secondary),
-                                  onChanged: (int? newValue) {
-                                    // TODO(arobine): Handle quantity edit.
-                                  },
-                                  items: List<int>.generate(25 + 101, (int i) => i).map<DropdownMenuItem<int>>((int value) {
-                                    return DropdownMenuItem<int>(
-                                      value: value,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: margin / 2),
-                                        child: Text(
-                                          value.toString(),
-                                          style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                  dropdownColor: Theme.of(context).primaryColor,
-                                  underline: Container(),
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.secondary, // Text color
+                            child: DropdownButton<int>(
+                              value: 25,
+                              menuMaxHeight: 200,
+                              icon: Icon(Icons.arrow_drop_down, color: Theme.of(context).colorScheme.secondary),
+                              onChanged: (int? newValue) {
+                                // TODO(arobine): Handle quantity edit.
+                              },
+                              items: List<int>.generate(25 + 101, (int i) => i).map<DropdownMenuItem<int>>((int value) {
+                                return DropdownMenuItem<int>(
+                                  value: value,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: margin / 2),
+                                    child: Text(
+                                      value.toString(),
+                                      style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                                    ),
                                   ),
-                                ),
+                                );
+                              }).toList(),
+                              dropdownColor: Theme.of(context).primaryColor,
+                              underline: Container(),
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary, // Text color
                               ),
                             ),
                           ),

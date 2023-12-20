@@ -1,4 +1,5 @@
 import 'package:auth0_flutter/auth0_flutter.dart';
+import 'package:flex_market/pages/admin/admin_items.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flex_market/utils/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,10 @@ import 'package:provider/provider.dart';
 /// Additionally, it provides a logout button.
 class UserWidget extends StatelessWidget {
   /// Creates a [UserWidget].
-  const UserWidget({super.key});
+  const UserWidget({required this.setCustomPage, super.key});
+
+  /// Callback used to display other pages like the admin section
+  final void Function(Widget? page) setCustomPage;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +51,23 @@ class UserWidget extends StatelessWidget {
                 UserEntryWidget(propertyName: 'Email', propertyValue: user?.email),
                 UserEntryWidget(propertyName: 'Email Verified', propertyValue: user?.isEmailVerified == true ? 'Yes' : 'No'),
               ],
+            ),
+          ),
+          Center(
+            child: Container(
+              margin: const EdgeInsets.only(top: margin),
+              child: ElevatedButton(
+                onPressed: () => setCustomPage(AdminItemsWidget(setCustomPage: setCustomPage)),
+                child: Text(
+                  'Open admin items',
+                  style: GoogleFonts.spaceGrotesk(
+                    color: Theme.of(context).primaryColor,
+                    fontSize: 24,
+                    height: 0.8,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
             ),
           ),
           Center(
