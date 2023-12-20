@@ -22,7 +22,10 @@ const List<ProductSliderWidget> sections = <ProductSliderWidget>[
 /// showcasing various categories like the latest products, offers, and best sellers.
 class HomeWidget extends StatelessWidget {
   /// Creates a [HomeWidget].
-  const HomeWidget({super.key});
+  const HomeWidget({required this.navigatorKey, super.key});
+
+  /// Key used for custom navigation flow inside each app section
+  final GlobalKey<NavigatorState> navigatorKey;
 
   @override
   Widget build(BuildContext context) {

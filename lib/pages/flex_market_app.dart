@@ -10,11 +10,24 @@ import 'package:provider/provider.dart';
 
 /// Represents an item in the navigation bar of the application.
 class NavigationItem {
-  /// Constructs a [NavigationItem] with the given [page], [icon], and [label].
-  NavigationItem({required this.page, required this.icon, required this.label});
+  /// Constructs a [NavigationItem] with the given [navigatorKey], [pageBuilder],
+  /// [page], [icon], and [label].
+  NavigationItem({
+    required this.navigatorKey,
+    required this.pageBuilder,
+    // required this.page,
+    required this.icon,
+    required this.label,
+  });
+
+  /// Key used for custom navigation flow inside each app section
+  final GlobalKey<NavigatorState> navigatorKey;
+
+  /// Page builder to pass the navigatorKey to its child
+  final Widget Function(GlobalKey<NavigatorState>) pageBuilder;
 
   /// The page to navigate to when this item is tapped.
-  final Widget page;
+  // final Widget page;
 
   /// The icon representing this navigation item.
   final Widget icon;
@@ -37,11 +50,12 @@ class FlexMarketApp extends StatefulWidget {
 
 class _FlexMarketAppState extends State<FlexMarketApp> {
   int _currentIndex = 0;
-  Widget? _customPage;
+  Widget? _customPage = null;
 
   late final List<NavigationItem> navbarPages = <NavigationItem>[
     NavigationItem(
-      page: const HomeWidget(),
+      navigatorKey: GlobalKey<NavigatorState>(),
+      pageBuilder: (GlobalKey<NavigatorState> key) => HomeWidget(navigatorKey: key),
       icon: Image.asset(
         'assets/home.png',
         height: 22,
@@ -50,7 +64,8 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
       label: 'Home',
     ),
     NavigationItem(
-      page: const SearchPageWidget(),
+      navigatorKey: GlobalKey<NavigatorState>(),
+      pageBuilder: (GlobalKey<NavigatorState> key) => SearchPageWidget(navigatorKey: key),
       icon: Image.asset(
         'assets/search.png',
         height: 22,
@@ -59,7 +74,8 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
       label: 'Search',
     ),
     NavigationItem(
-      page: const FavoritesWidget(),
+      navigatorKey: GlobalKey<NavigatorState>(),
+      pageBuilder: (GlobalKey<NavigatorState> key) => FavoritesWidget(navigatorKey: key),
       icon: Image.asset(
         'assets/fav.png',
         height: 22,
@@ -68,7 +84,8 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
       label: 'Favorites',
     ),
     NavigationItem(
-      page: const CartWidget(),
+      navigatorKey: GlobalKey<NavigatorState>(),
+      pageBuilder: (GlobalKey<NavigatorState> key) => CartWidget(navigatorKey: key),
       icon: Image.asset(
         'assets/cart.png',
         height: 22,
@@ -77,7 +94,8 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
       label: 'Cart',
     ),
     NavigationItem(
-      page: UserWidget(setCustomPage: setCustomPage),
+      navigatorKey: GlobalKey<NavigatorState>(),
+      pageBuilder: (GlobalKey<NavigatorState> key) => UserWidget(navigatorKey: key),
       icon: Image.asset(
         'assets/profile.png',
         height: 22,
@@ -94,7 +112,7 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
     });
   }
 
-  void setCustomPage(Widget? page) {
+  void setCustomPage(Widget page) {
     setState(() {
       _customPage = page;
     });
@@ -117,7 +135,17 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
             children: <Widget>[
               SizedBox(
                 height: screenHeight * 0.87,
-                child: _customPage ?? navbarPages[_currentIndex].page,
+                child: IndexedStack(
+                  index: _currentIndex,
+                  children: navbarPages.map<Widget>((NavigationItem item) {
+                    return Navigator(
+                      key: item.navigatorKey,
+                      onGenerateRoute: (RouteSettings settings) {
+                        return MaterialPageRoute<Widget>(builder: (BuildContext context) => item.pageBuilder(item.navigatorKey));
+                      },
+                    );
+                  }).toList(),
+                ),
               ),
             ],
           ),
