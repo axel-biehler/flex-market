@@ -19,7 +19,7 @@ class PicturePreviewPage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Image.file(File(picture.path), fit: BoxFit.cover, width: 250),
+            Image.file(File(picture.path), fit: BoxFit.cover),
             const SizedBox(height: 24),
             Text(picture.name),
             Row(
@@ -31,7 +31,6 @@ class PicturePreviewPage extends StatelessWidget {
                 ),
                 const SizedBox(width: 24),
                 ElevatedButton(
-                  // TODO(axel): implement the returned image to use for profile or add products.
                   onPressed: () => Navigator.of(context).pop(),
                   child: const Text('Use Picture'),
                 ),

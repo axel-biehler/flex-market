@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:camera/camera.dart';
+import 'package:flex_market/components/image_picker.dart';
 import 'package:flex_market/components/picture_preview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -124,6 +125,16 @@ class _CameraPageState extends State<CameraPage> {
                 ),
                 child: Row(
                   children: <Widget>[
+                    const ImagePickerWidget(),
+                    Expanded(
+                      child: IconButton(
+                        onPressed: takePicture,
+                        iconSize: 50,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        icon: const Icon(Icons.circle, color: Colors.white),
+                      ),
+                    ),
                     Expanded(
                       child: IconButton(
                         padding: EdgeInsets.zero,
@@ -147,16 +158,6 @@ class _CameraPageState extends State<CameraPage> {
                         },
                       ),
                     ),
-                    Expanded(
-                      child: IconButton(
-                        onPressed: takePicture,
-                        iconSize: 50,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        icon: const Icon(Icons.circle, color: Colors.white),
-                      ),
-                    ),
-                    const Spacer(),
                   ],
                 ),
               ),
