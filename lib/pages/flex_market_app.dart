@@ -37,6 +37,7 @@ class FlexMarketApp extends StatefulWidget {
 
 class _FlexMarketAppState extends State<FlexMarketApp> {
   int _currentIndex = 0;
+  Widget? _customPage;
 
   late final List<NavigationItem> navbarPages = <NavigationItem>[
     NavigationItem(
@@ -76,7 +77,7 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
       label: 'Cart',
     ),
     NavigationItem(
-      page: const UserWidget(),
+      page: UserWidget(setCustomPage: setCustomPage),
       icon: Image.asset(
         'assets/profile.png',
         height: 22,
@@ -88,7 +89,14 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
 
   void onItemTapped(int index) {
     setState(() {
+      _customPage = null;
       _currentIndex = index;
+    });
+  }
+
+  void setCustomPage(Widget? page) {
+    setState(() {
+      _customPage = page;
     });
   }
 
@@ -109,7 +117,7 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
             children: <Widget>[
               SizedBox(
                 height: screenHeight * 0.87,
-                child: navbarPages[_currentIndex].page,
+                child: _customPage ?? navbarPages[_currentIndex].page,
               ),
             ],
           ),
