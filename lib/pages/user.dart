@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:auth0_flutter/auth0_flutter.dart';
+import 'package:flex_market/components/camera.dart';
+import 'package:flex_market/models/user_profile.dart';
 import 'package:flex_market/pages/admin/admin_items.dart';
+import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/constants.dart';
-import 'package:flex_market/utils/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -21,8 +22,8 @@ class UserWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final UserProfile? user = context.watch<AuthProvider>().user;
-    final Uri? pictureUrl = user?.pictureUrl;
+    final User? user = context.watch<AuthProvider>().userCustom;
+    final String? pictureUrl = user?.picture;
 
     return Padding(
       padding: const EdgeInsets.all(padding / 2),
@@ -39,9 +40,10 @@ class UserWidget extends StatelessWidget {
           if (pictureUrl != null)
             Container(
               margin: const EdgeInsets.only(top: margin),
+              alignment: Alignment.center,
               child: CircleAvatar(
-                radius: 56,
-                child: ClipOval(child: Image.network(pictureUrl.toString())),
+                radius: 70,
+                backgroundImage: NetworkImage(pictureUrl.toString()),
               ),
             ),
           Card(
@@ -49,9 +51,14 @@ class UserWidget extends StatelessWidget {
             color: Theme.of(context).primaryColor,
             child: Column(
               children: <Widget>[
-                UserEntryWidget(propertyName: 'Name', propertyValue: user?.name),
-                UserEntryWidget(propertyName: 'Email', propertyValue: user?.email),
-                UserEntryWidget(propertyName: 'Email Verified', propertyValue: user?.isEmailVerified == true ? 'Yes' : 'No'),
+                UserEntryWidget(
+                  propertyName: 'Name',
+                  propertyValue: user?.name,
+                ),
+                UserEntryWidget(
+                  propertyName: 'Email',
+                  propertyValue: user?.email,
+                ),
               ],
             ),
           ),
@@ -63,7 +70,8 @@ class UserWidget extends StatelessWidget {
                   unawaited(
                     navigatorKey.currentState?.push(
                       MaterialPageRoute<Widget>(
-                        builder: (BuildContext context) => AdminItemsWidget(navigatorKey: navigatorKey),
+                        builder: (BuildContext context) =>
+                            AdminItemsWidget(navigatorKey: navigatorKey),
                       ),
                     ),
                   );
@@ -83,17 +91,41 @@ class UserWidget extends StatelessWidget {
           Center(
             child: Container(
               margin: const EdgeInsets.only(top: margin),
-              child: ElevatedButton(
-                onPressed: context.read<AuthProvider>().logout,
-                child: Text(
-                  'Logout',
-                  style: GoogleFonts.spaceGrotesk(
-                    color: Theme.of(context).primaryColor,
-                    fontSize: 24,
-                    height: 0.8,
-                    fontWeight: FontWeight.w500,
+              child: Column(
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () async {
+                      await navigatorKey.currentState?.push(
+                        MaterialPageRoute<Widget>(
+                          builder: (BuildContext context) => CameraPage(
+                            navigatorKey: navigatorKey,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Change profile picture',
+                      style: GoogleFonts.spaceGrotesk(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 24,
+                        height: 0.8,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
-                ),
+                  ElevatedButton(
+                    onPressed: context.read<AuthProvider>().logout,
+                    child: Text(
+                      'Logout',
+                      style: GoogleFonts.spaceGrotesk(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 24,
+                        height: 0.8,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -108,7 +140,11 @@ class UserWidget extends StatelessWidget {
 /// It shows a [propertyName] and its [propertyValue] side by side.
 class UserEntryWidget extends StatelessWidget {
   /// Creates a [UserEntryWidget] with a given [propertyName] and [propertyValue].
-  const UserEntryWidget({required this.propertyName, required this.propertyValue, super.key});
+  const UserEntryWidget({
+    required this.propertyName,
+    required this.propertyValue,
+    super.key,
+  });
 
   /// The name of the property to display (e.g., 'Name', 'Email').
   final String propertyName;

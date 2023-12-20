@@ -1,6 +1,7 @@
 import 'package:auth0_flutter/auth0_flutter.dart';
+import 'package:flex_market/models/product.dart';
+import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/enums.dart';
-import 'package:flex_market/utils/product.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -10,12 +11,25 @@ import 'package:http/http.dart' as http;
 /// This class acts as a central hub for the state management within
 /// the application, leveraging Flutter's Provider package for state
 /// notification and updates.
-class DataProvider extends ChangeNotifier {
+class CartProvider extends ChangeNotifier {
+  /// Constructor that receives the AuthProvider
+  CartProvider(this.authProvider);
+
+  /// Reference to the AuthProvider
+  AuthProvider authProvider;
+
   /// The shopping cart containing a list of products.
   final List<Product> _cart = <Product>[];
 
   /// Getter for the user's cart.
   List<Product> get cart => _cart;
+
+  /// Method to update the reference to the AuthProvider
+  void updateWithAuthProvider(AuthProvider authProvider) {
+    this.authProvider = authProvider;
+    // You may want to perform additional updates or fetches here
+    notifyListeners();
+  }
 
   /// A list of mock products used for displaying in the UI.
   List<Product> mockProducts = <Product>[

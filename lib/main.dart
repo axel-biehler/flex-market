@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:flex_market/pages/flex_market_app.dart';
-import 'package:flex_market/utils/providers/auth_provider.dart';
-import 'package:flex_market/utils/providers/data_provider.dart';
+import 'package:flex_market/providers/auth_provider.dart';
+import 'package:flex_market/providers/cart_provider.dart';
+import 'package:flex_market/providers/item_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:nested/nested.dart';
 import 'package:provider/provider.dart';
 
 /// A widget that represents the root of the application.
@@ -23,7 +25,8 @@ class App extends StatelessWidget {
     return MaterialApp(
       theme: theme.copyWith(
         primaryColor: const Color(0xFF121212),
-        colorScheme: theme.colorScheme.copyWith(secondary: const Color(0xFFC2C2C2)),
+        colorScheme:
+            theme.colorScheme.copyWith(secondary: const Color(0xFFC2C2C2)),
         textTheme: const TextTheme(
           titleMedium: TextStyle(
             fontSize: 20,
@@ -66,9 +69,28 @@ void main() async {
 
   runApp(
     MultiProvider(
-      providers: <ChangeNotifierProvider<ChangeNotifier>>[
-        ChangeNotifierProvider<AuthProvider>(create: (BuildContext context) => AuthProvider()),
-        ChangeNotifierProvider<DataProvider>(create: (BuildContext context) => DataProvider()),
+      providers: <SingleChildWidget>[
+        ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, CartProvider>(
+          create: (BuildContext context) =>
+              CartProvider(Provider.of<AuthProvider>(context, listen: false)),
+          update: (
+            BuildContext context,
+            AuthProvider authProvider,
+            CartProvider? previousDataProvider,
+          ) =>
+              previousDataProvider!..updateWithAuthProvider(authProvider),
+        ),
+        ChangeNotifierProxyProvider<AuthProvider, ItemProvider>(
+          create: (BuildContext context) =>
+              ItemProvider(Provider.of<AuthProvider>(context, listen: false)),
+          update: (
+            BuildContext context,
+            AuthProvider authProvider,
+            ItemProvider? previousDataProvider,
+          ) =>
+              previousDataProvider!..updateWithAuthProvider(authProvider),
+        ),
       ],
       child: App(),
     ),

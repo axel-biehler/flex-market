@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:auth0_flutter/auth0_flutter_web.dart';
+import 'package:flex_market/models/user_profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 
 /// Manages the application state including user authentication,
 /// product data, and shopping cart functionality.
@@ -12,18 +16,24 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AuthProvider extends ChangeNotifier {
   /// The current user profile, null if not authenticated.
   UserProfile? _user;
+  User? _userCustom;
 
   /// The current user's credentials, null if not authenticated.
   Credentials? _credentials;
 
   /// Instance of Auth0 for user authentication.
-  final Auth0 auth0 = Auth0(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_CLIENT_ID']!);
+  final Auth0 auth0 =
+      Auth0(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_CLIENT_ID']!);
 
   /// Instance of Auth0Web for web-based authentication.
-  final Auth0Web auth0Web = Auth0Web(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_WEB_CLIENT_ID']!);
+  final Auth0Web auth0Web =
+      Auth0Web(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_WEB_CLIENT_ID']!);
 
   /// Getter for the current user.
   UserProfile? get user => _user;
+
+  /// Getter for the current user custom.
+  User? get userCustom => _userCustom;
 
   /// Getter for the current user's credentials.
   Credentials? get credentials => _credentials;
@@ -45,6 +55,12 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Sets the current user custom and notifies listeners about the change.
+  void setCustomUser(User? user) {
+    _userCustom = user;
+    notifyListeners();
+  }
+
   /// Sets the current user's credentials and notifies listeners about the change.
   void setCredentials(Credentials? credentials) {
     _credentials = credentials;
@@ -60,10 +76,13 @@ class AuthProvider extends ChangeNotifier {
         );
         _user = credentials.user;
         _credentials = credentials;
+        await fetchUserInfo(credentials);
         notifyListeners();
         return;
       }
-      final Credentials credentials = await auth0.webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME']).login(
+      final Credentials credentials = await auth0
+          .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
+          .login(
         audience: dotenv.env['AUTH0_AUDIENCE'],
         scopes: <String>{
           'openid',
@@ -78,6 +97,7 @@ class AuthProvider extends ChangeNotifier {
       );
       _user = credentials.user;
       _credentials = credentials;
+      await fetchUserInfo(credentials);
       notifyListeners();
     } catch (e) {
       if (kDebugMode) {
@@ -95,10 +115,13 @@ class AuthProvider extends ChangeNotifier {
         );
         _user = credentials.user;
         _credentials = credentials;
+        await fetchUserInfo(credentials);
         notifyListeners();
         return;
       }
-      final Credentials credentials = await auth0.webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME']).login(
+      final Credentials credentials = await auth0
+          .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
+          .login(
         audience: dotenv.env['AUTH0_AUDIENCE'],
         scopes: <String>{
           'openid',
@@ -114,6 +137,7 @@ class AuthProvider extends ChangeNotifier {
       _user = credentials.user;
       _credentials = credentials;
       notifyListeners();
+      await fetchUserInfo(credentials);
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -127,13 +151,46 @@ class AuthProvider extends ChangeNotifier {
       if (kIsWeb) {
         await auth0Web.logout(returnToUrl: dotenv.env['AUTH0_REDIRECT_URI']);
       } else {
-        await auth0.webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME']).logout();
+        await auth0
+            .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
+            .logout();
         _user = null;
         notifyListeners();
       }
     } catch (e) {
       if (kDebugMode) {
         print(e);
+      }
+    }
+  }
+
+  /// Fetches user information from a specified API endpoint and handles the response.
+  Future<void> fetchUserInfo(Credentials credentials) async {
+    final Uri url = Uri.parse(
+      '${dotenv.env['API_URL']}/me',
+    );
+
+    try {
+      final http.Response response = await http.get(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer ${credentials.accessToken}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        if (kDebugMode) {
+          print('Response data: ${response.body}');
+        }
+        setCustomUser(User.fromJson(jsonDecode(response.body)['profile']));
+      } else {
+        if (kDebugMode) {
+          print('Request failed with status: ${response.statusCode}.');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
       }
     }
   }

@@ -1,6 +1,6 @@
+import 'package:flex_market/models/product.dart';
+import 'package:flex_market/providers/cart_provider.dart';
 import 'package:flex_market/utils/constants.dart';
-import 'package:flex_market/utils/product.dart';
-import 'package:flex_market/utils/providers/data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +16,7 @@ class FavoritesProductsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Product> products = context.read<DataProvider>().mockProducts;
+    final List<Product> products = context.read<CartProvider>().mockProducts;
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -52,9 +52,11 @@ class FavoritesProductsWidget extends StatelessWidget {
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2, // Two items per row
-                  crossAxisSpacing: 50, // Spacing between items on the cross axis
+                  crossAxisSpacing:
+                      50, // Spacing between items on the cross axis
                   mainAxisSpacing: 10, // Spacing between items on the main axis
-                  childAspectRatio: (screenWidth * 0.5) / (screenHeight * 0.7 / 2.5), // Aspect ratio for each item
+                  childAspectRatio: (screenWidth * 0.5) /
+                      (screenHeight * 0.7 / 2.5), // Aspect ratio for each item
                 ),
                 itemCount: products.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -74,7 +76,10 @@ class FavoritesProductsWidget extends StatelessWidget {
                             ),
                             Text(
                               '\$${product.price.toString()}',
-                              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium!
+                                  .copyWith(
                                     fontStyle: FontStyle.italic,
                                   ),
                             ),
@@ -89,8 +94,10 @@ class FavoritesProductsWidget extends StatelessWidget {
                           bottom: 15,
                           child: IconButton(
                             icon: SvgPicture.asset('assets/fav.svg', width: 40),
-                            onPressed: () => context.read<DataProvider>().addToCart(product),
-                            highlightColor: Theme.of(context).colorScheme.secondary,
+                            onPressed: () =>
+                                context.read<CartProvider>().addToCart(product),
+                            highlightColor:
+                                Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                       ],
