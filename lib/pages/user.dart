@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:auth0_flutter/auth0_flutter.dart';
+import 'package:flex_market/components/camera.dart';
+import 'package:flex_market/models/user_profile.dart';
 import 'package:flex_market/pages/admin/admin_items.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/constants.dart';
@@ -18,20 +19,6 @@ class UserWidget extends StatelessWidget {
 
   /// Key used for custom navigation flow inside each app section
   final GlobalKey<NavigatorState> navigatorKey;
-
-  /// Properties of the camera
-  late List<CameraDescription> cameras;
-
-  /// Camera controller
-  late CameraController controller;
-
-  /// Initializes the camera
-  Future<void> initCamera() async {
-    cameras = await availableCameras();
-    controller = CameraController(cameras[0], ResolutionPreset.medium);
-    await controller.initialize();
-    CameraPreview(controller);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +70,8 @@ class UserWidget extends StatelessWidget {
                   unawaited(
                     navigatorKey.currentState?.push(
                       MaterialPageRoute<Widget>(
-                        builder: (BuildContext context) => AdminItemsWidget(navigatorKey: navigatorKey),
+                        builder: (BuildContext context) =>
+                            AdminItemsWidget(navigatorKey: navigatorKey),
                       ),
                     ),
                   );
@@ -103,22 +91,15 @@ class UserWidget extends StatelessWidget {
           Center(
             child: Container(
               margin: const EdgeInsets.only(top: margin),
-              child: ElevatedButton(
-                onPressed: context.read<AuthProvider>().logout,
-                child: Text(
-                  'Logout',
-                  style: GoogleFonts.spaceGrotesk(
-                    color: Theme.of(context).primaryColor,
-                    fontSize: 24,
-                    height: 0.8,
-                    fontWeight: FontWeight.w500,
               child: Column(
                 children: <Widget>[
                   ElevatedButton(
                     onPressed: () async {
-                      await Navigator.of(context).push(
+                      await navigatorKey.currentState?.push(
                         MaterialPageRoute<Widget>(
-                          builder: (BuildContext context) => const CameraPage(),
+                          builder: (BuildContext context) => CameraPage(
+                            navigatorKey: navigatorKey,
+                          ),
                         ),
                       );
                     },

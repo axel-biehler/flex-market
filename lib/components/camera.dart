@@ -1,14 +1,19 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:camera/camera.dart';
 import 'package:flex_market/components/picture_preview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 /// CameraPage class used to display the camera preview
 class CameraPage extends StatefulWidget {
   /// constructor
-  const CameraPage({super.key});
+  const CameraPage({required this.navigatorKey, super.key});
+
+  /// Global key used for custom navigation flow inside each app section
+  final GlobalKey<NavigatorState> navigatorKey;
 
   /// cameras
   @override
@@ -83,6 +88,20 @@ class _CameraPageState extends State<CameraPage> {
       body: SafeArea(
         child: Stack(
           children: <Widget>[
+            DecoratedBox(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                color: Color(0xFF3D3D3B),
+              ),
+              child: IconButton(
+                icon: Transform.rotate(
+                  angle: pi,
+                  child: SvgPicture.asset('assets/arrow.svg', height: 20),
+                ),
+                onPressed: () => widget.navigatorKey.currentState?.pop(),
+                highlightColor: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
             if (loading)
               const ColoredBox(
                 color: Colors.black,
