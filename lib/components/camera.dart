@@ -125,7 +125,9 @@ class _CameraPageState extends State<CameraPage> {
                 ),
                 child: Row(
                   children: <Widget>[
-                    const ImagePickerWidget(),
+                    const Expanded(
+                      child: ImagePickerWidget(),
+                    ),
                     Expanded(
                       child: IconButton(
                         onPressed: takePicture,

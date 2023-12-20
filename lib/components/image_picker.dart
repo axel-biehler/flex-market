@@ -11,10 +11,11 @@ class ImagePickerWidget extends StatefulWidget {
   @override
 
   /// state
-  _ImagePickerWidgetState createState() => _ImagePickerWidgetState();
+  ImagePickerWidgetState createState() => ImagePickerWidgetState();
 }
 
-class _ImagePickerWidgetState extends State<ImagePickerWidget> {
+/// Class state
+class ImagePickerWidgetState extends State<ImagePickerWidget> {
   XFile? _image;
 
   Future<void> _pickImage() async {
@@ -31,24 +32,17 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        if (_image == null)
-          const Text('No image selected.')
-        else
-          Container(
-            alignment: Alignment.center,
-            child: CircleAvatar(
-              radius: 30,
+    return ElevatedButton(
+      onPressed: _pickImage,
+      style: ElevatedButton.styleFrom(
+        shape: const CircleBorder(),
+      ),
+      child: _image == null
+          ? const Text('Pick Image')
+          : CircleAvatar(
+              radius: 40,
               backgroundImage: FileImage(File(_image!.path)),
             ),
-          ),
-        ElevatedButton(
-          onPressed: _pickImage,
-          child: const Text('Pick Image'),
-        ),
-      ],
     );
   }
 }

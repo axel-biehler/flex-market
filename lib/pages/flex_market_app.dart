@@ -112,7 +112,17 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
 
   @override
   Widget build(BuildContext context) {
-    if (context.watch<AuthProvider>().user == null) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    if (context.watch<AuthProvider>().user == null &&
+        context.watch<AuthProvider>().isAuthenticated == false) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    } else if (context.watch<AuthProvider>().user == null &&
+        context.watch<AuthProvider>().isAuthenticated == null) {
       return Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
         body: const HeroWidget(),
