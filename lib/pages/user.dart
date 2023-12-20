@@ -1,6 +1,6 @@
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flex_market/utils/constants.dart';
-import 'package:flex_market/utils/data_provider.dart';
+import 'package:flex_market/utils/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -15,8 +15,7 @@ class UserWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DataProvider authProvider = Provider.of<DataProvider>(context);
-    final UserProfile? user = authProvider.user;
+    final UserProfile? user = context.watch<AuthProvider>().user;
     final Uri? pictureUrl = user?.pictureUrl;
 
     return Padding(
@@ -54,7 +53,7 @@ class UserWidget extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.only(top: margin),
               child: ElevatedButton(
-                onPressed: authProvider.logout,
+                onPressed: context.read<AuthProvider>().logout,
                 child: Text(
                   'Logout',
                   style: GoogleFonts.spaceGrotesk(

@@ -1,5 +1,5 @@
 import 'package:flex_market/utils/constants.dart';
-import 'package:flex_market/utils/data_provider.dart';
+import 'package:flex_market/utils/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,8 +25,6 @@ class HeroWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DataProvider authProvider = Provider.of<DataProvider>(context);
-
     return Column(
       children: <Widget>[
         Container(
@@ -56,7 +54,7 @@ class HeroWidget extends StatelessWidget {
                       Container(
                         margin: const EdgeInsets.only(top: margin * 16),
                         child: ElevatedButton(
-                          onPressed: authProvider.login,
+                          onPressed: context.read<AuthProvider>().login,
                           child: Text(
                             'Login',
                             style: GoogleFonts.spaceGrotesk(
@@ -71,7 +69,7 @@ class HeroWidget extends StatelessWidget {
                       Container(
                         margin: const EdgeInsets.only(top: margin),
                         child: ElevatedButton(
-                          onPressed: authProvider.register,
+                          onPressed: context.read<AuthProvider>().register,
                           child: Text(
                             'Register',
                             style: GoogleFonts.spaceGrotesk(

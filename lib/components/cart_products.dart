@@ -1,6 +1,6 @@
 import 'package:flex_market/utils/constants.dart';
-import 'package:flex_market/utils/data_provider.dart';
 import 'package:flex_market/utils/product.dart';
+import 'package:flex_market/utils/providers/data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,8 +15,7 @@ class CartProductsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DataProvider dataProvider = Provider.of<DataProvider>(context);
-    final List<Product> products = dataProvider.mockProducts;
+    final List<Product> products = context.watch<DataProvider>().mockProducts;
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Container(
