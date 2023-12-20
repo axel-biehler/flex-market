@@ -117,14 +117,14 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
-
     if (context.watch<AuthProvider>().user == null) {
       return Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
         body: const HeroWidget(),
       );
     } else {
+      final double screenHeight = MediaQuery.of(context).size.height;
+
       return SafeArea(
         child: Scaffold(
           backgroundColor: Theme.of(context).primaryColor,
