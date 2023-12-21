@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flex_market/components/admin_published_items.dart';
+import 'package:flex_market/pages/admin/admin_item_form.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -71,7 +73,13 @@ class AdminItemsWidget extends StatelessWidget {
                   margin: const EdgeInsets.only(right: margin),
                   child: ElevatedButton(
                     onPressed: () {
-                      // TODO(arobine): Clear the cart and notify the user that the order has been processed.
+                      unawaited(
+                        navigatorKey.currentState?.push(
+                          MaterialPageRoute<Widget>(
+                            builder: (BuildContext context) => AdminItemFormWidget(navigatorKey: navigatorKey, isEdit: false),
+                          ),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF247100),

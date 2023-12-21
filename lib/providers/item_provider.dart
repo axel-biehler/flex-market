@@ -21,13 +21,49 @@ class ItemProvider extends ChangeNotifier {
   AuthProvider authProvider;
 
   /// The URL for the API endpoint.
-  final String apiUrl = DotEnv().env['API_URL']!;
+  final String apiUrl = dotenv.env['API_URL']!;
 
   /// Method to update the reference to the AuthProvider
   void updateWithAuthProvider(AuthProvider authProvider) {
     this.authProvider = authProvider;
     // You may want to perform additional updates or fetches here
     notifyListeners();
+  }
+
+  /// Create a product
+  Future<bool> createProduct(Item item) async {
+    final Uri url = Uri.parse(
+      '$apiUrl/products',
+    );
+    final Credentials? credentials = authProvider.credentials;
+    if (credentials == null) {
+      throw Exception('No credentials available. User must be logged in.');
+    }
+
+    try {
+      final http.Response response = await http.post(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer ${credentials.accessToken}',
+        },
+        body: item.toJson(),
+      );
+
+      if (response.statusCode == 200) {
+        // final data = json.decode(response.body);
+        return true;
+      } else {
+        if (kDebugMode) {
+          print('Request failed with status: ${response.statusCode}.');
+        }
+        throw Exception('Failed to load product');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+      throw Exception('Failed to load product');
+    }
   }
 
   /// Fetches a product by its ID from a specified API endpoint and handles the response.
