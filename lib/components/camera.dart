@@ -1,20 +1,27 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:camera/camera.dart';
 import 'package:flex_market/components/image_picker.dart';
 import 'package:flex_market/components/picture_preview.dart';
+import 'package:flex_market/providers/image_management_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 /// CameraPage class used to display the camera preview
 class CameraPage extends StatefulWidget {
   /// constructor
-  const CameraPage({required this.navigatorKey, super.key});
+  const CameraPage({
+    required this.navigatorKey,
+    this.maxPictures = 1,
+    super.key,
+  });
 
   /// Global key used for custom navigation flow inside each app section
   final GlobalKey<NavigatorState> navigatorKey;
+
+  /// Maximum number of pictures that can be taken
+  final int maxPictures;
 
   /// cameras
   @override
@@ -57,11 +64,13 @@ class _CameraPageState extends State<CameraPage> {
 
       // Check if the widget is still in the tree after async gap
       if (!mounted) return;
-
-      await Navigator.of(context).push(
+      Provider.of<ImageManagementProvider>(context, listen: false)
+          .setImageUrl(<XFile>[picture]);
+      await widget.navigatorKey.currentState?.push(
         MaterialPageRoute<Widget>(
           builder: (BuildContext context) => PicturePreviewPage(
-            picture: picture,
+            navigatorKey: widget.navigatorKey,
+            maxPictures: widget.maxPictures,
           ),
         ),
       );
@@ -86,23 +95,25 @@ class _CameraPageState extends State<CameraPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Photo',
+          style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 27, 27, 27),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFFC2C2C2)),
+          onPressed: () => <void>{
+            Navigator.of(context).pop(),
+            context.read<ImageManagementProvider>().clearImageUrls(),
+          },
+        ),
+      ),
       body: SafeArea(
         child: Stack(
+          fit: StackFit.expand,
           children: <Widget>[
-            DecoratedBox(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                color: Color(0xFF3D3D3B),
-              ),
-              child: IconButton(
-                icon: Transform.rotate(
-                  angle: pi,
-                  child: SvgPicture.asset('assets/arrow.svg', height: 20),
-                ),
-                onPressed: () => widget.navigatorKey.currentState?.pop(),
-                highlightColor: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
             if (loading)
               const ColoredBox(
                 color: Colors.black,
@@ -125,16 +136,25 @@ class _CameraPageState extends State<CameraPage> {
                 ),
                 child: Row(
                   children: <Widget>[
-                    const Expanded(
-                      child: ImagePickerWidget(),
+                    Expanded(
+                      child: ImagePickerWidget(
+                        navigatorKey: widget.navigatorKey,
+                        maxPictures: widget.maxPictures,
+                      ),
                     ),
                     Expanded(
-                      child: IconButton(
-                        onPressed: takePicture,
-                        iconSize: 50,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        icon: const Icon(Icons.circle, color: Colors.white),
+                      child: DecoratedBox(
+                        decoration: const BoxDecoration(
+                          color: Colors.grey, // Set the background color
+                          shape: BoxShape.circle, // Make the container circular
+                        ),
+                        child: IconButton(
+                          onPressed: takePicture,
+                          iconSize: 50,
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          icon: const Icon(Icons.circle, color: Colors.white),
+                        ),
                       ),
                     ),
                     Expanded(
