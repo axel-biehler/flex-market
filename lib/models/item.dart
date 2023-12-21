@@ -45,6 +45,7 @@ class Item {
     Map<String, dynamic> specs,
     double price,
     Gender gender,
+    String? id,
   ) {
     return Item(
       name: name,
@@ -55,6 +56,7 @@ class Item {
       price: price,
       gender: gender.name.toUpperCase(),
       imagesUrl: <String>[],
+      id: id,
     );
   }
 

@@ -51,6 +51,7 @@ class HomeWidget extends StatelessWidget {
           ),
           ...items.entries.map((MapEntry<String, List<Item>> entry) {
             return ProductSliderWidget(
+              navigatorKey: navigatorKey,
               title: entry.key,
               subtitle: 'Discover our ${entry.key.toLowerCase()}',
               items: entry.value,

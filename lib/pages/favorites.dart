@@ -35,7 +35,7 @@ class FavoritesWidget extends StatelessWidget {
               ),
             ),
           ),
-          const FavoritesProductsWidget(),
+          FavoritesProductsWidget(navigatorKey: navigatorKey),
         ],
       ),
     );

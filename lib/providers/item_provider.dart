@@ -204,8 +204,8 @@ class ItemProvider extends ChangeNotifier {
     }
   }
 
-  /// Create a product
-  Future<bool> createProduct(Item item) async {
+  /// Create an item
+  Future<bool> createItem(Item item) async {
     final Uri url = Uri.parse(
       '$apiUrl/products',
     );
@@ -224,19 +224,92 @@ class ItemProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
+        unawaited(fetchAllProducts());
         // final data = json.decode(response.body);
         return true;
       } else {
         if (kDebugMode) {
           print('Request failed with status: ${response.statusCode}.');
         }
-        throw Exception('Failed to load product');
+        throw Exception('Failed to create product');
       }
     } catch (e) {
       if (kDebugMode) {
         print('Error: $e');
       }
-      throw Exception('Failed to load product');
+      throw Exception('Failed to create product');
+    }
+  }
+
+  /// Update an item
+  Future<bool> updateItem(Item item) async {
+    final Uri url = Uri.parse(
+      '$apiUrl/products/${item.id}',
+    );
+    final Credentials? credentials = authProvider.credentials;
+    if (credentials == null) {
+      throw Exception('No credentials available. User must be logged in.');
+    }
+
+    try {
+      final http.Response response = await http.patch(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer ${credentials.accessToken}',
+        },
+        body: item.toJson(),
+      );
+
+      if (response.statusCode == 200) {
+        unawaited(fetchAllProducts());
+        // final data = json.decode(response.body);
+        return true;
+      } else {
+        if (kDebugMode) {
+          print('Request failed with status: ${response.statusCode}.');
+        }
+        throw Exception('Failed to update product');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+      throw Exception('Failed to update product');
+    }
+  }
+
+  /// Delete an item
+  Future<bool> deleteItem(Item item) async {
+    final Uri url = Uri.parse(
+      '$apiUrl/products/${item.id}',
+    );
+    final Credentials? credentials = authProvider.credentials;
+    if (credentials == null) {
+      throw Exception('No credentials available. User must be logged in.');
+    }
+
+    try {
+      final http.Response response = await http.delete(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer ${credentials.accessToken}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        unawaited(fetchAllProducts());
+        return true;
+      } else {
+        if (kDebugMode) {
+          print('Request failed with status: ${response.statusCode}.');
+        }
+        throw Exception('Failed to update product');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+      throw Exception('Failed to update product');
     }
   }
 

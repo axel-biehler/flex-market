@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flex_market/models/item.dart';
+import 'package:flex_market/pages/admin/admin_item_form.dart';
 import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +15,10 @@ import 'package:provider/provider.dart';
 /// a buttton to go to the product page.
 class AdminItemsListWidget extends StatelessWidget {
   /// Creates a [AdminItemsListWidget].
-  const AdminItemsListWidget({super.key});
+  const AdminItemsListWidget({required this.navigatorKey, super.key});
+
+  /// Key used for custom navigation flow inside each app section
+  final GlobalKey<NavigatorState> navigatorKey;
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +83,19 @@ class AdminItemsListWidget extends StatelessWidget {
                         ),
                         IconButton(
                           icon: SvgPicture.asset('assets/arrow.svg', height: 40),
-                          onPressed: () => print('go to edit'),
+                          onPressed: () {
+                            unawaited(
+                              navigatorKey.currentState?.push(
+                                MaterialPageRoute<Widget>(
+                                  builder: (BuildContext context) => AdminItemFormWidget(
+                                    navigatorKey: navigatorKey,
+                                    isEdit: true,
+                                    item: item,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                           highlightColor: Theme.of(context).colorScheme.secondary,
                         ),
                       ],

@@ -25,8 +25,10 @@ class App extends StatelessWidget {
     return MaterialApp(
       theme: theme.copyWith(
         primaryColor: const Color(0xFF121212),
-        colorScheme:
-            theme.colorScheme.copyWith(secondary: const Color(0xFFC2C2C2)),
+        colorScheme: theme.colorScheme.copyWith(
+          secondary: const Color(0xFFC2C2C2),
+          errorContainer: const Color(0xFF8E0000),
+        ),
         textTheme: const TextTheme(
           titleMedium: TextStyle(
             fontSize: 20,
@@ -72,8 +74,7 @@ void main() async {
       providers: <SingleChildWidget>[
         ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
         ChangeNotifierProxyProvider<AuthProvider, CartProvider>(
-          create: (BuildContext context) =>
-              CartProvider(Provider.of<AuthProvider>(context, listen: false)),
+          create: (BuildContext context) => CartProvider(Provider.of<AuthProvider>(context, listen: false)),
           update: (
             BuildContext context,
             AuthProvider authProvider,
@@ -82,8 +83,7 @@ void main() async {
               previousDataProvider!..updateWithAuthProvider(authProvider),
         ),
         ChangeNotifierProxyProvider<AuthProvider, ItemProvider>(
-          create: (BuildContext context) =>
-              ItemProvider(Provider.of<AuthProvider>(context, listen: false)),
+          create: (BuildContext context) => ItemProvider(Provider.of<AuthProvider>(context, listen: false)),
           update: (
             BuildContext context,
             AuthProvider authProvider,
