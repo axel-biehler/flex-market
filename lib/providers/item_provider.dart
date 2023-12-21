@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flex_market/models/item.dart';
 import 'package:flex_market/providers/auth_provider.dart';
+import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 /// Manages the application state including user authentication,
@@ -23,9 +23,6 @@ class ItemProvider extends ChangeNotifier {
 
   /// Reference to the AuthProvider
   AuthProvider authProvider;
-
-  /// The URL for the API endpoint.
-  final String apiUrl = dotenv.env['API_URL']!;
 
   /// Items available on the store
   List<Item> items = <Item>[];

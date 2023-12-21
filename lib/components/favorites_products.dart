@@ -1,6 +1,8 @@
 import 'package:flex_market/models/item.dart';
+import 'package:flex_market/providers/cart_provider.dart';
 import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/utils/constants.dart';
+import 'package:flex_market/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -102,10 +104,16 @@ class FavoritesProductsWidget extends StatelessWidget {
                         Positioned(
                           right: 7,
                           bottom: 30,
-                          child: IconButton(
-                            icon: Image.asset('assets/cart.png', width: 25),
-                            onPressed: () async => print('add to cart'),
-                            highlightColor: Theme.of(context).colorScheme.secondary,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF3D3D3B),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            child: IconButton(
+                              icon: Image.asset('assets/cart.png', width: 25),
+                              onPressed: () async => context.read<CartProvider>().addToCart(item, ItemSize.l, 3),
+                              highlightColor: Theme.of(context).colorScheme.secondary,
+                            ),
                           ),
                         ),
                       ],

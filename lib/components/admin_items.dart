@@ -77,7 +77,7 @@ class AdminItemsListWidget extends StatelessWidget {
                         ),
                         IconButton(
                           icon: SvgPicture.asset('assets/arrow.svg', height: 40),
-                          onPressed: () => print('add to cart'),
+                          onPressed: () => print('go to edit'),
                           highlightColor: Theme.of(context).colorScheme.secondary,
                         ),
                       ],
