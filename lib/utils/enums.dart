@@ -10,6 +10,17 @@ enum Gender {
   unisex,
 }
 
+/// Returns a [Gender] enum value corresponding to the given string
+Gender? stringToGender(String? genderString) {
+  if (genderString == null) {
+    return null;
+  }
+  return Gender.values.firstWhere(
+    (Gender e) => e.name == genderString.toLowerCase(),
+    orElse: () => throw ArgumentError('Invalid gender string: $genderString'),
+  );
+}
+
 /// Enum used to provide the search page gender [ToggleButton] values
 enum SearchPageGender {
   /// Both genders
@@ -43,6 +54,17 @@ enum ItemSize {
   xxl
 }
 
+/// Returns a [Size] enum value corresponding to the given string
+ItemSize? stringToSize(String? sizeString) {
+  if (sizeString == null) {
+    return null;
+  }
+  return ItemSize.values.firstWhere(
+    (ItemSize e) => e.name == sizeString.toLowerCase(),
+    orElse: () => throw ArgumentError('Invalid size string: $sizeString'),
+  );
+}
+
 /// Enum that contains the available categories
 enum Category {
   /// Tops
@@ -74,4 +96,15 @@ enum Category {
 
   /// Swimwear
   swimwear
+}
+
+/// Returns a [Category] enum value corresponding to the given string
+Category? stringToCategory(String? catString) {
+  if (catString == null) {
+    return null;
+  }
+  return Category.values.firstWhere(
+    (Category e) => e.name == catString.toLowerCase(),
+    orElse: () => throw ArgumentError('Invalid category string: $catString'),
+  );
 }

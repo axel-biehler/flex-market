@@ -8,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-/// A widget that displays the products market as favorites vertically.
+/// A widget that displays the items marked as favorites vertically.
 ///
-/// This widget creates a vertical list of product cards, each card displaying
-/// a product image, its price, and title. Each product card also includes an
+/// This widget creates a vertical list of item cards, each card displaying
+/// a product image, its price, and title. Each item card also includes an
 /// option to add or remove the product from favorites.
-class FavoritesProductsWidget extends StatelessWidget {
-  /// Creates a [FavoritesProductsWidget].
-  const FavoritesProductsWidget({required this.navigatorKey, super.key});
+class FavoritesItemsWidget extends StatelessWidget {
+  /// Creates a [FavoritesItemsWidget].
+  const FavoritesItemsWidget({required this.navigatorKey, super.key});
 
   /// Key used for custom navigation flow inside each app section
   final GlobalKey<NavigatorState> navigatorKey;
@@ -123,7 +123,10 @@ class FavoritesProductsWidget extends StatelessWidget {
                               ),
                               child: IconButton(
                                 icon: Image.asset('assets/cart.png', width: 25),
-                                onPressed: () async => context.read<CartProvider>().addToCart(item, ItemSize.l, 3),
+                                onPressed: () async {
+                                  final int quantity = context.read<CartProvider>().getItemQuantity(item.id!);
+                                  await context.read<CartProvider>().addToCart(item, ItemSize.l, quantity + 1);
+                                },
                                 highlightColor: Theme.of(context).colorScheme.secondary,
                               ),
                             ),

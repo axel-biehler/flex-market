@@ -1,7 +1,10 @@
-import 'package:flex_market/components/cart_products.dart';
+import 'package:flex_market/components/cart_items.dart';
+import 'package:flex_market/providers/cart_provider.dart';
 import 'package:flex_market/utils/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 /// A widget that displays the user's shopping cart.
 ///
@@ -12,6 +15,41 @@ class CartWidget extends StatelessWidget {
 
   /// Key used for custom navigation flow inside each app section
   final GlobalKey<NavigatorState> navigatorKey;
+
+  /// Simulate the order processing
+  Future<void> order(BuildContext context) async {
+    try {
+      await context.read<CartProvider>().emptyCart();
+
+      // ignore: use_build_context_synchronously
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Success'),
+            content: const Text('Order placed successfully.'),
+            backgroundColor: Theme.of(context).primaryColor,
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'OK',
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: const Color(0xFF247100)),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+      throw Exception('Failed to empty cart');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +76,11 @@ class CartWidget extends StatelessWidget {
               ),
             ),
           ),
-          const CartProductsWidget(),
+          const CartItemsWidget(),
           SizedBox(
             height: screenHeight * 0.07,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              // crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.only(
@@ -61,7 +98,7 @@ class CartWidget extends StatelessWidget {
                     left: 9,
                   ),
                   child: Text(
-                    r'$245,90',
+                    '\$${context.watch<CartProvider>().cartPrice}',
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           fontStyle: FontStyle.italic,
                         ),
@@ -70,9 +107,7 @@ class CartWidget extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.only(right: margin),
                   child: ElevatedButton(
-                    onPressed: () {
-                      // TODO(arobine): Clear the cart and notify the user that the order has been processed.
-                    },
+                    onPressed: () async => order(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF247100),
                       shape: RoundedRectangleBorder(

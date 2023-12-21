@@ -35,15 +35,17 @@ class ItemProvider extends ChangeNotifier {
     return favorites.any((Item item) => item.id == itemId);
   }
 
+  /// Getter to return an item by Id
+  Item? getById(String itemId) {
+    return items.firstWhere((Item? e) => e?.id == itemId);
+  }
+
   /// Getter to return items grouped by category
   Map<String, List<Item>> get itemsByCategory {
     final Map<String, List<Item>> groupedItems = groupBy<Item, String>(items, (Item item) => item.category);
-
-    // Sort the map entries based on the length of the item lists in descending order
     final List<MapEntry<String, List<Item>>> sortedEntries = groupedItems.entries.toList()
       ..sort((MapEntry<String, List<Item>> a, MapEntry<String, List<Item>> b) => b.value.length.compareTo(a.value.length));
 
-    // Convert the sorted entries back to a map
     return Map<String, List<Item>>.fromEntries(sortedEntries);
   }
 
@@ -60,7 +62,6 @@ class ItemProvider extends ChangeNotifier {
   /// Method to update the reference to the AuthProvider
   void updateWithAuthProvider(AuthProvider authProvider) {
     this.authProvider = authProvider;
-    // You may want to perform additional updates or fetches here
     notifyListeners();
   }
 
@@ -70,7 +71,6 @@ class ItemProvider extends ChangeNotifier {
       '$apiUrl/products',
     );
 
-    // Retrieve credentials from AuthProvider
     final Credentials? credentials = authProvider.credentials;
     if (credentials == null) {
       throw Exception('No credentials available. User must be logged in.');
@@ -113,7 +113,6 @@ class ItemProvider extends ChangeNotifier {
       '$apiUrl/favorites',
     );
 
-    // Retrieve credentials from AuthProvider
     final Credentials? credentials = authProvider.credentials;
     if (credentials == null) {
       throw Exception('No credentials available. User must be logged in.');
@@ -139,13 +138,13 @@ class ItemProvider extends ChangeNotifier {
         if (kDebugMode) {
           print('Request failed with status: ${response.statusCode}.');
         }
-        throw Exception('Failed to load product');
+        throw Exception('Failed to load favorites');
       }
     } catch (e) {
       if (kDebugMode) {
         print('Error: $e');
       }
-      throw Exception('Failed to load product');
+      throw Exception('Failed to load favorites');
     }
   }
 
@@ -321,7 +320,6 @@ class ItemProvider extends ChangeNotifier {
       '$apiUrl/products/$productId',
     );
 
-    // Retrieve credentials from AuthProvider
     final Credentials? credentials = authProvider.credentials;
     if (credentials == null) {
       throw Exception('No credentials available. User must be logged in.');

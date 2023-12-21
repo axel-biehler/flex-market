@@ -30,28 +30,6 @@ String getItemStockValue(Item? item, ItemSize size) {
   }
 }
 
-/// Returns a [Category] enum value corresponding to the given string
-Category? stringToCategory(String? catString) {
-  if (catString == null) {
-    return null;
-  }
-  return Category.values.firstWhere(
-    (Category e) => e.name == catString.toLowerCase(),
-    orElse: () => throw ArgumentError('Invalid category string: $catString'),
-  );
-}
-
-/// Returns a [Gender] enum value corresponding to the given string
-Gender? stringToGender(String? genderString) {
-  if (genderString == null) {
-    return null;
-  }
-  return Gender.values.firstWhere(
-    (Gender e) => e.name == genderString.toLowerCase(),
-    orElse: () => throw ArgumentError('Invalid gender string: $genderString'),
-  );
-}
-
 /// A widget that displays the product form to add and edit items.
 ///
 /// A form to add or edit items.

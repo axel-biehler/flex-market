@@ -135,7 +135,10 @@ class _ItemWidgetState extends State<ItemWidget> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: margin),
                     child: ElevatedButton(
-                      onPressed: () async => context.read<CartProvider>().addToCart(widget.item, selectedSize, 1),
+                      onPressed: () async {
+                        final int quantity = context.read<CartProvider>().getItemQuantity(widget.item.id!);
+                        await context.read<CartProvider>().addToCart(widget.item, selectedSize, quantity + 1);
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF247100),
                         fixedSize: const Size(120, 30),
