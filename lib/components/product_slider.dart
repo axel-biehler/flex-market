@@ -1,6 +1,4 @@
 import 'package:flex_market/models/item.dart';
-import 'package:flex_market/models/product.dart';
-import 'package:flex_market/providers/cart_provider.dart';
 import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -70,6 +68,7 @@ class ProductSliderWidget extends StatelessWidget {
               itemCount: items.length,
               itemBuilder: (BuildContext context, int index) {
                 final Item item = items[index];
+                final bool isFav = context.watch<ItemProvider>().isFavorite(item.id!);
                 return Card(
                   color: Theme.of(context).primaryColor,
                   child: Stack(
@@ -101,8 +100,11 @@ class ProductSliderWidget extends StatelessWidget {
                         right: 7,
                         bottom: 15,
                         child: IconButton(
-                          icon: SvgPicture.asset('assets/fav.svg', width: 40),
-                          onPressed: () async => context.read<ItemProvider>().addToFavorites(item.id!),
+                          icon: SvgPicture.asset(
+                            isFav ? 'assets/fav-filled.svg' : 'assets/fav.svg',
+                            height: isFav ? 25 : 40,
+                          ),
+                          onPressed: () async => context.read<ItemProvider>().toggleFavorites(item.id!),
                           highlightColor: Theme.of(context).colorScheme.secondary,
                         ),
                       ),

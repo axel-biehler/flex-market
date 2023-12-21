@@ -30,6 +30,14 @@ class ItemProvider extends ChangeNotifier {
   /// Items available on the store
   List<Item> items = <Item>[];
 
+  /// User's favorite items
+  List<Item> favorites = <Item>[];
+
+  /// Checks if a given item is in favorites
+  bool isFavorite(String itemId) {
+    return favorites.any((Item item) => item.id == itemId);
+  }
+
   /// Getter to return items grouped by category
   Map<String, List<Item>> get itemsByCategory {
     final Map<String, List<Item>> groupedItems = groupBy<Item, String>(items, (Item item) => item.category);
@@ -84,6 +92,7 @@ class ItemProvider extends ChangeNotifier {
         final List<dynamic> jsonItems = data['products'] as List<dynamic>;
         items = jsonItems.map<Item>((dynamic json) => Item.fromJson(json as Map<String, dynamic>)).toList();
         notifyListeners();
+        unawaited(fetchFavorites());
         if (kDebugMode) {
           print('Product data: $items');
         }
@@ -101,8 +110,50 @@ class ItemProvider extends ChangeNotifier {
     }
   }
 
-  /// Create a product
-  Future<bool> addToFavorites(String id) async {
+  /// Fetch user favorite items
+  Future<void> fetchFavorites() async {
+    final Uri url = Uri.parse(
+      '$apiUrl/favorites',
+    );
+
+    // Retrieve credentials from AuthProvider
+    final Credentials? credentials = authProvider.credentials;
+    if (credentials == null) {
+      throw Exception('No credentials available. User must be logged in.');
+    }
+
+    try {
+      final http.Response response = await http.get(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer ${credentials.accessToken}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic data = json.decode(response.body);
+        final List<dynamic> jsonItems = data['items'] as List<dynamic>;
+        favorites = jsonItems.map<Item>((dynamic json) => items.firstWhere((Item e) => e.id == json['itemId'])).toList();
+        notifyListeners();
+        if (kDebugMode) {
+          print('Favorites: $favorites');
+        }
+      } else {
+        if (kDebugMode) {
+          print('Request failed with status: ${response.statusCode}.');
+        }
+        throw Exception('Failed to load product');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+      throw Exception('Failed to load product');
+    }
+  }
+
+  /// Add or remove and item from the favorites depending on its current status
+  Future<bool> toggleFavorites(String id) async {
     final Uri url = Uri.parse(
       '$apiUrl/favorites',
     );
@@ -112,18 +163,35 @@ class ItemProvider extends ChangeNotifier {
     }
 
     try {
-      final http.Response response = await http.post(
-        url,
-        headers: <String, String>{
-          'Authorization': 'Bearer ${credentials.accessToken}',
-        },
-        body: jsonEncode({
-          'size': 'L',
-          'itemId': id,
-        }),
-      );
+      http.Response response;
+
+      if (isFavorite(id)) {
+        response = await http.patch(
+          url,
+          headers: <String, String>{
+            'Authorization': 'Bearer ${credentials.accessToken}',
+          },
+          body: jsonEncode(<String, String>{
+            'itemId': id,
+            'size': 'L',
+          }),
+        );
+      } else {
+        response = await http.post(
+          url,
+          headers: <String, String>{
+            'Authorization': 'Bearer ${credentials.accessToken}',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(<String, String>{
+            'itemId': id,
+            'size': 'L',
+          }),
+        );
+      }
 
       if (response.statusCode == 200) {
+        await fetchFavorites();
         return true;
       } else {
         if (kDebugMode) {
