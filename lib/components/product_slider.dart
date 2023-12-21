@@ -1,5 +1,7 @@
+import 'package:flex_market/models/item.dart';
 import 'package:flex_market/models/product.dart';
 import 'package:flex_market/providers/cart_provider.dart';
+import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -20,6 +22,7 @@ class ProductSliderWidget extends StatelessWidget {
   const ProductSliderWidget({
     required this.title,
     required this.subtitle,
+    required this.items,
     super.key,
   });
 
@@ -29,10 +32,11 @@ class ProductSliderWidget extends StatelessWidget {
   /// The subtitle text displayed below the title.
   final String subtitle;
 
+  /// The products contained in the slider.
+  final List<Item> items;
+
   @override
   Widget build(BuildContext context) {
-    final List<Product> products = context.watch<CartProvider>().mockProducts;
-
     return Container(
       margin: const EdgeInsets.only(top: margin, left: margin / 2),
       child: Column(
@@ -63,9 +67,9 @@ class ProductSliderWidget extends StatelessWidget {
             height: 200,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: products.length,
+              itemCount: items.length,
               itemBuilder: (BuildContext context, int index) {
-                final Product product = products[index];
+                final Item item = items[index];
                 return Card(
                   color: Theme.of(context).primaryColor,
                   child: Stack(
@@ -74,22 +78,21 @@ class ProductSliderWidget extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
+                          // if (item.imagesUrl.isNotEmpty)
                           Image.asset(
-                            product.imageUrl,
+                            // item.imagesUrl.first,
+                            'assets/shoes.png',
                             width: 150,
                             height: 150,
                           ),
                           Text(
-                            '\$${product.price.toString()}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium!
-                                .copyWith(
+                            '\$${item.price.toString()}',
+                            style: Theme.of(context).textTheme.labelMedium!.copyWith(
                                   fontStyle: FontStyle.italic,
                                 ),
                           ),
                           Text(
-                            product.title,
+                            item.name,
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
@@ -99,10 +102,8 @@ class ProductSliderWidget extends StatelessWidget {
                         bottom: 15,
                         child: IconButton(
                           icon: SvgPicture.asset('assets/fav.svg', width: 40),
-                          onPressed: () =>
-                              context.read<CartProvider>().addToCart(product),
-                          highlightColor:
-                              Theme.of(context).colorScheme.secondary,
+                          onPressed: () async => context.read<ItemProvider>().addToFavorites(item.id!),
+                          highlightColor: Theme.of(context).colorScheme.secondary,
                         ),
                       ),
                     ],

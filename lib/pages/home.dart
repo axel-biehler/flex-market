@@ -1,6 +1,9 @@
 import 'package:flex_market/components/product_slider.dart';
+import 'package:flex_market/models/item.dart';
+import 'package:flex_market/providers/item_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 /// A custom linear gradient shader used for text styling.
 final Shader linearGradient = const LinearGradient(
@@ -8,13 +11,6 @@ final Shader linearGradient = const LinearGradient(
   begin: Alignment.topLeft,
   end: Alignment.bottomRight,
 ).createShader(const Rect.fromLTWH(0, 0, 500, 70));
-
-/// Predefined sections for the home screen, each representing a product slider.
-const List<ProductSliderWidget> sections = <ProductSliderWidget>[
-  ProductSliderWidget(title: 'Latest drop', subtitle: 'Discover our newest products'),
-  ProductSliderWidget(title: 'Last offers', subtitle: 'Discover our products on sale and get a good deal'),
-  ProductSliderWidget(title: 'Best sellers', subtitle: 'Top-selling items on Flex Market'),
-];
 
 /// The home screen widget for the FlexMarket application.
 ///
@@ -31,6 +27,7 @@ class HomeWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
+    final Map<String, List<Item>> items = context.watch<ItemProvider>().itemsByCategory;
 
     return SingleChildScrollView(
       child: Column(
@@ -52,7 +49,13 @@ class HomeWidget extends StatelessWidget {
               ),
             ),
           ),
-          ...sections.map((ProductSliderWidget section) => section),
+          ...items.entries.map((MapEntry<String, List<Item>> entry) {
+            return ProductSliderWidget(
+              title: entry.key,
+              subtitle: 'Discover our ${entry.key.toLowerCase()}',
+              items: entry.value,
+            );
+          }),
         ],
       ),
     );

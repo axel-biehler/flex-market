@@ -30,6 +30,28 @@ class ItemProvider extends ChangeNotifier {
   /// Items available on the store
   List<Item> items = <Item>[];
 
+  /// Getter to return items grouped by category
+  Map<String, List<Item>> get itemsByCategory {
+    final Map<String, List<Item>> groupedItems = groupBy<Item, String>(items, (Item item) => item.category);
+
+    // Sort the map entries based on the length of the item lists in descending order
+    final List<MapEntry<String, List<Item>>> sortedEntries = groupedItems.entries.toList()
+      ..sort((MapEntry<String, List<Item>> a, MapEntry<String, List<Item>> b) => b.value.length.compareTo(a.value.length));
+
+    // Convert the sorted entries back to a map
+    return Map<String, List<Item>>.fromEntries(sortedEntries);
+  }
+
+  /// Helper function to group items by a specific key
+  Map<K, List<V>> groupBy<V, K>(Iterable<V> values, K Function(V) keyFunction) {
+    final Map<K, List<V>> map = <K, List<V>>{};
+    for (final V element in values) {
+      final K key = keyFunction(element);
+      map.putIfAbsent(key, () => <V>[]).add(element);
+    }
+    return map;
+  }
+
   /// Method to update the reference to the AuthProvider
   void updateWithAuthProvider(AuthProvider authProvider) {
     this.authProvider = authProvider;
@@ -76,6 +98,44 @@ class ItemProvider extends ChangeNotifier {
         print('Error: $e');
       }
       throw Exception('Failed to load product');
+    }
+  }
+
+  /// Create a product
+  Future<bool> addToFavorites(String id) async {
+    final Uri url = Uri.parse(
+      '$apiUrl/favorites',
+    );
+    final Credentials? credentials = authProvider.credentials;
+    if (credentials == null) {
+      throw Exception('No credentials available. User must be logged in.');
+    }
+
+    try {
+      final http.Response response = await http.post(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer ${credentials.accessToken}',
+        },
+        body: jsonEncode({
+          'size': 'L',
+          'itemId': id,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        if (kDebugMode) {
+          print('Request failed with status: ${response.statusCode}.');
+        }
+        throw Exception('Failed to add to favorites');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+      throw Exception('Failed to add to favorites');
     }
   }
 
@@ -140,7 +200,6 @@ class ItemProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
 
-        // Convert the JSON response into a Product object.
         final Item item = Item.fromJson(data['product']);
         if (kDebugMode) {
           print('Product data: $item');
