@@ -1,9 +1,24 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:flex_market/models/item.dart';
+import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flex_market/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+
+Map<String, dynamic> specsToMap(List<Map<String, TextEditingController>> specs) {
+  final Map<String, dynamic> specsMap = <String, dynamic>{};
+
+  for (final Map<String, TextEditingController> spec in specs) {
+    final String key = spec['name']!.text;
+    final dynamic value = spec['value']!.text;
+    specsMap[key] = value;
+  }
+
+  return specsMap;
+}
 
 /// A widget that displays the product form to add and edit items.
 ///
@@ -23,16 +38,22 @@ class AdminItemFormWidget extends StatefulWidget {
 }
 
 class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
+  late TextEditingController _priceController;
   late Map<ItemSize, TextEditingController> _stockControllers;
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  Category? selectedCategory;
+  Gender? selectedGender;
+  List<Map<String, TextEditingController>> specs = <Map<String, TextEditingController>>[];
+  bool _isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
     _nameController = TextEditingController();
     _descriptionController = TextEditingController();
+    _priceController = TextEditingController();
     _stockControllers = <ItemSize, TextEditingController>{
       ItemSize.xs: TextEditingController(),
       ItemSize.s: TextEditingController(),
@@ -47,19 +68,76 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
+    _priceController.dispose();
     for (final TextEditingController controller in _stockControllers.values) {
       controller.dispose();
     }
     super.dispose();
   }
 
+  void addSpec() {
+    setState(() {
+      specs.add(<String, TextEditingController>{
+        'name': TextEditingController(),
+        'value': TextEditingController(),
+      });
+    });
+  }
+
+  void removeSpec(int index) {
+    setState(() {
+      specs.removeAt(index);
+    });
+  }
+
   Future<void> submit() async {
     if (formKey.currentState!.validate()) {
-      // final Map<ItemSize, int?> stocks = _stockControllers.map((ItemSize key, TextEditingController value) {
-      //   return MapEntry<ItemSize, int?>(key, int.tryParse(value.text));
-      // });
-      // final model = productFormToModel(_nameController.text, _descriptionController.text, stocks);
-      formKey.currentState!.reset();
+      setState(() {
+        _isSubmitting = true;
+      });
+      final Map<String, int?> stocks = _stockControllers.map((ItemSize key, TextEditingController value) {
+        return MapEntry<String, int?>(key.name.toUpperCase(), int.tryParse(value.text));
+      });
+      final Map<String, dynamic> formattedSpecs = specsToMap(specs);
+      final Item model = Item.formForm(
+        _nameController.text,
+        selectedCategory!,
+        _descriptionController.text,
+        stocks,
+        formattedSpecs,
+        double.tryParse(_priceController.text)!,
+        selectedGender!,
+      );
+      final bool status = await context.read<ItemProvider>().createProduct(model);
+      if (status) {
+        // ignore: use_build_context_synchronously
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Success'),
+              content: const Text('Product created successfully.'),
+              backgroundColor: Theme.of(context).primaryColor,
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    formKey.currentState!.reset();
+                    widget.navigatorKey.currentState?.pop();
+                  },
+                  child: Text(
+                    'OK',
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: const Color(0xFF247100)),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      }
+      setState(() {
+        _isSubmitting = false;
+      });
     }
   }
 
@@ -153,6 +231,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                           child: SizedBox(
                             height: 50,
                             child: TextFormField(
+                              enabled: !_isSubmitting,
                               controller: _nameController,
                               decoration: const InputDecoration(
                                 labelText: 'Name',
@@ -184,6 +263,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                         ),
                       ),
                       TextFormField(
+                        enabled: !_isSubmitting,
                         controller: _descriptionController,
                         decoration: const InputDecoration(
                           labelText: 'Description',
@@ -201,6 +281,87 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                         },
                       ),
                     ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: margin),
+                    child: TextFormField(
+                      enabled: !_isSubmitting,
+                      controller: _priceController,
+                      decoration: const InputDecoration(
+                        labelText: 'Price',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a price';
+                        }
+                        if (double.tryParse(value) == null) {
+                          return 'Enter a valid number';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: margin),
+                    child: DropdownButtonFormField<Category>(
+                      value: selectedCategory,
+                      onChanged: (Category? newValue) {
+                        setState(() {
+                          if (!_isSubmitting) {
+                            selectedCategory = newValue;
+                          }
+                        });
+                      },
+                      items: Category.values.map((Category category) {
+                        return DropdownMenuItem<Category>(
+                          value: category,
+                          child: Text(category.name),
+                        );
+                      }).toList(),
+                      decoration: const InputDecoration(
+                        labelText: 'Category',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (Category? value) {
+                        if (value == null) {
+                          return 'Please select a category';
+                        }
+                        return null;
+                      },
+                      dropdownColor: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: margin),
+                    child: DropdownButtonFormField<Gender>(
+                      value: selectedGender,
+                      onChanged: (Gender? newValue) {
+                        setState(() {
+                          if (!_isSubmitting) {
+                            selectedGender = newValue;
+                          }
+                        });
+                      },
+                      items: Gender.values.map((Gender gender) {
+                        return DropdownMenuItem<Gender>(
+                          value: gender,
+                          child: Text(gender.name),
+                        );
+                      }).toList(),
+                      decoration: const InputDecoration(
+                        labelText: 'Gender',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (Gender? value) {
+                        if (value == null) {
+                          return 'Please select a category';
+                        }
+                        return null;
+                      },
+                      dropdownColor: Theme.of(context).primaryColor,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
@@ -230,6 +391,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                               height: 50,
                               width: screenWidth * 0.5,
                               child: TextFormField(
+                                enabled: !_isSubmitting,
                                 controller: _stockControllers[size],
                                 decoration: InputDecoration(
                                   labelText: size.name.toUpperCase(),
@@ -251,6 +413,66 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                       );
                     }).toList(),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: margin),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        for (int i = 0; i < specs.length; i++)
+                          Padding(
+                            padding: const EdgeInsets.only(top: margin),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: TextFormField(
+                                    enabled: !_isSubmitting,
+                                    controller: specs[i]['name'],
+                                    decoration: const InputDecoration(
+                                      labelText: 'Name',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: TextFormField(
+                                    enabled: !_isSubmitting,
+                                    controller: specs[i]['value'],
+                                    decoration: const InputDecoration(
+                                      labelText: 'Value',
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.remove_circle),
+                                  onPressed: () => removeSpec(i),
+                                ),
+                              ],
+                            ),
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: margin),
+                          child: ElevatedButton(
+                            onPressed: _isSubmitting ? null : addSpec,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF247100),
+                              fixedSize: const Size(150, 40),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: Text(
+                              'Add spec',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -258,7 +480,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: margin * 2),
             child: ElevatedButton(
-              onPressed: submit,
+              onPressed: _isSubmitting ? null : submit,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF247100),
                 fixedSize: const Size(100, 30),
@@ -267,7 +489,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                 ),
               ),
               child: Text(
-                'SAVE',
+                'Save',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.secondary,
                 ),
