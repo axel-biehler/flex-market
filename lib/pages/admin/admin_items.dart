@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:flex_market/components/admin_published_items.dart';
+import 'package:flex_market/components/admin_items.dart';
 import 'package:flex_market/pages/admin/admin_item_form.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -99,7 +99,7 @@ class AdminItemsWidget extends StatelessWidget {
               ],
             ),
           ),
-          const AdminPublishedItemsWidget(),
+          const AdminItemsListWidget(),
         ],
       ),
     );
