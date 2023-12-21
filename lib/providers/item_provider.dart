@@ -50,10 +50,7 @@ class ItemProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        print(response);
-        print(response.body);
-        final data = json.decode(response.body);
-        print(data);
+        // final data = json.decode(response.body);
         return true;
       } else {
         if (kDebugMode) {

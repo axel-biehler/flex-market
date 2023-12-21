@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+/// Convert the form specs list to a map of [Map<String, dynamic>]
 Map<String, dynamic> specsToMap(List<Map<String, TextEditingController>> specs) {
   final Map<String, dynamic> specsMap = <String, dynamic>{};
 
