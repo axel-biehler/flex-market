@@ -6,9 +6,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 /// Image picker widget
-class ImagePickerWidget extends StatefulWidget {
+class CameraPickerWidget extends StatefulWidget {
   /// constructor
-  const ImagePickerWidget({
+  const CameraPickerWidget({
     required this.navigatorKey,
     required this.maxPictures,
     super.key,
@@ -23,21 +23,16 @@ class ImagePickerWidget extends StatefulWidget {
   @override
 
   /// state
-  ImagePickerWidgetState createState() => ImagePickerWidgetState();
+  CameraPickerWidgetState createState() => CameraPickerWidgetState();
 }
 
 /// Class state
-class ImagePickerWidgetState extends State<ImagePickerWidget> {
+class CameraPickerWidgetState extends State<CameraPickerWidget> {
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
 
-    if (widget.maxPictures == 1) {
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-      unawaited(addImage(<XFile>[image!]));
-    } else {
-      final List<XFile> images = await picker.pickMultiImage();
-      unawaited(addImage(images));
-    }
+    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+    unawaited(addImage(<XFile>[image!]));
   }
 
   /// Add choosen image to the list of images
@@ -73,12 +68,12 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Icon(
-            Icons.image,
+            Icons.add_a_photo,
             color: context.watch<ImageManagementProvider>().imageFiles.length <
                     widget.maxPictures
                 ? Colors.white
                 : Colors.grey[800],
-          ), // White icon to contrast with darker disabled color
+          ),
         ],
       ),
     );

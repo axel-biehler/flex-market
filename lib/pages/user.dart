@@ -1,10 +1,11 @@
 import 'dart:async';
 
-import 'package:flex_market/components/camera.dart';
+import 'package:flex_market/components/picture_preview.dart';
 import 'package:flex_market/models/user_profile.dart';
 import 'package:flex_market/pages/admin/admin_items.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -97,8 +98,14 @@ class UserWidget extends StatelessWidget {
                     onPressed: () async {
                       await navigatorKey.currentState?.push(
                         MaterialPageRoute<Widget>(
-                          builder: (BuildContext context) => CameraPage(
+                          builder: (BuildContext context) => PicturePreviewPage(
                             navigatorKey: navigatorKey,
+                            maxPictures: 1,
+                            callback: () async {
+                              if (kDebugMode) {
+                                print('added');
+                              }
+                            },
                           ),
                         ),
                       );

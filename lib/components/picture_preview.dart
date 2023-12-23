@@ -1,7 +1,39 @@
 import 'dart:io';
+import 'package:flex_market/components/camera_picker.dart';
+import 'package:flex_market/components/image_picker.dart';
 import 'package:flex_market/providers/image_management_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+/// Build the image item
+Widget buildImageItem(BuildContext context, int index, double imageSize) {
+  return Padding(
+    padding: const EdgeInsets.all(8),
+    child: Stack(
+      alignment: Alignment.topRight,
+      children: <Widget>[
+        SizedBox(
+          width: imageSize,
+          height: imageSize,
+          child: Image.file(
+            File(
+              context.watch<ImageManagementProvider>().imageFiles[index].path,
+            ),
+            fit: BoxFit.cover,
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.cancel, color: Colors.red),
+          onPressed: () {
+            context.read<ImageManagementProvider>().removeImageUrl(
+                  context.read<ImageManagementProvider>().imageFiles[index],
+                );
+          },
+        ),
+      ],
+    ),
+  );
+}
 
 /// CameraPage class used to display the camera preview
 class PicturePreviewPage extends StatelessWidget {
@@ -9,6 +41,7 @@ class PicturePreviewPage extends StatelessWidget {
   const PicturePreviewPage({
     required this.navigatorKey,
     required this.maxPictures,
+    required this.callback,
     super.key,
   });
 
@@ -17,6 +50,9 @@ class PicturePreviewPage extends StatelessWidget {
 
   /// Maximum number of pictures that can be taken
   final int maxPictures;
+
+  /// Callback function to be executed when the user presses the check button
+  final Future<void> Function() callback;
 
   @override
   Widget build(BuildContext context) {
@@ -46,77 +82,103 @@ class PicturePreviewPage extends StatelessWidget {
             child: Center(
               child: SizedBox(
                 height: imageSize,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: context
-                      .watch<ImageManagementProvider>()
-                      .imageFiles
-                      .length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Stack(
-                        alignment: Alignment.topRight,
+                child: context
+                        .watch<ImageManagementProvider>()
+                        .imageFiles
+                        .isEmpty
+                    ? Flex(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        direction: Axis.vertical,
                         children: <Widget>[
-                          SizedBox(
-                            width: imageSize,
-                            height: imageSize,
-                            child: Image.file(
-                              File(
-                                context
-                                    .watch<ImageManagementProvider>()
-                                    .imageFiles[index]
-                                    .path,
-                              ),
-                              fit: BoxFit.cover,
+                          const Expanded(
+                            child: Icon(
+                              Icons.image,
+                              color: Colors.white,
+                              size: 50,
                             ),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.cancel, color: Colors.red),
-                            onPressed: () {
-                              context
-                                  .read<ImageManagementProvider>()
-                                  .removeImageUrl(
-                                    context
-                                        .read<ImageManagementProvider>()
-                                        .imageFiles[index],
-                                  );
-                            },
+                          const SizedBox(height: 16),
+                          Text(
+                            'No images selected',
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ],
+                      )
+                    : ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: context
+                                .watch<ImageManagementProvider>()
+                                .imageFiles
+                                .length +
+                            1,
+                        itemBuilder: (BuildContext context, int index) {
+                          if (index ==
+                              context
+                                  .watch<ImageManagementProvider>()
+                                  .imageFiles
+                                  .length) {
+                            return CameraPickerWidget(
+                              navigatorKey: navigatorKey,
+                              maxPictures: maxPictures,
+                            );
+                          } else {
+                            return buildImageItem(context, index, imageSize);
+                          }
+                        },
                       ),
-                    );
-                  },
-                ),
               ),
             ),
           ),
           const SizedBox(height: 24),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              ElevatedButton(
-                onPressed:
-                    context.watch<ImageManagementProvider>().imageFiles.length <
-                            maxPictures
-                        ? () => navigatorKey.currentState?.pop()
-                        : null,
-                style: ElevatedButton.styleFrom(
-                  disabledBackgroundColor:
-                      const Color.fromARGB(255, 48, 48, 48),
-                  disabledForegroundColor: const Color.fromARGB(109, 2, 2, 2),
-                ),
-                child: const Text(
-                  'Retake a picture',
-                  style: TextStyle(color: Colors.black),
-                ),
+              ImagePickerWidget(
+                navigatorKey: navigatorKey,
+                maxPictures: maxPictures,
+              ),
+              const SizedBox(width: 24),
+              CameraPickerWidget(
+                navigatorKey: navigatorKey,
+                maxPictures: maxPictures,
               ),
               const SizedBox(width: 24),
               ElevatedButton(
-                onPressed: () => navigatorKey.currentState?.pop(),
-                child: const Text(
-                  'Use Pictures',
-                  style: TextStyle(color: Colors.black),
+                onPressed: context
+                        .watch<ImageManagementProvider>()
+                        .imageFiles
+                        .isNotEmpty
+                    ? () async {
+                        await callback();
+                        navigatorKey.currentState?.pop();
+                      }
+                    : null,
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                    (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.disabled)) {
+                        return Colors.grey[800]!;
+                      }
+                      return const Color(0xFF247100);
+                    },
+                  ),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  elevation: MaterialStateProperty.resolveWith<double>(
+                    (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.disabled)) {
+                        return 0.0;
+                      }
+                      return 4.0;
+                    },
+                  ),
+                ),
+                child: const Icon(
+                  Icons.check,
+                  color: Colors.white,
                 ),
               ),
             ],
