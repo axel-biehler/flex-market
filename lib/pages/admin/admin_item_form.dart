@@ -10,7 +10,8 @@ import 'package:provider/provider.dart';
 
 /// Convert the form specs list to a map of [Map<String, dynamic>]
 Map<String, dynamic> specsToMap(
-    List<Map<String, TextEditingController>> specs) {
+  List<Map<String, TextEditingController>> specs,
+) {
   final Map<String, dynamic> specsMap = <String, dynamic>{};
 
   for (final Map<String, TextEditingController> spec in specs) {
@@ -80,17 +81,23 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
         TextEditingController(text: widget.item?.price.toString());
     _stockControllers = <ItemSize, TextEditingController>{
       ItemSize.xs: TextEditingController(
-          text: getItemStockValue(widget.item, ItemSize.xs)),
+        text: getItemStockValue(widget.item, ItemSize.xs),
+      ),
       ItemSize.s: TextEditingController(
-          text: getItemStockValue(widget.item, ItemSize.s)),
+        text: getItemStockValue(widget.item, ItemSize.s),
+      ),
       ItemSize.m: TextEditingController(
-          text: getItemStockValue(widget.item, ItemSize.m)),
+        text: getItemStockValue(widget.item, ItemSize.m),
+      ),
       ItemSize.l: TextEditingController(
-          text: getItemStockValue(widget.item, ItemSize.l)),
+        text: getItemStockValue(widget.item, ItemSize.l),
+      ),
       ItemSize.xl: TextEditingController(
-          text: getItemStockValue(widget.item, ItemSize.xl)),
+        text: getItemStockValue(widget.item, ItemSize.xl),
+      ),
       ItemSize.xxl: TextEditingController(
-          text: getItemStockValue(widget.item, ItemSize.xxl)),
+        text: getItemStockValue(widget.item, ItemSize.xxl),
+      ),
     };
     widget.item?.specs.forEach((String key, dynamic value) {
       specs.add(<String, TextEditingController>{
@@ -134,7 +141,9 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
       final Map<String, int?> stocks =
           _stockControllers.map((ItemSize key, TextEditingController value) {
         return MapEntry<String, int?>(
-            key.name.toUpperCase(), int.tryParse(value.text));
+          key.name.toUpperCase(),
+          int.tryParse(value.text),
+        );
       });
       final Map<String, dynamic> formattedSpecs = specsToMap(specs);
       final Item model = Item.formForm(
@@ -154,7 +163,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
         status = await context.read<ItemProvider>().createItem(model);
       }
       if (status) {
-        showDialogBox();
+        showDialogBoxAdd();
       }
       setState(() {
         _isSubmitting = false;
@@ -162,7 +171,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
     }
   }
 
-  void showDialogBox() {
+  void showDialogBoxAdd() {
     unawaited(
       showDialog(
         context: context,
@@ -170,7 +179,39 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
           return AlertDialog(
             title: const Text('Success'),
             content: Text(
-                'Item ${widget.isEdit ? 'updated' : 'created'} successfully.'),
+              'Item ${widget.isEdit ? 'updated' : 'created'} successfully.',
+            ),
+            backgroundColor: Theme.of(context).primaryColor,
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  formKey.currentState!.reset();
+                  widget.navigatorKey.currentState?.pop();
+                },
+                child: Text(
+                  'OK',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: const Color(0xFF247100)),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void showDialogBoxDelete() {
+    unawaited(
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Success'),
+            content: const Text('Item deleted successfully.'),
             backgroundColor: Theme.of(context).primaryColor,
             actions: <Widget>[
               TextButton(
@@ -203,33 +244,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
         await context.read<ItemProvider>().deleteItem(widget.item!);
 
     if (status) {
-      // ignore: use_build_context_synchronously
-      await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Success'),
-            content: const Text('Item deleted successfully.'),
-            backgroundColor: Theme.of(context).primaryColor,
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  formKey.currentState!.reset();
-                  widget.navigatorKey.currentState?.pop();
-                },
-                child: Text(
-                  'OK',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: const Color(0xFF247100)),
-                ),
-              ),
-            ],
-          );
-        },
-      );
+      showDialogBoxDelete();
     }
     setState(() {
       _isSubmitting = false;
@@ -262,8 +277,10 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                           child: IconButton(
                             icon: Transform.rotate(
                               angle: pi,
-                              child: SvgPicture.asset('assets/arrow.svg',
-                                  height: 20),
+                              child: SvgPicture.asset(
+                                'assets/arrow.svg',
+                                height: 20,
+                              ),
                             ),
                             onPressed: () =>
                                 widget.navigatorKey.currentState?.pop(),
