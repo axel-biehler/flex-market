@@ -30,7 +30,7 @@ class Item {
       createdAt: DateTime.parse(json['createdAt']),
       specs: json['specs'],
       stock: Map<String, int>.from(json['stock']),
-      price: json['price'],
+      price: json['price'].toDouble(),
       description: json['description'],
       gender: json['gender'],
     );
@@ -45,6 +45,7 @@ class Item {
     Map<String, dynamic> specs,
     double price,
     Gender gender,
+    String? id,
   ) {
     return Item(
       name: name,
@@ -55,6 +56,7 @@ class Item {
       price: price,
       gender: gender.name.toUpperCase(),
       imagesUrl: <String>[],
+      id: id,
     );
   }
 
@@ -70,6 +72,11 @@ class Item {
       'gender': gender,
       'category': category,
     });
+  }
+
+  /// Method to calculate total stock
+  int get totalStock {
+    return stock.values.fold(0, (int sum, int quantity) => sum + quantity);
   }
 
   /// id of the item.

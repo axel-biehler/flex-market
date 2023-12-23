@@ -1,4 +1,4 @@
-import 'package:flex_market/components/favorites_products.dart';
+import 'package:flex_market/components/favorites_items.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -35,7 +35,7 @@ class FavoritesWidget extends StatelessWidget {
               ),
             ),
           ),
-          const FavoritesProductsWidget(),
+          FavoritesItemsWidget(navigatorKey: navigatorKey),
         ],
       ),
     );

@@ -1,34 +1,29 @@
 import 'package:flex_market/models/item.dart';
-import 'package:flex_market/providers/item_provider.dart';
+import 'package:flex_market/providers/cart_provider.dart';
+import 'package:flex_market/utils/constants.dart';
+import 'package:flex_market/utils/enums.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-/// A widget that displays the details of a product.
-class ItemPage extends StatefulWidget {
-  /// Creates an [ItemPage].
-  const ItemPage({required this.productId, super.key});
+/// A widget that displays the details of an item.
+class ItemWidget extends StatefulWidget {
+  /// Creates an [ItemWidget].
+  const ItemWidget({required this.item, super.key});
 
-  /// The ID of the product to display.
-  final String productId;
+  /// Item to be displayed
+  final Item item;
 
   @override
-  ItemPageState createState() => ItemPageState();
+  State<ItemWidget> createState() => _ItemWidgetState();
 }
 
-/// The state of the [ItemPage].
-class ItemPageState extends State<ItemPage> {
-  /// The size of the product to display.
-  String? selectedSize;
-
-  late Future<Item> _itemFuture;
+class _ItemWidgetState extends State<ItemWidget> {
+  late ItemSize selectedSize;
 
   @override
-  Future<void> initState() async {
+  void initState() {
     super.initState();
-    // Initialize the future here
-    final ItemProvider itemProvider =
-        Provider.of<ItemProvider>(context, listen: false);
-    _itemFuture = itemProvider.fetchProductById(widget.productId);
+    selectedSize = ItemSize.l;
   }
 
   @override
@@ -43,161 +38,127 @@ class ItemPageState extends State<ItemPage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: FutureBuilder<Item>(
-        future: _itemFuture,
-        builder: (BuildContext context, AsyncSnapshot<Item> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                'Error: ${snapshot.error}',
-                style: const TextStyle(color: Color(0xFFC2C2C2)),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.35,
+              width: double.infinity,
+              child: const Placeholder(
+                color: Color(
+                  0xFFC2C2C2,
+                ),
               ),
-            );
-          } else if (snapshot.hasData) {
-            final Item item = snapshot.data!;
-            // Example sizes, replace with actual sizes from item if available
-            final List<String> itemSizes = <String>[
-              'XS',
-              'S',
-              'M',
-              'L',
-              'XL',
-              'XXL',
-            ];
-
-            return SingleChildScrollView(
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.35,
-                    width: double.infinity,
-                    child: const Placeholder(
-                      color: Color(
-                        0xFFC2C2C2,
-                      ),
-                    ), // Replace with item image carousel
+                  Text(
+                    widget.item.name,
+                    style: const TextStyle(
+                      color: Color(0xFFC2C2C2),
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '\$${widget.item.price}',
+                    style: const TextStyle(
+                      color: Color(0xFFFF8E26),
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    widget.item.description,
+                    style: const TextStyle(
+                      color: Color(0xFFC2C2C2),
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Size',
+                    style: TextStyle(
+                      color: Color(0xFFC2C2C2),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children: ItemSize.values.map((ItemSize size) {
+                      final bool outOfStock = widget.item.stock[size.name.toUpperCase()] == 0 || widget.item.stock[size.name.toUpperCase()] == null;
+                      return ChoiceChip(
+                        label: Text(
+                          size.name.toUpperCase(),
+                          style: TextStyle(
+                            color: selectedSize == size ? Theme.of(context).primaryColor : Colors.white,
+                            decoration: outOfStock ? TextDecoration.lineThrough : TextDecoration.none,
+                          ),
+                        ),
+                        selected: selectedSize == size,
+                        onSelected: (bool selected) {
+                          if (!outOfStock) {
+                            setState(() {
+                              selectedSize = size;
+                            });
+                          }
+                        },
+                        selectedColor: const Color(
+                          0xFFC2C2C2,
+                        ), // Color when selected
+                        backgroundColor: const Color(
+                          0xFF121212,
+                        ), // Consistent background color
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                        ),
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 8),
+                        // Remove checkmark by using an empty Widget
+                        checkmarkColor: Colors.transparent,
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'In stock: ${widget.item.stock[selectedSize.name.toUpperCase()]}',
+                    style: const TextStyle(
+                      color: Color(0xFFC2C2C2),
+                      fontSize: 16,
+                    ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          item.name,
-                          style: const TextStyle(
-                            color: Color(0xFFC2C2C2),
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+                    padding: const EdgeInsets.symmetric(vertical: margin),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final int quantity = context.read<CartProvider>().getItemQuantity(widget.item.id!);
+                        await context.read<CartProvider>().addToCart(widget.item, selectedSize, quantity + 1);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF247100),
+                        fixedSize: const Size(120, 30),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '\$${item.price}',
-                          style: const TextStyle(
-                            color: Color(0xFFFF8E26),
-                            fontSize: 20,
-                          ),
+                      ),
+                      child: Text(
+                        'Add to cart',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          item.description,
-                          style: const TextStyle(
-                            color: Color(0xFFC2C2C2),
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        const Text(
-                          'Size',
-                          style: TextStyle(
-                            color: Color(0xFFC2C2C2),
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          children: itemSizes.map((String size) {
-                            final bool outOfStock = item.stock[size] == 0 ||
-                                item.stock[size] == null;
-                            return ChoiceChip(
-                              label: Text(
-                                size,
-                                style: TextStyle(
-                                  color: selectedSize == size
-                                      ? Colors.white
-                                      : const Color(0xFFC2C2C2),
-                                  decoration: outOfStock
-                                      ? TextDecoration.lineThrough
-                                      : TextDecoration.none,
-                                ),
-                              ),
-                              selected: selectedSize == size,
-                              onSelected: outOfStock
-                                  ? null
-                                  : (bool selected) {
-                                      setState(() {
-                                        selectedSize = size;
-                                      });
-                                    },
-                              selectedColor: const Color(
-                                0xFFC2C2C2,
-                              ), // Color when selected
-                              backgroundColor: const Color(
-                                0xFF121212,
-                              ), // Consistent background color
-                              shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5)),
-                              ),
-                              labelPadding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              // Remove checkmark by using an empty Widget
-                              checkmarkColor: Colors.transparent,
-                            );
-                          }).toList(),
-                        ),
-                        if (selectedSize != null) ...<Widget>[
-                          const SizedBox(height: 8),
-                          Text(
-                            'In stock: ${item.stock[selectedSize]}',
-                            style: const TextStyle(
-                              color: Color(0xFFC2C2C2),
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                        const SizedBox(height: 24),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: ElevatedButton(
-                            onPressed: selectedSize != null ? null : null,
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.green, // Text color
-                              minimumSize: const Size(120, 50),
-                            ),
-                            child: const Text('ADD TO CART'),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ],
               ),
-            );
-          } else {
-            return const Center(
-              child: Text(
-                'No data found',
-                style: TextStyle(color: Color(0xFFC2C2C2)),
-              ),
-            );
-          }
-        },
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:flex_market/components/admin_published_items.dart';
+import 'package:flex_market/components/admin_items.dart';
 import 'package:flex_market/pages/admin/admin_item_form.dart';
+import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 /// A widget that displays the user items if he is admin.
 ///
@@ -59,7 +61,7 @@ class AdminItemsWidget extends StatelessWidget {
                                 style: Theme.of(context).textTheme.titleMedium!.copyWith(fontStyle: FontStyle.italic),
                               ),
                               Text(
-                                '45 items',
+                                '${context.watch<ItemProvider>().items.length} items',
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ],
@@ -99,7 +101,7 @@ class AdminItemsWidget extends StatelessWidget {
               ],
             ),
           ),
-          const AdminPublishedItemsWidget(),
+          AdminItemsListWidget(navigatorKey: navigatorKey),
         ],
       ),
     );

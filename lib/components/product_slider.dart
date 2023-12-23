@@ -1,5 +1,6 @@
-import 'package:flex_market/models/product.dart';
-import 'package:flex_market/providers/cart_provider.dart';
+import 'package:flex_market/models/item.dart';
+import 'package:flex_market/pages/item.dart';
+import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,10 +19,15 @@ class ProductSliderWidget extends StatelessWidget {
   ///
   /// Requires [title] and [subtitle] strings to be provided.
   const ProductSliderWidget({
+    required this.navigatorKey,
     required this.title,
     required this.subtitle,
+    required this.items,
     super.key,
   });
+
+  /// Key used for custom navigation flow inside each app section
+  final GlobalKey<NavigatorState> navigatorKey;
 
   /// The title text displayed above the product list.
   final String title;
@@ -29,10 +35,11 @@ class ProductSliderWidget extends StatelessWidget {
   /// The subtitle text displayed below the title.
   final String subtitle;
 
+  /// The products contained in the slider.
+  final List<Item> items;
+
   @override
   Widget build(BuildContext context) {
-    final List<Product> products = context.watch<CartProvider>().mockProducts;
-
     return Container(
       margin: const EdgeInsets.only(top: margin, left: margin / 2),
       child: Column(
@@ -63,49 +70,60 @@ class ProductSliderWidget extends StatelessWidget {
             height: 200,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: products.length,
+              itemCount: items.length,
               itemBuilder: (BuildContext context, int index) {
-                final Product product = products[index];
-                return Card(
-                  color: Theme.of(context).primaryColor,
-                  child: Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Image.asset(
-                            product.imageUrl,
-                            width: 150,
-                            height: 150,
-                          ),
-                          Text(
-                            '\$${product.price.toString()}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium!
-                                .copyWith(
-                                  fontStyle: FontStyle.italic,
-                                ),
-                          ),
-                          Text(
-                            product.title,
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
+                final Item item = items[index];
+                final bool isFav = context.watch<ItemProvider>().isFavorite(item.id!);
+
+                return InkWell(
+                  onTap: () async {
+                    await navigatorKey.currentState?.push(
+                      MaterialPageRoute<Widget>(
+                        builder: (BuildContext context) => ItemWidget(item: item),
                       ),
-                      Positioned(
-                        right: 7,
-                        bottom: 15,
-                        child: IconButton(
-                          icon: SvgPicture.asset('assets/fav.svg', width: 40),
-                          onPressed: () =>
-                              context.read<CartProvider>().addToCart(product),
-                          highlightColor:
-                              Theme.of(context).colorScheme.secondary,
+                    );
+                  },
+                  child: Card(
+                    color: Theme.of(context).primaryColor,
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            // if (item.imagesUrl.isNotEmpty)
+                            Image.asset(
+                              // item.imagesUrl.first,
+                              'assets/shoes.png',
+                              width: 150,
+                              height: 150,
+                            ),
+                            Text(
+                              '\$${item.price.toString()}',
+                              style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                            ),
+                            Text(
+                              item.name,
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        Positioned(
+                          right: 7,
+                          bottom: 15,
+                          child: IconButton(
+                            icon: SvgPicture.asset(
+                              isFav ? 'assets/fav-filled.svg' : 'assets/fav.svg',
+                              height: isFav ? 25 : 40,
+                            ),
+                            onPressed: () async => context.read<ItemProvider>().toggleFavorites(item.id!),
+                            highlightColor: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },

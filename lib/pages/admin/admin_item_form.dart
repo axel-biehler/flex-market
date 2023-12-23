@@ -9,7 +9,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 /// Convert the form specs list to a map of [Map<String, dynamic>]
-Map<String, dynamic> specsToMap(List<Map<String, TextEditingController>> specs) {
+Map<String, dynamic> specsToMap(
+  List<Map<String, TextEditingController>> specs,
+) {
   final Map<String, dynamic> specsMap = <String, dynamic>{};
 
   for (final Map<String, TextEditingController> spec in specs) {
@@ -21,18 +23,35 @@ Map<String, dynamic> specsToMap(List<Map<String, TextEditingController>> specs) 
   return specsMap;
 }
 
+/// Get the stock value of an item for a given [ItemSize]
+String getItemStockValue(Item? item, ItemSize size) {
+  if (item != null && item.stock[size.name.toUpperCase()] != null) {
+    return item.stock[size.name.toUpperCase()].toString();
+  } else {
+    return '0';
+  }
+}
+
 /// A widget that displays the product form to add and edit items.
 ///
 /// A form to add or edit items.
 class AdminItemFormWidget extends StatefulWidget {
   /// Creates a [AdminItemFormWidget].
-  const AdminItemFormWidget({required this.navigatorKey, required this.isEdit, super.key});
+  const AdminItemFormWidget({
+    required this.navigatorKey,
+    required this.isEdit,
+    this.item,
+    super.key,
+  });
 
   /// Key used for custom navigation flow inside each app section
   final GlobalKey<NavigatorState> navigatorKey;
 
   /// Boolean indicating if the form is in add or edit mode
   final bool isEdit;
+
+  /// Boolean indicating if the form is in add or edit mode
+  final Item? item;
 
   @override
   State<AdminItemFormWidget> createState() => _AdminItemFormWidgetState();
@@ -46,23 +65,46 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
   late Map<ItemSize, TextEditingController> _stockControllers;
   Category? selectedCategory;
   Gender? selectedGender;
-  List<Map<String, TextEditingController>> specs = <Map<String, TextEditingController>>[];
+  List<Map<String, TextEditingController>> specs =
+      <Map<String, TextEditingController>>[];
   bool _isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController();
-    _descriptionController = TextEditingController();
-    _priceController = TextEditingController();
+    selectedCategory = stringToCategory(widget.item?.category);
+    selectedGender = stringToGender(widget.item?.gender);
+    _nameController = TextEditingController(text: widget.item?.name);
+    _descriptionController =
+        TextEditingController(text: widget.item?.description);
+    _priceController =
+        TextEditingController(text: widget.item?.price.toString());
     _stockControllers = <ItemSize, TextEditingController>{
-      ItemSize.xs: TextEditingController(),
-      ItemSize.s: TextEditingController(),
-      ItemSize.m: TextEditingController(),
-      ItemSize.l: TextEditingController(),
-      ItemSize.xl: TextEditingController(),
-      ItemSize.xxl: TextEditingController(),
+      ItemSize.xs: TextEditingController(
+        text: getItemStockValue(widget.item, ItemSize.xs),
+      ),
+      ItemSize.s: TextEditingController(
+        text: getItemStockValue(widget.item, ItemSize.s),
+      ),
+      ItemSize.m: TextEditingController(
+        text: getItemStockValue(widget.item, ItemSize.m),
+      ),
+      ItemSize.l: TextEditingController(
+        text: getItemStockValue(widget.item, ItemSize.l),
+      ),
+      ItemSize.xl: TextEditingController(
+        text: getItemStockValue(widget.item, ItemSize.xl),
+      ),
+      ItemSize.xxl: TextEditingController(
+        text: getItemStockValue(widget.item, ItemSize.xxl),
+      ),
     };
+    widget.item?.specs.forEach((String key, dynamic value) {
+      specs.add(<String, TextEditingController>{
+        'name': TextEditingController(text: key),
+        'value': TextEditingController(text: value),
+      });
+    });
   }
 
   @override
@@ -96,8 +138,12 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
       setState(() {
         _isSubmitting = true;
       });
-      final Map<String, int?> stocks = _stockControllers.map((ItemSize key, TextEditingController value) {
-        return MapEntry<String, int?>(key.name.toUpperCase(), int.tryParse(value.text));
+      final Map<String, int?> stocks =
+          _stockControllers.map((ItemSize key, TextEditingController value) {
+        return MapEntry<String, int?>(
+          key.name.toUpperCase(),
+          int.tryParse(value.text),
+        );
       });
       final Map<String, dynamic> formattedSpecs = specsToMap(specs);
       final Item model = Item.formForm(
@@ -108,38 +154,101 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
         formattedSpecs,
         double.tryParse(_priceController.text)!,
         selectedGender!,
+        widget.item?.id,
       );
-      final bool status = await context.read<ItemProvider>().createProduct(model);
+      bool status;
+      if (widget.isEdit) {
+        status = await context.read<ItemProvider>().updateItem(model);
+      } else {
+        status = await context.read<ItemProvider>().createItem(model);
+      }
       if (status) {
-        // ignore: use_build_context_synchronously
-        await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Success'),
-              content: const Text('Product created successfully.'),
-              backgroundColor: Theme.of(context).primaryColor,
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    formKey.currentState!.reset();
-                    widget.navigatorKey.currentState?.pop();
-                  },
-                  child: Text(
-                    'OK',
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: const Color(0xFF247100)),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
+        showDialogBoxAdd();
       }
       setState(() {
         _isSubmitting = false;
       });
     }
+  }
+
+  void showDialogBoxAdd() {
+    unawaited(
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Success'),
+            content: Text(
+              'Item ${widget.isEdit ? 'updated' : 'created'} successfully.',
+            ),
+            backgroundColor: Theme.of(context).primaryColor,
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  formKey.currentState!.reset();
+                  widget.navigatorKey.currentState?.pop();
+                },
+                child: Text(
+                  'OK',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: const Color(0xFF247100)),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void showDialogBoxDelete() {
+    unawaited(
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Success'),
+            content: const Text('Item deleted successfully.'),
+            backgroundColor: Theme.of(context).primaryColor,
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  formKey.currentState!.reset();
+                  widget.navigatorKey.currentState?.pop();
+                },
+                child: Text(
+                  'OK',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: const Color(0xFF247100)),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Future<void> deleteItem() async {
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    final bool status =
+        await context.read<ItemProvider>().deleteItem(widget.item!);
+
+    if (status) {
+      showDialogBoxDelete();
+    }
+    setState(() {
+      _isSubmitting = false;
+    });
   }
 
   @override
@@ -168,10 +277,15 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                           child: IconButton(
                             icon: Transform.rotate(
                               angle: pi,
-                              child: SvgPicture.asset('assets/arrow.svg', height: 20),
+                              child: SvgPicture.asset(
+                                'assets/arrow.svg',
+                                height: 20,
+                              ),
                             ),
-                            onPressed: () => widget.navigatorKey.currentState?.pop(),
-                            highlightColor: Theme.of(context).colorScheme.secondary,
+                            onPressed: () =>
+                                widget.navigatorKey.currentState?.pop(),
+                            highlightColor:
+                                Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                         Padding(
@@ -182,7 +296,10 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                             children: <Widget>[
                               Text(
                                 '${widget.isEdit ? "MODIFY" : "ADD"} AN ITEM',
-                                style: Theme.of(context).textTheme.titleMedium!.copyWith(fontStyle: FontStyle.italic),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(fontStyle: FontStyle.italic),
                               ),
                             ],
                           ),
@@ -497,6 +614,26 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
               ),
             ),
           ),
+          if (widget.isEdit)
+            Padding(
+              padding: const EdgeInsets.only(bottom: margin * 2),
+              child: ElevatedButton(
+                onPressed: _isSubmitting ? null : deleteItem,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.errorContainer,
+                  fixedSize: const Size(100, 30),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text(
+                  'Delete',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
