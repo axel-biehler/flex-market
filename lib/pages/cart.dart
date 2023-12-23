@@ -36,7 +36,10 @@ class CartWidget extends StatelessWidget {
                 },
                 child: Text(
                   'OK',
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: const Color(0xFF247100)),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: const Color(0xFF247100)),
                 ),
               ),
             ],

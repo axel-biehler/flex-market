@@ -21,6 +21,9 @@ class AuthProvider extends ChangeNotifier {
   /// The current user's credentials, null if not authenticated.
   Credentials? _credentials;
 
+  /// The current user's authentication status.
+  bool? _isAuthenticated;
+
   /// Instance of Auth0 for user authentication.
   final Auth0 auth0 =
       Auth0(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_CLIENT_ID']!);
@@ -31,6 +34,9 @@ class AuthProvider extends ChangeNotifier {
 
   /// Getter for the current user.
   UserProfile? get user => _user;
+
+  /// Getter for the current user's authentication status.
+  bool? get isAuthenticated => _isAuthenticated;
 
   /// Getter for the current user custom.
   User? get userCustom => _userCustom;
@@ -70,6 +76,8 @@ class AuthProvider extends ChangeNotifier {
   /// Handles user login using Auth0 authentication.
   Future<void> login() async {
     try {
+      _isAuthenticated = false;
+      notifyListeners();
       if (kIsWeb) {
         final Credentials credentials = await auth0Web.loginWithPopup(
           audience: dotenv.env['AUTH0_AUDIENCE'],
@@ -108,6 +116,8 @@ class AuthProvider extends ChangeNotifier {
 
   /// Handles user register using Auth0 authentication.
   Future<void> register() async {
+    _isAuthenticated = false;
+    notifyListeners();
     try {
       if (kIsWeb) {
         final Credentials credentials = await auth0Web.loginWithPopup(
@@ -148,6 +158,8 @@ class AuthProvider extends ChangeNotifier {
   /// Handles user logout and state cleanup.
   Future<void> logout() async {
     try {
+      _isAuthenticated = null;
+      notifyListeners();
       if (kIsWeb) {
         await auth0Web.logout(returnToUrl: dotenv.env['AUTH0_REDIRECT_URI']);
       } else {
@@ -183,6 +195,7 @@ class AuthProvider extends ChangeNotifier {
           print('Response data: ${response.body}');
         }
         setCustomUser(User.fromJson(jsonDecode(response.body)['profile']));
+        _isAuthenticated = true;
       } else {
         if (kDebugMode) {
           print('Request failed with status: ${response.statusCode}.');

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flex_market/pages/flex_market_app.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/providers/cart_provider.dart';
+import 'package:flex_market/providers/image_management_provider.dart';
 import 'package:flex_market/providers/item_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -73,6 +74,9 @@ void main() async {
     MultiProvider(
       providers: <SingleChildWidget>[
         ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
+        ChangeNotifierProvider<ImageManagementProvider>(
+          create: (_) => ImageManagementProvider(),
+        ),
         ChangeNotifierProxyProvider<AuthProvider, CartProvider>(
           create: (BuildContext context) => CartProvider(Provider.of<AuthProvider>(context, listen: false)),
           update: (
