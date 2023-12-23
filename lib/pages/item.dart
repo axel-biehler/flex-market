@@ -92,13 +92,20 @@ class _ItemWidgetState extends State<ItemWidget> {
                   Wrap(
                     spacing: 8,
                     children: ItemSize.values.map((ItemSize size) {
-                      final bool outOfStock = widget.item.stock[size.name.toUpperCase()] == 0 || widget.item.stock[size.name.toUpperCase()] == null;
+                      final bool outOfStock =
+                          widget.item.stock[size.name.toUpperCase()] == 0 ||
+                              widget.item.stock[size.name.toUpperCase()] ==
+                                  null;
                       return ChoiceChip(
                         label: Text(
                           size.name.toUpperCase(),
                           style: TextStyle(
-                            color: selectedSize == size ? Theme.of(context).primaryColor : Colors.white,
-                            decoration: outOfStock ? TextDecoration.lineThrough : TextDecoration.none,
+                            color: selectedSize == size
+                                ? Theme.of(context).primaryColor
+                                : Colors.white,
+                            decoration: outOfStock
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none,
                           ),
                         ),
                         selected: selectedSize == size,
@@ -111,15 +118,14 @@ class _ItemWidgetState extends State<ItemWidget> {
                         },
                         selectedColor: const Color(
                           0xFFC2C2C2,
-                        ), // Color when selected
+                        ),
                         backgroundColor: const Color(
                           0xFF121212,
-                        ), // Consistent background color
+                        ),
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                         ),
                         labelPadding: const EdgeInsets.symmetric(horizontal: 8),
-                        // Remove checkmark by using an empty Widget
                         checkmarkColor: Colors.transparent,
                       );
                     }).toList(),
@@ -136,8 +142,12 @@ class _ItemWidgetState extends State<ItemWidget> {
                     padding: const EdgeInsets.symmetric(vertical: margin),
                     child: ElevatedButton(
                       onPressed: () async {
-                        final int quantity = context.read<CartProvider>().getItemQuantity(widget.item.id!);
-                        await context.read<CartProvider>().addToCart(widget.item, selectedSize, quantity + 1);
+                        final int quantity = context
+                            .read<CartProvider>()
+                            .getItemQuantity(widget.item.id!);
+                        await context
+                            .read<CartProvider>()
+                            .addToCart(widget.item, selectedSize, quantity + 1);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF247100),

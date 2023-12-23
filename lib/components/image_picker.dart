@@ -78,7 +78,7 @@ class ImagePickerWidgetState extends State<ImagePickerWidget> {
                     widget.maxPictures
                 ? Colors.white
                 : Colors.grey[800],
-          ), // White icon to contrast with darker disabled color
+          ),
         ],
       ),
     );

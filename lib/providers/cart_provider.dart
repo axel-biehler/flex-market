@@ -52,7 +52,6 @@ class CartProvider extends ChangeNotifier {
   /// Method to update the reference to the AuthProvider
   void updateWithAuthProvider(AuthProvider authProvider) {
     this.authProvider = authProvider;
-    // You may want to perform additional updates or fetches here
     notifyListeners();
   }
 

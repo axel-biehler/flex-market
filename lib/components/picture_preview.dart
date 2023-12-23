@@ -56,8 +56,7 @@ class PicturePreviewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Define the fixed size for the images (square)
-    const double imageSize = 150; // Size for both width and height
+    const double imageSize = 150;
 
     return Scaffold(
       appBar: AppBar(

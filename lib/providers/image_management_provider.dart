@@ -3,9 +3,6 @@ import 'package:flutter/foundation.dart';
 
 /// Manages the application state for the images
 class ImageManagementProvider with ChangeNotifier {
-  // Add your provider properties and methods here
-
-  // Example property
   final List<XFile> _imageFiles = <XFile>[];
 
   /// Getter for the list of images
