@@ -9,7 +9,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 /// Convert the form specs list to a map of [Map<String, dynamic>]
-Map<String, dynamic> specsToMap(List<Map<String, TextEditingController>> specs) {
+Map<String, dynamic> specsToMap(
+    List<Map<String, TextEditingController>> specs) {
   final Map<String, dynamic> specsMap = <String, dynamic>{};
 
   for (final Map<String, TextEditingController> spec in specs) {
@@ -63,7 +64,8 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
   late Map<ItemSize, TextEditingController> _stockControllers;
   Category? selectedCategory;
   Gender? selectedGender;
-  List<Map<String, TextEditingController>> specs = <Map<String, TextEditingController>>[];
+  List<Map<String, TextEditingController>> specs =
+      <Map<String, TextEditingController>>[];
   bool _isSubmitting = false;
 
   @override
@@ -72,15 +74,23 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
     selectedCategory = stringToCategory(widget.item?.category);
     selectedGender = stringToGender(widget.item?.gender);
     _nameController = TextEditingController(text: widget.item?.name);
-    _descriptionController = TextEditingController(text: widget.item?.description);
-    _priceController = TextEditingController(text: widget.item?.price.toString());
+    _descriptionController =
+        TextEditingController(text: widget.item?.description);
+    _priceController =
+        TextEditingController(text: widget.item?.price.toString());
     _stockControllers = <ItemSize, TextEditingController>{
-      ItemSize.xs: TextEditingController(text: getItemStockValue(widget.item, ItemSize.xs)),
-      ItemSize.s: TextEditingController(text: getItemStockValue(widget.item, ItemSize.s)),
-      ItemSize.m: TextEditingController(text: getItemStockValue(widget.item, ItemSize.m)),
-      ItemSize.l: TextEditingController(text: getItemStockValue(widget.item, ItemSize.l)),
-      ItemSize.xl: TextEditingController(text: getItemStockValue(widget.item, ItemSize.xl)),
-      ItemSize.xxl: TextEditingController(text: getItemStockValue(widget.item, ItemSize.xxl)),
+      ItemSize.xs: TextEditingController(
+          text: getItemStockValue(widget.item, ItemSize.xs)),
+      ItemSize.s: TextEditingController(
+          text: getItemStockValue(widget.item, ItemSize.s)),
+      ItemSize.m: TextEditingController(
+          text: getItemStockValue(widget.item, ItemSize.m)),
+      ItemSize.l: TextEditingController(
+          text: getItemStockValue(widget.item, ItemSize.l)),
+      ItemSize.xl: TextEditingController(
+          text: getItemStockValue(widget.item, ItemSize.xl)),
+      ItemSize.xxl: TextEditingController(
+          text: getItemStockValue(widget.item, ItemSize.xxl)),
     };
     widget.item?.specs.forEach((String key, dynamic value) {
       specs.add(<String, TextEditingController>{
@@ -121,8 +131,10 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
       setState(() {
         _isSubmitting = true;
       });
-      final Map<String, int?> stocks = _stockControllers.map((ItemSize key, TextEditingController value) {
-        return MapEntry<String, int?>(key.name.toUpperCase(), int.tryParse(value.text));
+      final Map<String, int?> stocks =
+          _stockControllers.map((ItemSize key, TextEditingController value) {
+        return MapEntry<String, int?>(
+            key.name.toUpperCase(), int.tryParse(value.text));
       });
       final Map<String, dynamic> formattedSpecs = specsToMap(specs);
       final Item model = Item.formForm(
@@ -142,30 +154,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
         status = await context.read<ItemProvider>().createItem(model);
       }
       if (status) {
-        // ignore: use_build_context_synchronously
-        await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Success'),
-              content: Text('Item ${widget.isEdit ? 'updated' : 'created'} successfully.'),
-              backgroundColor: Theme.of(context).primaryColor,
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    formKey.currentState!.reset();
-                    widget.navigatorKey.currentState?.pop();
-                  },
-                  child: Text(
-                    'OK',
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: const Color(0xFF247100)),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
+        showDialogBox();
       }
       setState(() {
         _isSubmitting = false;
@@ -173,12 +162,45 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
     }
   }
 
+  void showDialogBox() {
+    unawaited(
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Success'),
+            content: Text(
+                'Item ${widget.isEdit ? 'updated' : 'created'} successfully.'),
+            backgroundColor: Theme.of(context).primaryColor,
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  formKey.currentState!.reset();
+                  widget.navigatorKey.currentState?.pop();
+                },
+                child: Text(
+                  'OK',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: const Color(0xFF247100)),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   Future<void> deleteItem() async {
     setState(() {
       _isSubmitting = true;
     });
 
-    final bool status = await context.read<ItemProvider>().deleteItem(widget.item!);
+    final bool status =
+        await context.read<ItemProvider>().deleteItem(widget.item!);
 
     if (status) {
       // ignore: use_build_context_synchronously
@@ -198,7 +220,10 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                 },
                 child: Text(
                   'OK',
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: const Color(0xFF247100)),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: const Color(0xFF247100)),
                 ),
               ),
             ],
@@ -237,10 +262,13 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                           child: IconButton(
                             icon: Transform.rotate(
                               angle: pi,
-                              child: SvgPicture.asset('assets/arrow.svg', height: 20),
+                              child: SvgPicture.asset('assets/arrow.svg',
+                                  height: 20),
                             ),
-                            onPressed: () => widget.navigatorKey.currentState?.pop(),
-                            highlightColor: Theme.of(context).colorScheme.secondary,
+                            onPressed: () =>
+                                widget.navigatorKey.currentState?.pop(),
+                            highlightColor:
+                                Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                         Padding(
@@ -251,7 +279,10 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                             children: <Widget>[
                               Text(
                                 '${widget.isEdit ? "MODIFY" : "ADD"} AN ITEM',
-                                style: Theme.of(context).textTheme.titleMedium!.copyWith(fontStyle: FontStyle.italic),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(fontStyle: FontStyle.italic),
                               ),
                             ],
                           ),
