@@ -66,7 +66,7 @@ ItemSize? stringToSize(String? sizeString) {
 }
 
 /// Enum that contains the available categories
-enum Category {
+enum ItemCategory {
   /// Tops
   tops,
 
@@ -98,13 +98,13 @@ enum Category {
   swimwear
 }
 
-/// Returns a [Category] enum value corresponding to the given string
-Category? stringToCategory(String? catString) {
+/// Returns a [ItemCategory] enum value corresponding to the given string
+ItemCategory? stringToItemCategory(String? catString) {
   if (catString == null) {
     return null;
   }
-  return Category.values.firstWhere(
-    (Category e) => e.name == catString.toLowerCase(),
+  return ItemCategory.values.firstWhere(
+    (ItemCategory e) => e.name == catString.toLowerCase(),
     orElse: () => throw ArgumentError('Invalid category string: $catString'),
   );
 }

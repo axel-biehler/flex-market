@@ -8,6 +8,7 @@ import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 /// A widget that displays the user's profile information.
@@ -71,8 +72,7 @@ class UserWidget extends StatelessWidget {
                   unawaited(
                     navigatorKey.currentState?.push(
                       MaterialPageRoute<Widget>(
-                        builder: (BuildContext context) =>
-                            AdminItemsWidget(navigatorKey: navigatorKey),
+                        builder: (BuildContext context) => AdminItemsWidget(navigatorKey: navigatorKey),
                       ),
                     ),
                   );
@@ -101,7 +101,7 @@ class UserWidget extends StatelessWidget {
                           builder: (BuildContext context) => PicturePreviewPage(
                             navigatorKey: navigatorKey,
                             maxPictures: 1,
-                            callback: () async {
+                            callback: (List<XFile> pics) async {
                               if (kDebugMode) {
                                 print('added');
                               }

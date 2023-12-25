@@ -204,7 +204,7 @@ class ItemProvider extends ChangeNotifier {
   }
 
   /// Create an item
-  Future<bool> createItem(Item item) async {
+  Future<List<dynamic>> createItem(Item item) async {
     final Uri url = Uri.parse(
       '$apiUrl/products',
     );
@@ -224,8 +224,9 @@ class ItemProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         unawaited(fetchAllProducts());
-        // final data = json.decode(response.body);
-        return true;
+        final dynamic data = json.decode(response.body);
+        final List<dynamic> presignedUrls = data['presignedUrls'];
+        return presignedUrls;
       } else {
         if (kDebugMode) {
           print('Request failed with status: ${response.statusCode}.');

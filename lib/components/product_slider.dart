@@ -73,15 +73,13 @@ class ProductSliderWidget extends StatelessWidget {
               itemCount: items.length,
               itemBuilder: (BuildContext context, int index) {
                 final Item item = items[index];
-                final bool isFav =
-                    context.watch<ItemProvider>().isFavorite(item.id!);
+                final bool isFav = context.watch<ItemProvider>().isFavorite(item.id!);
 
                 return InkWell(
                   onTap: () async {
                     await navigatorKey.currentState?.push(
                       MaterialPageRoute<Widget>(
-                        builder: (BuildContext context) =>
-                            ItemWidget(item: item),
+                        builder: (BuildContext context) => ItemWidget(item: item),
                       ),
                     );
                   },
@@ -94,17 +92,28 @@ class ProductSliderWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             if (item.imagesUrl.isNotEmpty)
-                              Image.asset(
+                              Image.network(
                                 item.imagesUrl.first,
                                 width: 150,
                                 height: 150,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return Center(
+                                    child: CircularProgressIndicator(
+                                      value: loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                          : null,
+                                    ),
+                                  );
+                                },
+                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                  return const Icon(Icons.error);
+                                },
                               ),
                             Text(
                               '\$${item.price.toString()}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium!
-                                  .copyWith(
+                              style: Theme.of(context).textTheme.labelMedium!.copyWith(
                                     fontStyle: FontStyle.italic,
                                   ),
                             ),
@@ -119,16 +128,11 @@ class ProductSliderWidget extends StatelessWidget {
                           bottom: 15,
                           child: IconButton(
                             icon: SvgPicture.asset(
-                              isFav
-                                  ? 'assets/fav-filled.svg'
-                                  : 'assets/fav.svg',
+                              isFav ? 'assets/fav-filled.svg' : 'assets/fav.svg',
                               height: isFav ? 25 : 40,
                             ),
-                            onPressed: () async => context
-                                .read<ItemProvider>()
-                                .toggleFavorites(item.id!),
-                            highlightColor:
-                                Theme.of(context).colorScheme.secondary,
+                            onPressed: () async => context.read<ItemProvider>().toggleFavorites(item.id!),
+                            highlightColor: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                       ],

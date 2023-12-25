@@ -39,12 +39,13 @@ class Item {
   /// Returns a [Item] from the given form datas.
   factory Item.formForm(
     String name,
-    Category category,
+    ItemCategory category,
     String description,
     Map<String, int?> stocks,
     Map<String, dynamic> specs,
     double price,
     Gender gender,
+    List<String> imagesUrl,
     String? id,
   ) {
     return Item(
@@ -55,7 +56,7 @@ class Item {
       specs: specs,
       price: price,
       gender: gender.name.toUpperCase(),
-      imagesUrl: <String>[],
+      imagesUrl: imagesUrl,
       id: id,
     );
   }
