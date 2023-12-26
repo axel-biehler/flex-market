@@ -62,8 +62,11 @@ class AdminItemsListWidget extends StatelessWidget {
                           if (item.imagesUrl.isNotEmpty)
                             Padding(
                               padding: const EdgeInsets.all(margin),
-                              child: ImageViewerWidget(
-                                url: item.imagesUrl.first,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(23),
+                                child: ImageViewerWidget(
+                                  url: item.imagesUrl.first,
+                                ),
                               ),
                             ),
                           Expanded(

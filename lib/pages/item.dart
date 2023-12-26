@@ -171,8 +171,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 8), // Add some spacing between the title and rows
-                        // Create a row for each spec in widget.item.specs
+                        const SizedBox(height: 8),
                         ...widget.item.specs.entries.map((MapEntry<String, dynamic> entry) {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: margin / 2),
@@ -197,7 +196,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                               ],
                             ),
                           );
-                        }).toList(),
+                        }),
                       ],
                     ),
                   ),

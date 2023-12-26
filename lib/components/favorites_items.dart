@@ -84,8 +84,11 @@ class FavoritesItemsWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               if (item.imagesUrl.isNotEmpty)
-                                ImageViewerWidget(
-                                  url: item.imagesUrl.first,
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(23),
+                                  child: ImageViewerWidget(
+                                    url: item.imagesUrl.first,
+                                  ),
                                 ),
                               Text(
                                 '\$${item.price.toString()}',

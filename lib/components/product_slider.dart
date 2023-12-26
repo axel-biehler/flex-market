@@ -93,8 +93,11 @@ class ProductSliderWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             if (item.imagesUrl.isNotEmpty)
-                              ImageViewerWidget(
-                                url: item.imagesUrl.first,
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(23),
+                                child: ImageViewerWidget(
+                                  url: item.imagesUrl.first,
+                                ),
                               ),
                             Text(
                               '\$${item.price.toString()}',
@@ -109,8 +112,8 @@ class ProductSliderWidget extends StatelessWidget {
                           ],
                         ),
                         Positioned(
-                          right: 7,
-                          bottom: 15,
+                          left: 3,
+                          top: 3,
                           child: IconButton(
                             icon: SvgPicture.asset(
                               isFav ? 'assets/fav-filled.svg' : 'assets/fav.svg',
