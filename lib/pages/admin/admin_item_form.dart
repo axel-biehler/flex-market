@@ -71,8 +71,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
   List<String> imagesUrl = <String>[];
   ItemCategory? selectedCategory;
   Gender? selectedGender;
-  List<Map<String, TextEditingController>> specs =
-      <Map<String, TextEditingController>>[];
+  List<Map<String, TextEditingController>> specs = <Map<String, TextEditingController>>[];
   bool _isSubmitting = false;
 
   @override
@@ -81,10 +80,8 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
     selectedCategory = stringToItemCategory(widget.item?.category);
     selectedGender = stringToGender(widget.item?.gender);
     _nameController = TextEditingController(text: widget.item?.name);
-    _descriptionController =
-        TextEditingController(text: widget.item?.description);
-    _priceController =
-        TextEditingController(text: widget.item?.price.toString());
+    _descriptionController = TextEditingController(text: widget.item?.description);
+    _priceController = TextEditingController(text: widget.item?.price.toString());
     _stockControllers = <ItemSize, TextEditingController>{
       ItemSize.xs: TextEditingController(
         text: getItemStockValue(widget.item, ItemSize.xs),
@@ -139,49 +136,6 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
     });
   }
 
-  // Future<void> submit() async {
-  //   if (formKey.currentState!.validate()) {
-  //     setState(() {
-  //       _isSubmitting = true;
-  //     });
-  //     final Map<String, int?> stocks = _stockControllers.map((ItemSize key, TextEditingController value) {
-  //       return MapEntry<String, int?>(
-  //         key.name.toUpperCase(),
-  //         int.tryParse(value.text),
-  //       );
-  //     });
-  //     final Map<String, dynamic> formattedSpecs = specsToMap(specs);
-  //     final Item model = Item.formForm(
-  //       _nameController.text,
-  //       selectedCategory!,
-  //       _descriptionController.text,
-  //       stocks,
-  //       formattedSpecs,
-  //       double.tryParse(_priceController.text)!,
-  //       selectedGender!,
-  //       imagesUrl,
-  //       widget.item?.id,
-  //     );
-  //     bool status = false;
-  //     List<dynamic> urls = <dynamic>[];
-  //     if (widget.isEdit) {
-  //       status = await context.read<ItemProvider>().updateItem(model);
-  //     } else {
-  //       urls = await context.read<ItemProvider>().createItem(model);
-  //       final List<XFile> files = context.read<ImageManagementProvider>().imageFiles;
-  //       for (int i = 0; i < imagesUrl.length; i++) {
-  //         await context.read<ImageManagementProvider>().uploadXFileToS3(files[i], imagesUrl[i]);
-  //       }
-  //     }
-  //     if (status || urls.length == imagesUrl.length) {
-  //       showDialogBoxAdd();
-  //     }
-  //     setState(() {
-  //       _isSubmitting = false;
-  //     });
-  //   }
-  // }
-
   Future<void> submit() async {
     if (formKey.currentState!.validate()) {
       setState(() {
@@ -190,11 +144,9 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
 
       // Capture the providers before the async gap
       final ItemProvider itemProvider = context.read<ItemProvider>();
-      final ImageManagementProvider imageManagementProvider =
-          context.read<ImageManagementProvider>();
+      final ImageManagementProvider imageManagementProvider = context.read<ImageManagementProvider>();
 
-      final Map<String, int?> stocks =
-          _stockControllers.map((ItemSize key, TextEditingController value) {
+      final Map<String, int?> stocks = _stockControllers.map((ItemSize key, TextEditingController value) {
         return MapEntry<String, int?>(
           key.name.toUpperCase(),
           int.tryParse(value.text),
@@ -260,10 +212,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                 },
                 child: Text(
                   'OK',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: const Color(0xFF247100)),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: const Color(0xFF247100)),
                 ),
               ),
             ],
@@ -291,10 +240,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                 },
                 child: Text(
                   'OK',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: const Color(0xFF247100)),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: const Color(0xFF247100)),
                 ),
               ),
             ],
@@ -309,8 +255,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
       _isSubmitting = true;
     });
 
-    final bool status =
-        await context.read<ItemProvider>().deleteItem(widget.item!);
+    final bool status = await context.read<ItemProvider>().deleteItem(widget.item!);
 
     if (status) {
       showDialogBoxDelete();
@@ -351,10 +296,8 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                                 height: 20,
                               ),
                             ),
-                            onPressed: () =>
-                                widget.navigatorKey.currentState?.pop(),
-                            highlightColor:
-                                Theme.of(context).colorScheme.secondary,
+                            onPressed: () => widget.navigatorKey.currentState?.pop(),
+                            highlightColor: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                         Padding(
@@ -365,10 +308,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                             children: <Widget>[
                               Text(
                                 '${widget.isEdit ? "MODIFY" : "ADD"} AN ITEM',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(fontStyle: FontStyle.italic),
+                                style: Theme.of(context).textTheme.titleMedium!.copyWith(fontStyle: FontStyle.italic),
                               ),
                             ],
                           ),
@@ -412,10 +352,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         children: <Widget>[
-                          ...context
-                              .watch<ImageManagementProvider>()
-                              .imageFiles
-                              .map((XFile file) {
+                          ...context.watch<ImageManagementProvider>().imageFiles.map((XFile file) {
                             return Padding(
                               padding: const EdgeInsets.only(right: margin),
                               child: ClipRRect(
@@ -434,8 +371,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                             child: DecoratedBox(
                               decoration: const BoxDecoration(
                                 color: Color(0xFF3D3D3B),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(23)),
+                                borderRadius: BorderRadius.all(Radius.circular(23)),
                               ),
                               child: IconButton(
                                 iconSize: 100,
@@ -444,14 +380,11 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                                 onPressed: () async {
                                   await widget.navigatorKey.currentState?.push(
                                     MaterialPageRoute<Widget>(
-                                      builder: (BuildContext context) =>
-                                          PicturePreviewPage(
+                                      builder: (BuildContext context) => PicturePreviewPage(
                                         navigatorKey: widget.navigatorKey,
                                         maxPictures: 5,
                                         callback: (List<XFile> pics) async {
-                                          imagesUrl = pics
-                                              .map((XFile e) => e.name)
-                                              .toList();
+                                          imagesUrl = pics.map((XFile e) => e.name).toList();
                                           if (kDebugMode) {
                                             print(imagesUrl);
                                             print(pics);

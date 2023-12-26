@@ -1,3 +1,4 @@
+import 'package:flex_market/components/image_viewer.dart';
 import 'package:flex_market/models/item.dart';
 import 'package:flex_market/pages/item.dart';
 import 'package:flex_market/providers/cart_provider.dart';
@@ -83,10 +84,8 @@ class FavoritesItemsWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               if (item.imagesUrl.isNotEmpty)
-                                Image.asset(
-                                  item.imagesUrl[0],
-                                  width: 150,
-                                  height: 150,
+                                ImageViewerWidget(
+                                  url: item.imagesUrl.first,
                                 ),
                               Text(
                                 '\$${item.price.toString()}',
@@ -102,7 +101,7 @@ class FavoritesItemsWidget extends StatelessWidget {
                           ),
                           Positioned(
                             right: 7,
-                            bottom: 80,
+                            bottom: 25,
                             child: IconButton(
                               icon: SvgPicture.asset(
                                 isFav ? 'assets/fav-filled.svg' : 'assets/fav.svg',
@@ -111,24 +110,6 @@ class FavoritesItemsWidget extends StatelessWidget {
                               color: isFav ? Colors.red : null,
                               onPressed: () async => context.read<ItemProvider>().toggleFavorites(item.id!),
                               highlightColor: Theme.of(context).colorScheme.secondary,
-                            ),
-                          ),
-                          Positioned(
-                            right: 7,
-                            bottom: 30,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF3D3D3B),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              child: IconButton(
-                                icon: Image.asset('assets/cart.png', width: 25),
-                                onPressed: () async {
-                                  final int quantity = context.read<CartProvider>().getItemQuantity(item.id!);
-                                  await context.read<CartProvider>().addToCart(item, ItemSize.l, quantity + 1);
-                                },
-                                highlightColor: Theme.of(context).colorScheme.secondary,
-                              ),
                             ),
                           ),
                         ],

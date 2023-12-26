@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flex_market/components/image_viewer.dart';
 import 'package:flex_market/models/item.dart';
 import 'package:flex_market/pages/admin/admin_item_form.dart';
 import 'package:flex_market/providers/item_provider.dart';
@@ -37,70 +38,83 @@ class AdminItemsListWidget extends StatelessWidget {
             itemCount: context.watch<ItemProvider>().items.length,
             itemBuilder: (BuildContext context, int index) {
               final Item item = context.watch<ItemProvider>().items[index];
-              return Card(
-                color: Theme.of(context).primaryColor,
-                child: Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        if (item.imagesUrl.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.all(margin),
-                            child: Image.asset(
-                              item.imagesUrl[0],
-                              width: 130,
-                              height: 130,
-                            ),
-                          ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              Text(
-                                '\$${item.price.toString()}',
-                                style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: margin),
-                                child: Text(
-                                  item.name,
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: margin),
-                                child: Text(
-                                  'Stock: ${item.totalStock}',
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                              ),
-                            ],
-                          ),
+              return InkWell(
+                onTap: () {
+                  unawaited(
+                    navigatorKey.currentState?.push(
+                      MaterialPageRoute<Widget>(
+                        builder: (BuildContext context) => AdminItemFormWidget(
+                          navigatorKey: navigatorKey,
+                          isEdit: true,
+                          item: item,
                         ),
-                        IconButton(
-                          icon: SvgPicture.asset('assets/arrow.svg', height: 40),
-                          onPressed: () {
-                            unawaited(
-                              navigatorKey.currentState?.push(
-                                MaterialPageRoute<Widget>(
-                                  builder: (BuildContext context) => AdminItemFormWidget(
-                                    navigatorKey: navigatorKey,
-                                    isEdit: true,
-                                    item: item,
+                      ),
+                    ),
+                  );
+                },
+                child: Card(
+                  color: Theme.of(context).primaryColor,
+                  child: Stack(
+                    alignment: Alignment.bottomCenter,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          if (item.imagesUrl.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(margin),
+                              child: ImageViewerWidget(
+                                url: item.imagesUrl.first,
+                              ),
+                            ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                Text(
+                                  '\$${item.price.toString()}',
+                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: margin),
+                                  child: Text(
+                                    item.name,
+                                    style: Theme.of(context).textTheme.bodySmall,
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                          highlightColor: Theme.of(context).colorScheme.secondary,
-                        ),
-                      ],
-                    ),
-                  ],
+                                Padding(
+                                  padding: const EdgeInsets.only(top: margin),
+                                  child: Text(
+                                    'Stock: ${item.totalStock}',
+                                    style: Theme.of(context).textTheme.bodySmall,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            icon: SvgPicture.asset('assets/arrow.svg', height: 40),
+                            onPressed: () {
+                              unawaited(
+                                navigatorKey.currentState?.push(
+                                  MaterialPageRoute<Widget>(
+                                    builder: (BuildContext context) => AdminItemFormWidget(
+                                      navigatorKey: navigatorKey,
+                                      isEdit: true,
+                                      item: item,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            highlightColor: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               );
             },

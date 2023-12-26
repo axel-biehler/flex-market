@@ -1,3 +1,4 @@
+import 'package:flex_market/components/image_viewer.dart';
 import 'package:flex_market/models/item.dart';
 import 'package:flex_market/pages/item.dart';
 import 'package:flex_market/providers/item_provider.dart';
@@ -92,24 +93,8 @@ class ProductSliderWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             if (item.imagesUrl.isNotEmpty)
-                              Image.network(
-                                item.imagesUrl.first,
-                                width: 150,
-                                height: 150,
-                                fit: BoxFit.cover,
-                                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return Center(
-                                    child: CircularProgressIndicator(
-                                      value: loadingProgress.expectedTotalBytes != null
-                                          ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                          : null,
-                                    ),
-                                  );
-                                },
-                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                  return const Icon(Icons.error);
-                                },
+                              ImageViewerWidget(
+                                url: item.imagesUrl.first,
                               ),
                             Text(
                               '\$${item.price.toString()}',
