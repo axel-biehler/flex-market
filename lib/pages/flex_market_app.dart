@@ -3,7 +3,7 @@ import 'package:flex_market/pages/favorites.dart';
 import 'package:flex_market/pages/hero.dart';
 import 'package:flex_market/pages/home.dart';
 import 'package:flex_market/pages/search_page.dart';
-import 'package:flex_market/pages/user.dart';
+import 'package:flex_market/pages/profile/profile.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -54,7 +54,8 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
   late final List<NavigationItem> navbarPages = <NavigationItem>[
     NavigationItem(
       navigatorKey: GlobalKey<NavigatorState>(),
-      pageBuilder: (GlobalKey<NavigatorState> key) => HomeWidget(navigatorKey: key),
+      pageBuilder: (GlobalKey<NavigatorState> key) =>
+          HomeWidget(navigatorKey: key),
       icon: Image.asset(
         'assets/home.png',
         height: 22,
@@ -64,7 +65,8 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
     ),
     NavigationItem(
       navigatorKey: GlobalKey<NavigatorState>(),
-      pageBuilder: (GlobalKey<NavigatorState> key) => SearchPageWidget(navigatorKey: key),
+      pageBuilder: (GlobalKey<NavigatorState> key) =>
+          SearchPageWidget(navigatorKey: key),
       icon: Image.asset(
         'assets/search.png',
         height: 22,
@@ -74,7 +76,8 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
     ),
     NavigationItem(
       navigatorKey: GlobalKey<NavigatorState>(),
-      pageBuilder: (GlobalKey<NavigatorState> key) => FavoritesWidget(navigatorKey: key),
+      pageBuilder: (GlobalKey<NavigatorState> key) =>
+          FavoritesWidget(navigatorKey: key),
       icon: Image.asset(
         'assets/fav.png',
         height: 22,
@@ -84,7 +87,8 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
     ),
     NavigationItem(
       navigatorKey: GlobalKey<NavigatorState>(),
-      pageBuilder: (GlobalKey<NavigatorState> key) => CartWidget(navigatorKey: key),
+      pageBuilder: (GlobalKey<NavigatorState> key) =>
+          CartWidget(navigatorKey: key),
       icon: Image.asset(
         'assets/cart.png',
         height: 22,
@@ -94,7 +98,8 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
     ),
     NavigationItem(
       navigatorKey: GlobalKey<NavigatorState>(),
-      pageBuilder: (GlobalKey<NavigatorState> key) => UserWidget(navigatorKey: key),
+      pageBuilder: (GlobalKey<NavigatorState> key) =>
+          UserWidget(navigatorKey: key),
       icon: Image.asset(
         'assets/profile.png',
         height: 22,
@@ -180,7 +185,8 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
               items: navbarPages
                   .asMap()
                   .map(
-                    (int index, NavigationItem item) => MapEntry<int, BottomNavigationBarItem>(
+                    (int index, NavigationItem item) =>
+                        MapEntry<int, BottomNavigationBarItem>(
                       index,
                       BottomNavigationBarItem(
                         icon: Container(
