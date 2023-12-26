@@ -81,6 +81,14 @@ class _ItemWidgetState extends State<ItemWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
+                    '${widget.item.gender.toUpperCase()} - ${widget.item.category.toUpperCase()}',
+                    style: const TextStyle(
+                      color: Color(0xFFC2C2C2),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                  Text(
                     widget.item.name,
                     style: const TextStyle(
                       color: Color(0xFFC2C2C2),
