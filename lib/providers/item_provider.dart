@@ -42,9 +42,13 @@ class ItemProvider extends ChangeNotifier {
 
   /// Getter to return items grouped by category
   Map<String, List<Item>> get itemsByCategory {
-    final Map<String, List<Item>> groupedItems = groupBy<Item, String>(items, (Item item) => item.category);
-    final List<MapEntry<String, List<Item>>> sortedEntries = groupedItems.entries.toList()
-      ..sort((MapEntry<String, List<Item>> a, MapEntry<String, List<Item>> b) => b.value.length.compareTo(a.value.length));
+    final Map<String, List<Item>> groupedItems =
+        groupBy<Item, String>(items, (Item item) => item.category);
+    final List<MapEntry<String, List<Item>>> sortedEntries = groupedItems
+        .entries
+        .toList()
+      ..sort((MapEntry<String, List<Item>> a, MapEntry<String, List<Item>> b) =>
+          b.value.length.compareTo(a.value.length));
 
     return Map<String, List<Item>>.fromEntries(sortedEntries);
   }
@@ -87,7 +91,10 @@ class ItemProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final dynamic data = json.decode(response.body);
         final List<dynamic> jsonItems = data['products'] as List<dynamic>;
-        items = jsonItems.map<Item>((dynamic json) => Item.fromJson(json as Map<String, dynamic>)).toList();
+        items = jsonItems
+            .map<Item>(
+                (dynamic json) => Item.fromJson(json as Map<String, dynamic>))
+            .toList();
         notifyListeners();
         unawaited(fetchFavorites());
         if (kDebugMode) {
@@ -129,7 +136,10 @@ class ItemProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final dynamic data = json.decode(response.body);
         final List<dynamic> jsonItems = data['items'] as List<dynamic>;
-        favorites = jsonItems.map<Item>((dynamic json) => items.firstWhere((Item e) => e.id == json['itemId'])).toList();
+        favorites = jsonItems
+            .map<Item>((dynamic json) =>
+                items.firstWhere((Item e) => e.id == json['itemId']))
+            .toList();
         notifyListeners();
         if (kDebugMode) {
           print('Favorites: $favorites');
@@ -205,6 +215,7 @@ class ItemProvider extends ChangeNotifier {
 
   /// Create an item
   Future<List<dynamic>> createItem(Item item) async {
+    print(item.imagesUrl);
     final Uri url = Uri.parse(
       '$apiUrl/products',
     );

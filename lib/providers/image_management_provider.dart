@@ -30,15 +30,10 @@ class ImageManagementProvider with ChangeNotifier {
   /// Upload and image to a presignedUrl
   Future<void> uploadXFileToS3(XFile xFile, String presignedUrl) async {
     try {
-      final http.MultipartRequest request = http.MultipartRequest('PUT', Uri.parse(presignedUrl));
-
-      final http.ByteStream stream = http.ByteStream(xFile.openRead());
-      final int length = await xFile.length();
-
-      final http.MultipartFile multipartFile = http.MultipartFile('file', stream, length, filename: xFile.name);
-      request.files.add(multipartFile);
-
-      final http.StreamedResponse response = await request.send();
+      final http.Response response = await http.put(
+        Uri.parse(presignedUrl),
+        body: await xFile.readAsBytes(),
+      );
 
       if (response.statusCode == 200) {
         if (kDebugMode) {
