@@ -210,54 +210,43 @@ class _ItemWidgetState extends State<ItemWidget> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: margin),
-                    child: AnimatedButton(
-                      onTap: () {},
-                      animationDuration: const Duration(milliseconds: 800),
-                      initialText: 'Add to cart',
-                      finalText: 'Added',
-                      iconData: Icons.check,
-                      iconSize: 32,
-                      buttonStyle: CustomButtonStyle(
-                        primaryColor: Colors.green.shade600,
-                        secondaryColor: Colors.white,
-                        elevation: 20,
-                        initialTextStyle: TextStyle(
-                          fontSize: 22,
-                          color: Theme.of(context).colorScheme.secondary,
+                    padding: const EdgeInsets.all(margin),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        AnimatedButton(
+                          onTap: () async {
+                            if (!_isSizeInStock()) {
+                              return;
+                            }
+                            final int quantity = context.read<CartProvider>().getItemQuantity(widget.item.id!);
+                            await context.read<CartProvider>().addToCart(widget.item, selectedSize, quantity + 1);
+                          },
+                          animationDuration: const Duration(milliseconds: 800),
+                          initialText: 'ADD TO CART',
+                          finalText: 'ADDED',
+                          iconData: Icons.check,
+                          iconSize: 32,
+                          buttonStyle: CustomButtonStyle(
+                            primaryColor: _isSizeInStock() ? const Color(0xFF247100) : Theme.of(context).colorScheme.errorContainer,
+                            secondaryColor: Colors.white,
+                            elevation: 20,
+                            initialTextStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                            ),
+                            finalTextStyle: const TextStyle(
+                              color: Color(0xFF247100),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                            ),
+                            borderRadius: 16,
+                          ),
                         ),
-                        finalTextStyle: TextStyle(
-                          fontSize: 22,
-                          color: Colors.green.shade600,
-                        ),
-                        borderRadius: 10,
-                      ),
-                    ),
-                  ),
-                  // TODO(arobine): merge two button with working onTap and
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: margin),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (!_isSizeInStock()) {
-                          return;
-                        }
-                        final int quantity = context.read<CartProvider>().getItemQuantity(widget.item.id!);
-                        await context.read<CartProvider>().addToCart(widget.item, selectedSize, quantity + 1);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _isSizeInStock() ? const Color(0xFF247100) : Theme.of(context).colorScheme.errorContainer,
-                        fixedSize: const Size(120, 30),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: Text(
-                        'Add to cart',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                      ),
+                      ],
                     ),
                   ),
                 ],

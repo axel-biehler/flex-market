@@ -69,7 +69,6 @@ class _AnimatedButtonState extends State<AnimatedButton> with TickerProviderStat
       ..addStatusListener((AnimationStatus currentStatus) {
         if (currentStatus == AnimationStatus.completed) {
           widget.onTap();
-          // return widget.onTap();
         }
       });
 
@@ -107,8 +106,8 @@ class _AnimatedButtonState extends State<AnimatedButton> with TickerProviderStat
               Radius.circular(widget.buttonStyle.borderRadius),
             ),
           ),
-          padding: EdgeInsets.symmetric(
-            horizontal: (_currentState == ButtonState.showOnlyIcon) ? 16.0 : 48.0,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
             vertical: 8,
           ),
           child: AnimatedSize(
@@ -125,9 +124,10 @@ class _AnimatedButtonState extends State<AnimatedButton> with TickerProviderStat
                   )
                 else
                   Container(),
-                SizedBox(
-                  width: _currentState == ButtonState.showTextIcon ? 30.0 : 0.0,
-                ),
+                if (_currentState == ButtonState.showTextIcon)
+                  const SizedBox(
+                    width: 16,
+                  ),
                 getTextWidget(),
               ],
             ),
