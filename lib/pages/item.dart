@@ -1,3 +1,4 @@
+import 'package:flex_market/components/animated_button.dart';
 import 'package:flex_market/components/image_viewer.dart';
 import 'package:flex_market/models/item.dart';
 import 'package:flex_market/providers/cart_provider.dart';
@@ -208,6 +209,32 @@ class _ItemWidgetState extends State<ItemWidget> {
                       ],
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: margin),
+                    child: AnimatedButton(
+                      onTap: () {},
+                      animationDuration: const Duration(milliseconds: 800),
+                      initialText: 'Add to cart',
+                      finalText: 'Added',
+                      iconData: Icons.check,
+                      iconSize: 32,
+                      buttonStyle: CustomButtonStyle(
+                        primaryColor: Colors.green.shade600,
+                        secondaryColor: Colors.white,
+                        elevation: 20,
+                        initialTextStyle: TextStyle(
+                          fontSize: 22,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        finalTextStyle: TextStyle(
+                          fontSize: 22,
+                          color: Colors.green.shade600,
+                        ),
+                        borderRadius: 10,
+                      ),
+                    ),
+                  ),
+                  // TODO(arobine): merge two button with working onTap and
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: margin),
                     child: ElevatedButton(
