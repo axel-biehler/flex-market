@@ -39,8 +39,7 @@ class AnimatedButton extends StatefulWidget {
   State<AnimatedButton> createState() => _AnimatedButtonState();
 }
 
-class _AnimatedButtonState extends State<AnimatedButton>
-    with TickerProviderStateMixin {
+class _AnimatedButtonState extends State<AnimatedButton> with TickerProviderStateMixin {
   late AnimationController _controller;
   late ButtonState _currentState;
   late Duration _smallDuration;
@@ -53,8 +52,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
     _smallDuration = Duration(
       milliseconds: (widget.animationDuration.inMilliseconds * 0.2).round(),
     );
-    _controller =
-        AnimationController(vsync: this, duration: widget.animationDuration);
+    _controller = AnimationController(vsync: this, duration: widget.animationDuration);
     _controller
       ..addListener(() {
         final double controllerValue = _controller.value;
@@ -70,12 +68,12 @@ class _AnimatedButtonState extends State<AnimatedButton>
       })
       ..addStatusListener((AnimationStatus currentStatus) {
         if (currentStatus == AnimationStatus.completed) {
-          return widget.onTap();
+          widget.onTap();
+          // return widget.onTap();
         }
       });
 
-    _scaleFinalTextAnimation =
-        Tween<double>(begin: 0, end: 1).animate(_controller);
+    _scaleFinalTextAnimation = Tween<double>(begin: 0, end: 1).animate(_controller);
   }
 
   @override
@@ -88,8 +86,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
   Widget build(BuildContext context) {
     return Material(
       elevation: widget.buttonStyle.elevation,
-      borderRadius:
-          BorderRadius.all(Radius.circular(widget.buttonStyle.borderRadius)),
+      borderRadius: BorderRadius.all(Radius.circular(widget.buttonStyle.borderRadius)),
       child: InkWell(
         onTap: () {
           _controller.forward();
@@ -98,13 +95,11 @@ class _AnimatedButtonState extends State<AnimatedButton>
           duration: _smallDuration,
           height: widget.iconSize + 16,
           decoration: BoxDecoration(
-            color: (_currentState == ButtonState.showOnlyIcon ||
-                    _currentState == ButtonState.showTextIcon)
+            color: (_currentState == ButtonState.showOnlyIcon || _currentState == ButtonState.showTextIcon)
                 ? widget.buttonStyle.secondaryColor
                 : widget.buttonStyle.primaryColor,
             border: Border.all(
-              color: (_currentState == ButtonState.showOnlyIcon ||
-                      _currentState == ButtonState.showTextIcon)
+              color: (_currentState == ButtonState.showOnlyIcon || _currentState == ButtonState.showTextIcon)
                   ? widget.buttonStyle.primaryColor
                   : Colors.transparent,
             ),
@@ -113,8 +108,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
             ),
           ),
           padding: EdgeInsets.symmetric(
-            horizontal:
-                (_currentState == ButtonState.showOnlyIcon) ? 16.0 : 48.0,
+            horizontal: (_currentState == ButtonState.showOnlyIcon) ? 16.0 : 48.0,
             vertical: 8,
           ),
           child: AnimatedSize(
@@ -123,8 +117,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                if (_currentState == ButtonState.showOnlyIcon ||
-                    _currentState == ButtonState.showTextIcon)
+                if (_currentState == ButtonState.showOnlyIcon || _currentState == ButtonState.showTextIcon)
                   Icon(
                     widget.iconData,
                     size: widget.iconSize,
