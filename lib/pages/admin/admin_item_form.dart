@@ -1,11 +1,16 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
+import 'package:flex_market/components/picture_preview.dart';
 import 'package:flex_market/models/item.dart';
+import 'package:flex_market/providers/image_management_provider.dart';
 import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flex_market/utils/enums.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 /// Convert the form specs list to a map of [Map<String, dynamic>]
@@ -63,22 +68,20 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
   late TextEditingController _descriptionController;
   late TextEditingController _priceController;
   late Map<ItemSize, TextEditingController> _stockControllers;
-  Category? selectedCategory;
+  List<String> imagesUrl = <String>[];
+  ItemCategory? selectedCategory;
   Gender? selectedGender;
-  List<Map<String, TextEditingController>> specs =
-      <Map<String, TextEditingController>>[];
+  List<Map<String, TextEditingController>> specs = <Map<String, TextEditingController>>[];
   bool _isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
-    selectedCategory = stringToCategory(widget.item?.category);
+    selectedCategory = stringToItemCategory(widget.item?.category);
     selectedGender = stringToGender(widget.item?.gender);
     _nameController = TextEditingController(text: widget.item?.name);
-    _descriptionController =
-        TextEditingController(text: widget.item?.description);
-    _priceController =
-        TextEditingController(text: widget.item?.price.toString());
+    _descriptionController = TextEditingController(text: widget.item?.description);
+    _priceController = TextEditingController(text: widget.item?.price.toString());
     _stockControllers = <ItemSize, TextEditingController>{
       ItemSize.xs: TextEditingController(
         text: getItemStockValue(widget.item, ItemSize.xs),
@@ -138,13 +141,18 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
       setState(() {
         _isSubmitting = true;
       });
-      final Map<String, int?> stocks =
-          _stockControllers.map((ItemSize key, TextEditingController value) {
+
+      // Capture the providers before the async gap
+      final ItemProvider itemProvider = context.read<ItemProvider>();
+      final ImageManagementProvider imageManagementProvider = context.read<ImageManagementProvider>();
+
+      final Map<String, int?> stocks = _stockControllers.map((ItemSize key, TextEditingController value) {
         return MapEntry<String, int?>(
           key.name.toUpperCase(),
           int.tryParse(value.text),
         );
       });
+
       final Map<String, dynamic> formattedSpecs = specsToMap(specs);
       final Item model = Item.formForm(
         _nameController.text,
@@ -154,20 +162,33 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
         formattedSpecs,
         double.tryParse(_priceController.text)!,
         selectedGender!,
+        imagesUrl,
         widget.item?.id,
       );
-      bool status;
+
+      bool status = false;
+      List<dynamic> urls = <dynamic>[];
+
       if (widget.isEdit) {
-        status = await context.read<ItemProvider>().updateItem(model);
+        status = await itemProvider.updateItem(model);
       } else {
-        status = await context.read<ItemProvider>().createItem(model);
+        urls = await itemProvider.createItem(model);
+        final List<XFile> files = imageManagementProvider.imageFiles;
+        for (int i = 0; i < imagesUrl.length; i++) {
+          await imageManagementProvider.uploadXFileToS3(files[i], urls[i]);
+        }
       }
-      if (status) {
-        showDialogBoxAdd();
+
+      // Check if the widget is still in the tree
+      if (mounted) {
+        if (status || urls.length == imagesUrl.length) {
+          showDialogBoxAdd();
+        }
+
+        setState(() {
+          _isSubmitting = false;
+        });
       }
-      setState(() {
-        _isSubmitting = false;
-      });
     }
   }
 
@@ -191,10 +212,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                 },
                 child: Text(
                   'OK',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: const Color(0xFF247100)),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: const Color(0xFF247100)),
                 ),
               ),
             ],
@@ -222,10 +240,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                 },
                 child: Text(
                   'OK',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: const Color(0xFF247100)),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: const Color(0xFF247100)),
                 ),
               ),
             ],
@@ -240,8 +255,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
       _isSubmitting = true;
     });
 
-    final bool status =
-        await context.read<ItemProvider>().deleteItem(widget.item!);
+    final bool status = await context.read<ItemProvider>().deleteItem(widget.item!);
 
     if (status) {
       showDialogBoxDelete();
@@ -282,10 +296,8 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                                 height: 20,
                               ),
                             ),
-                            onPressed: () =>
-                                widget.navigatorKey.currentState?.pop(),
-                            highlightColor:
-                                Theme.of(context).colorScheme.secondary,
+                            onPressed: () => widget.navigatorKey.currentState?.pop(),
+                            highlightColor: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                         Padding(
@@ -296,10 +308,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                             children: <Widget>[
                               Text(
                                 '${widget.isEdit ? "MODIFY" : "ADD"} AN ITEM',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(fontStyle: FontStyle.italic),
+                                style: Theme.of(context).textTheme.titleMedium!.copyWith(fontStyle: FontStyle.italic),
                               ),
                             ],
                           ),
@@ -332,10 +341,66 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
           Form(
             key: formKey,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 39),
+              padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: margin),
+                    child: SizedBox(
+                      height: screenWidth - 120,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: <Widget>[
+                          ...context.watch<ImageManagementProvider>().imageFiles.map((XFile file) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: margin),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(23),
+                                child: Image.file(
+                                  File(file.path),
+                                  width: screenWidth - 120,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          }),
+                          SizedBox(
+                            height: screenWidth - 120,
+                            width: screenWidth - 120,
+                            child: DecoratedBox(
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF3D3D3B),
+                                borderRadius: BorderRadius.all(Radius.circular(23)),
+                              ),
+                              child: IconButton(
+                                iconSize: 100,
+                                icon: SvgPicture.asset('assets/plus.svg'),
+                                color: Theme.of(context).colorScheme.secondary,
+                                onPressed: () async {
+                                  await widget.navigatorKey.currentState?.push(
+                                    MaterialPageRoute<Widget>(
+                                      builder: (BuildContext context) => PicturePreviewPage(
+                                        navigatorKey: widget.navigatorKey,
+                                        maxPictures: 5,
+                                        callback: (List<XFile> pics) async {
+                                          imagesUrl = pics.map((XFile e) => e.name).toList();
+                                          if (kDebugMode) {
+                                            print(imagesUrl);
+                                            print(pics);
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -423,17 +488,17 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: margin),
-                    child: DropdownButtonFormField<Category>(
+                    child: DropdownButtonFormField<ItemCategory>(
                       value: selectedCategory,
-                      onChanged: (Category? newValue) {
+                      onChanged: (ItemCategory? newValue) {
                         setState(() {
                           if (!_isSubmitting) {
                             selectedCategory = newValue;
                           }
                         });
                       },
-                      items: Category.values.map((Category category) {
-                        return DropdownMenuItem<Category>(
+                      items: ItemCategory.values.map((ItemCategory category) {
+                        return DropdownMenuItem<ItemCategory>(
                           value: category,
                           child: Text(category.name),
                         );
@@ -442,7 +507,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                         labelText: 'Category',
                         border: OutlineInputBorder(),
                       ),
-                      validator: (Category? value) {
+                      validator: (ItemCategory? value) {
                         if (value == null) {
                           return 'Please select a category';
                         }

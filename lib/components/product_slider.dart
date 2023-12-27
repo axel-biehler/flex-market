@@ -1,3 +1,4 @@
+import 'package:flex_market/components/image_viewer.dart';
 import 'package:flex_market/models/item.dart';
 import 'package:flex_market/pages/item.dart';
 import 'package:flex_market/providers/item_provider.dart';
@@ -73,15 +74,13 @@ class ProductSliderWidget extends StatelessWidget {
               itemCount: items.length,
               itemBuilder: (BuildContext context, int index) {
                 final Item item = items[index];
-                final bool isFav =
-                    context.watch<ItemProvider>().isFavorite(item.id!);
+                final bool isFav = context.watch<ItemProvider>().isFavorite(item.id!);
 
                 return InkWell(
                   onTap: () async {
                     await navigatorKey.currentState?.push(
                       MaterialPageRoute<Widget>(
-                        builder: (BuildContext context) =>
-                            ItemWidget(item: item),
+                        builder: (BuildContext context) => ItemWidget(item: item),
                       ),
                     );
                   },
@@ -94,17 +93,15 @@ class ProductSliderWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             if (item.imagesUrl.isNotEmpty)
-                              Image.asset(
-                                item.imagesUrl.first,
-                                width: 150,
-                                height: 150,
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(23),
+                                child: ImageViewerWidget(
+                                  url: item.imagesUrl.first,
+                                ),
                               ),
                             Text(
                               '\$${item.price.toString()}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium!
-                                  .copyWith(
+                              style: Theme.of(context).textTheme.labelMedium!.copyWith(
                                     fontStyle: FontStyle.italic,
                                   ),
                             ),
@@ -115,20 +112,15 @@ class ProductSliderWidget extends StatelessWidget {
                           ],
                         ),
                         Positioned(
-                          right: 7,
-                          bottom: 15,
+                          left: 3,
+                          top: 3,
                           child: IconButton(
                             icon: SvgPicture.asset(
-                              isFav
-                                  ? 'assets/fav-filled.svg'
-                                  : 'assets/fav.svg',
+                              isFav ? 'assets/fav-filled.svg' : 'assets/fav.svg',
                               height: isFav ? 25 : 40,
                             ),
-                            onPressed: () async => context
-                                .read<ItemProvider>()
-                                .toggleFavorites(item.id!),
-                            highlightColor:
-                                Theme.of(context).colorScheme.secondary,
+                            onPressed: () async => context.read<ItemProvider>().toggleFavorites(item.id!),
+                            highlightColor: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                       ],
