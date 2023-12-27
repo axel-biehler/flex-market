@@ -7,7 +7,6 @@ import 'package:flex_market/pages/user.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flex_market/pages/animated_button.dart';
 
 /// Represents an item in the navigation bar of the application.
 class NavigationItem {

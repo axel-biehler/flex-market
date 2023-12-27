@@ -1,5 +1,6 @@
 import 'package:flex_market/components/image_viewer.dart';
 import 'package:flex_market/models/item.dart';
+import 'package:flex_market/components/animated_button.dart';
 import 'package:flex_market/providers/cart_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flex_market/utils/enums.dart';
@@ -33,7 +34,8 @@ class _ItemWidgetState extends State<ItemWidget> {
   }
 
   bool _isSizeInStock() {
-    return widget.item.stock[selectedSize.name.toUpperCase()] != null && widget.item.stock[selectedSize.name.toUpperCase()]! > 0;
+    return widget.item.stock[selectedSize.name.toUpperCase()] != null &&
+        widget.item.stock[selectedSize.name.toUpperCase()]! > 0;
   }
 
   @override
@@ -125,13 +127,20 @@ class _ItemWidgetState extends State<ItemWidget> {
                   Wrap(
                     spacing: 8,
                     children: ItemSize.values.map((ItemSize size) {
-                      final bool outOfStock = widget.item.stock[size.name.toUpperCase()] == 0 || widget.item.stock[size.name.toUpperCase()] == null;
+                      final bool outOfStock =
+                          widget.item.stock[size.name.toUpperCase()] == 0 ||
+                              widget.item.stock[size.name.toUpperCase()] ==
+                                  null;
                       return ChoiceChip(
                         label: Text(
                           size.name.toUpperCase(),
                           style: TextStyle(
-                            color: selectedSize == size ? Theme.of(context).primaryColor : Colors.white,
-                            decoration: outOfStock ? TextDecoration.lineThrough : TextDecoration.none,
+                            color: selectedSize == size
+                                ? Theme.of(context).primaryColor
+                                : Colors.white,
+                            decoration: outOfStock
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none,
                           ),
                         ),
                         selected: selectedSize == size,
@@ -180,7 +189,8 @@ class _ItemWidgetState extends State<ItemWidget> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        ...widget.item.specs.entries.map((MapEntry<String, dynamic> entry) {
+                        ...widget.item.specs.entries
+                            .map((MapEntry<String, dynamic> entry) {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: margin / 2),
                             child: Row(
@@ -210,28 +220,50 @@ class _ItemWidgetState extends State<ItemWidget> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: margin),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (!_isSizeInStock()) {
-                          return;
-                        }
-                        final int quantity = context.read<CartProvider>().getItemQuantity(widget.item.id!);
-                        await context.read<CartProvider>().addToCart(widget.item, selectedSize, quantity + 1);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _isSizeInStock() ? const Color(0xFF247100) : Theme.of(context).colorScheme.errorContainer,
-                        fixedSize: const Size(120, 30),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: Text(
-                        'Add to cart',
-                        style: TextStyle(
+                    child: AnimatedButton(
+                      onTap: () {},
+                      animationDuration: const Duration(milliseconds: 800),
+                      initialText: 'Add to cart',
+                      finalText: 'Added',
+                      iconData: Icons.check,
+                      iconSize: 32,
+                      buttonStyle: CustomButtonStyle(
+                        primaryColor: Colors.green.shade600,
+                        secondaryColor: Colors.white,
+                        elevation: 20,
+                        initialTextStyle: TextStyle(
+                          fontSize: 22,
                           color: Theme.of(context).colorScheme.secondary,
                         ),
+                        finalTextStyle: TextStyle(
+                          fontSize: 22,
+                          color: Colors.green.shade600,
+                        ),
+                        borderRadius: 10,
                       ),
                     ),
+                    // child: ElevatedButton(
+                    //   onPressed: () async {
+                    //     if (!_isSizeInStock()) {
+                    //       return;
+                    //     }
+                    //     final int quantity = context.read<CartProvider>().getItemQuantity(widget.item.id!);
+                    //     await context.read<CartProvider>().addToCart(widget.item, selectedSize, quantity + 1);
+                    //   },
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor: _isSizeInStock() ? const Color(0xFF247100) : Theme.of(context).colorScheme.errorContainer,
+                    //     fixedSize: const Size(120, 30),
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(10),
+                    //     ),
+                    //   ),
+                    //   child: Text(
+                    //     'Add to cart',
+                    //     style: TextStyle(
+                    //       color: Theme.of(context).colorScheme.secondary,
+                    //     ),
+                    //   ),
+                    // ),
                   ),
                 ],
               ),

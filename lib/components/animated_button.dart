@@ -1,20 +1,42 @@
-// ignore_for_file: public_member_api_docs, library_private_types_in_public_api, void_checks, constant_identifier_names
-
 import 'package:flutter/material.dart';
 
+/// A components that dynamically render a button with an animation uppon click
 class AnimatedButton extends StatefulWidget {
-  const AnimatedButton({required this.initialText, required this.finalText, required this.iconData, required this.iconSize, required this.animationDuration, required this.buttonStyle, required this.onTap, super.key,
+  /// Creates an [AnimatedButton].
+  const AnimatedButton({
+    required this.initialText,
+    required this.finalText,
+    required this.iconData,
+    required this.iconSize,
+    required this.animationDuration,
+    required this.buttonStyle,
+    required this.onTap,
+    super.key,
   });
+
+  ///Text to be displayed before clicking
   final String initialText;
+
+  ///Text to be displayed after clicking
   final String finalText;
+
+  ///Custom style for the button
   final CustomButtonStyle buttonStyle;
+
+  ///Icon displayed on the button
   final IconData iconData;
+
+  ///Size of this icon
   final double iconSize;
+
+  ///Durantion of the animation
   final Duration animationDuration;
+
+  ///Button logic
   final Function onTap;
 
   @override
-  _AnimatedButtonState createState() => _AnimatedButtonState();
+  State<AnimatedButton> createState() => _AnimatedButtonState();
 }
 
 class _AnimatedButtonState extends State<AnimatedButton>
@@ -27,29 +49,30 @@ class _AnimatedButtonState extends State<AnimatedButton>
   @override
   void initState() {
     super.initState();
-    _currentState = ButtonState.SHOW_ONLY_TEXT;
+    _currentState = ButtonState.showOnlyText;
     _smallDuration = Duration(
-        milliseconds: (widget.animationDuration.inMilliseconds * 0.2).round(),);
+      milliseconds: (widget.animationDuration.inMilliseconds * 0.2).round(),
+    );
     _controller =
         AnimationController(vsync: this, duration: widget.animationDuration);
-    _controller..addListener(() {
-      final double controllerValue = _controller.value;
-      if (controllerValue < 0.2) {
-        setState(() {
-          _currentState = ButtonState.SHOW_ONLY_ICON;
-        });
-      } else if (controllerValue > 0.8) {
-        setState(() {
-          _currentState = ButtonState.SHOW_TEXT_ICON;
-        });
-      }
-    })
-
-    ..addStatusListener((AnimationStatus currentStatus) {
-      if (currentStatus == AnimationStatus.completed) {
-        return widget.onTap();
-      }
-    });
+    _controller
+      ..addListener(() {
+        final double controllerValue = _controller.value;
+        if (controllerValue < 0.2) {
+          setState(() {
+            _currentState = ButtonState.showOnlyIcon;
+          });
+        } else if (controllerValue > 0.8) {
+          setState(() {
+            _currentState = ButtonState.showTextIcon;
+          });
+        }
+      })
+      ..addStatusListener((AnimationStatus currentStatus) {
+        if (currentStatus == AnimationStatus.completed) {
+          return widget.onTap();
+        }
+      });
 
     _scaleFinalTextAnimation =
         Tween<double>(begin: 0, end: 1).animate(_controller);
@@ -75,13 +98,13 @@ class _AnimatedButtonState extends State<AnimatedButton>
           duration: _smallDuration,
           height: widget.iconSize + 16,
           decoration: BoxDecoration(
-            color: (_currentState == ButtonState.SHOW_ONLY_ICON ||
-                    _currentState == ButtonState.SHOW_TEXT_ICON)
+            color: (_currentState == ButtonState.showOnlyIcon ||
+                    _currentState == ButtonState.showTextIcon)
                 ? widget.buttonStyle.secondaryColor
                 : widget.buttonStyle.primaryColor,
             border: Border.all(
-              color: (_currentState == ButtonState.SHOW_ONLY_ICON ||
-                      _currentState == ButtonState.SHOW_TEXT_ICON)
+              color: (_currentState == ButtonState.showOnlyIcon ||
+                      _currentState == ButtonState.showTextIcon)
                   ? widget.buttonStyle.primaryColor
                   : Colors.transparent,
             ),
@@ -91,7 +114,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
           ),
           padding: EdgeInsets.symmetric(
             horizontal:
-                (_currentState == ButtonState.SHOW_ONLY_ICON) ? 16.0 : 48.0,
+                (_currentState == ButtonState.showOnlyIcon) ? 16.0 : 48.0,
             vertical: 8,
           ),
           child: AnimatedSize(
@@ -100,15 +123,17 @@ class _AnimatedButtonState extends State<AnimatedButton>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                if (_currentState == ButtonState.SHOW_ONLY_ICON ||
-                        _currentState == ButtonState.SHOW_TEXT_ICON) Icon(
-                        widget.iconData,
-                        size: widget.iconSize,
-                        color: widget.buttonStyle.primaryColor,
-                      ) else Container(),
+                if (_currentState == ButtonState.showOnlyIcon ||
+                    _currentState == ButtonState.showTextIcon)
+                  Icon(
+                    widget.iconData,
+                    size: widget.iconSize,
+                    color: widget.buttonStyle.primaryColor,
+                  )
+                else
+                  Container(),
                 SizedBox(
-                  width:
-                      _currentState == ButtonState.SHOW_TEXT_ICON ? 30.0 : 0.0,
+                  width: _currentState == ButtonState.showTextIcon ? 30.0 : 0.0,
                 ),
                 getTextWidget(),
               ],
@@ -120,12 +145,12 @@ class _AnimatedButtonState extends State<AnimatedButton>
   }
 
   Widget getTextWidget() {
-    if (_currentState == ButtonState.SHOW_ONLY_TEXT) {
+    if (_currentState == ButtonState.showOnlyText) {
       return Text(
         widget.initialText,
         style: widget.buttonStyle.initialTextStyle,
       );
-    } else if (_currentState == ButtonState.SHOW_ONLY_ICON) {
+    } else if (_currentState == ButtonState.showOnlyIcon) {
       return Container();
     } else {
       return ScaleTransition(
@@ -139,7 +164,9 @@ class _AnimatedButtonState extends State<AnimatedButton>
   }
 }
 
+///Class that define the style of a button
 class CustomButtonStyle {
+  ///Creates a [CustomButtonStyle]
   CustomButtonStyle({
     required this.primaryColor,
     required this.secondaryColor,
@@ -148,12 +175,34 @@ class CustomButtonStyle {
     required this.elevation,
     required this.borderRadius,
   });
+
+  ///Style for the texted displayed before clicking
   final TextStyle initialTextStyle;
+
+  ///Style for the texted displayed after clicking
   final TextStyle finalTextStyle;
+
+  ///Color of the button before clicking
   final Color primaryColor;
+
+  ///Color of the button before clicking
   final Color secondaryColor;
+
+  ///Button elevation
   final double elevation;
+
+  ///Button border radius
   final double borderRadius;
 }
 
-enum ButtonState { SHOW_ONLY_TEXT, SHOW_ONLY_ICON, SHOW_TEXT_ICON }
+///Enum for button actual state
+enum ButtonState {
+  ///First state where only "Adding to cart" is shown
+  showOnlyText,
+
+  ///Second state where only the validate icon is shown
+  showOnlyIcon,
+
+  ///Last state where the validate icon and "Added" is chown
+  showTextIcon
+}
