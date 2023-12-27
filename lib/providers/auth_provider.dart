@@ -62,8 +62,9 @@ class AuthProvider extends ChangeNotifier {
   }
 
   /// Sets the current user custom and notifies listeners about the change.
-  void setCustomUser(User? user) {
+  void setCustomUser(User? user, {bool isAdmin = false}) {
     _userCustom = user;
+    _userCustom!.isAdmin = isAdmin;
     notifyListeners();
   }
 
@@ -84,7 +85,6 @@ class AuthProvider extends ChangeNotifier {
         );
         _user = credentials.user;
         _credentials = credentials;
-        await fetchUserInfo(credentials);
         notifyListeners();
         return;
       }
@@ -194,7 +194,11 @@ class AuthProvider extends ChangeNotifier {
         if (kDebugMode) {
           print('Response data: ${response.body}');
         }
-        setCustomUser(User.fromJson(jsonDecode(response.body)['profile']));
+        final String role = await fetchUserRoles(credentials);
+        setCustomUser(
+          User.fromJson(jsonDecode(response.body)['profile']),
+          isAdmin: role == 'admin',
+        );
         _isAuthenticated = true;
       } else {
         if (kDebugMode) {
@@ -206,5 +210,44 @@ class AuthProvider extends ChangeNotifier {
         print('Error: $e');
       }
     }
+  }
+
+  /// Fetches user roles from a specified API endpoint and handles the response.
+  Future<String> fetchUserRoles(Credentials credentials) async {
+    final Uri url = Uri.parse(
+      '${dotenv.env['API_URL']}/me/roles',
+    );
+
+    try {
+      final http.Response response = await http.get(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer ${credentials.accessToken}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        if (kDebugMode) {
+          print('Response data: ${response.body}');
+        }
+
+        final String role = (jsonDecode(response.body)['profile'] != null &&
+                jsonDecode(response.body)['profile'].isNotEmpty)
+            ? 'admin'
+            : 'user';
+
+        return role;
+      } else {
+        if (kDebugMode) {
+          print('Request failed with status: ${response.statusCode}.');
+        }
+        return 'user';
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+    }
+    return 'user';
   }
 }

@@ -57,8 +57,8 @@ class UserWidget extends StatelessWidget {
                   margin: const EdgeInsets.only(top: margin, left: margin / 2),
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Your Account',
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    'YOUR ACCOUNT',
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
                           fontStyle: FontStyle.italic,
                         ),
                   ),
@@ -72,12 +72,12 @@ class UserWidget extends StatelessWidget {
                       backgroundImage: NetworkImage(pictureUrl.toString()),
                     ),
                   ),
+                const SizedBox(height: 10),
                 Text(
-                  user?.name ?? '',
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontStyle: FontStyle.italic,
-                      ),
+                  user?.nickname ?? '',
+                  style: Theme.of(context).textTheme.labelLarge!,
                 ),
+                const SizedBox(height: 26),
                 Container(
                   alignment: Alignment.centerLeft,
                   margin: const EdgeInsets.only(
@@ -111,15 +111,20 @@ class UserWidget extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text(
-                          'Orders',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontFamily: 'Jost',
-                            fontWeight: FontWeight.w400,
-                            height: 0,
-                            letterSpacing: 2.40,
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: margin,
+                          ),
+                          child: Text(
+                            'Orders',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontFamily: 'Jost',
+                              fontWeight: FontWeight.w400,
+                              height: 0,
+                              letterSpacing: 2.40,
+                            ),
                           ),
                         ),
                         Icon(Icons.arrow_forward_ios, color: Colors.white),
@@ -128,6 +133,7 @@ class UserWidget extends StatelessWidget {
                     onTap: () => print('hello'),
                   ),
                 ),
+                const SizedBox(height: 26),
                 Container(
                   alignment: Alignment.centerLeft,
                   margin: const EdgeInsets.only(
@@ -161,15 +167,20 @@ class UserWidget extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text(
-                          'Account',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontFamily: 'Jost',
-                            fontWeight: FontWeight.w400,
-                            height: 0,
-                            letterSpacing: 2.40,
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: margin,
+                          ),
+                          child: Text(
+                            'Account',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontFamily: 'Jost',
+                              fontWeight: FontWeight.w400,
+                              height: 0,
+                              letterSpacing: 2.40,
+                            ),
                           ),
                         ),
                         Icon(Icons.arrow_forward_ios, color: Colors.white),
@@ -177,7 +188,120 @@ class UserWidget extends StatelessWidget {
                     ),
                     onTap: () => print('hello'),
                   ),
-                )
+                ),
+                if (user!.isAdmin == true)
+                  Column(
+                    children: <Widget>[
+                      const SizedBox(height: 26),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        margin: const EdgeInsets.only(
+                          top: margin,
+                          bottom: margin,
+                          left: margin,
+                        ),
+                        child: const Text(
+                          'Admin',
+                          style: TextStyle(
+                            color: Color(0xFFC2C2C2),
+                            fontSize: 20,
+                            fontStyle: FontStyle.italic,
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w200,
+                            height: 0,
+                            letterSpacing: 3,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 430,
+                        height: 45,
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            top: BorderSide(color: Color(0xFF3D3D3B)),
+                            bottom: BorderSide(color: Color(0xFF3D3D3B)),
+                          ),
+                        ),
+                        child: InkWell(
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: margin,
+                                ),
+                                child: Text(
+                                  'Items',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontFamily: 'Jost',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0,
+                                    letterSpacing: 2.40,
+                                  ),
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+                            unawaited(
+                              navigatorKey.currentState?.push(
+                                MaterialPageRoute<Widget>(
+                                  builder: (BuildContext context) =>
+                                      AdminItemsWidget(
+                                    navigatorKey: navigatorKey,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Container(
+                        width: 430,
+                        height: 45,
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            top: BorderSide(color: Color(0xFF3D3D3B)),
+                            bottom: BorderSide(color: Color(0xFF3D3D3B)),
+                          ),
+                        ),
+                        child: InkWell(
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: margin,
+                                ),
+                                child: Text(
+                                  'Orders',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontFamily: 'Jost',
+                                    fontWeight: FontWeight.w400,
+                                    height: 0,
+                                    letterSpacing: 2.40,
+                                  ),
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
+                          onTap: () => print('hello'),
+                        ),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),
