@@ -1,15 +1,12 @@
 import 'dart:async';
 
-import 'package:flex_market/components/picture_preview.dart';
 import 'package:flex_market/models/user_profile.dart';
 import 'package:flex_market/pages/admin/admin_items.dart';
 import 'package:flex_market/pages/profile/edit_profile.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/constants.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 /// A widget that displays the user's profile information.
@@ -26,7 +23,8 @@ class UserWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final User? user = context.watch<AuthProvider>().userCustom;
-    final String? pictureUrl = user?.picture;
+    final String? pictureUrl =
+        context.watch<AuthProvider>().userCustom?.picture.toString();
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -191,8 +189,9 @@ class UserWidget extends StatelessWidget {
                       unawaited(
                         navigatorKey.currentState?.push(
                           MaterialPageRoute<Widget>(
-                            builder: (BuildContext context) =>
-                                const EditProfilePage(),
+                            builder: (BuildContext context) => EditProfilePage(
+                              navigatorKey: navigatorKey,
+                            ),
                           ),
                         ),
                       );

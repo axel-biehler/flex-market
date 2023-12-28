@@ -1,15 +1,22 @@
+import 'package:flex_market/components/picture_preview.dart';
 import 'package:flex_market/models/user_profile.dart';
 import 'package:flex_market/providers/auth_provider.dart';
+import 'package:flex_market/providers/image_management_provider.dart';
+import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 /// Edit profile page.
 class EditProfilePage extends StatefulWidget {
   /// Creates an instance of [EditProfilePage].
-  const EditProfilePage({super.key});
+  const EditProfilePage({required this.navigatorKey, super.key});
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
+
+  /// Key used for custom navigation flow inside each app section
+  final GlobalKey<NavigatorState> navigatorKey;
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
@@ -17,6 +24,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _birthDateController;
+
   String _selectedGender = 'Male';
 
   @override
@@ -49,11 +57,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Center(
-                  child: Icon(
-                    Icons.account_circle,
-                    size: 100,
-                    color: Colors.white,
+                Center(
+                  child: Container(
+                    margin: const EdgeInsets.only(top: margin),
+                    alignment: Alignment.center,
+                    child: CircleAvatar(
+                      radius: 70,
+                      backgroundImage: NetworkImage(
+                        context
+                            .watch<AuthProvider>()
+                            .userCustom!
+                            .picture
+                            .toString(),
+                      ),
+                    ),
                   ),
                 ),
                 Positioned(
@@ -62,8 +79,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   child: IconButton(
                     icon: const Icon(Icons.edit),
                     color: Colors.white,
-                    onPressed: () {
-                      // Implement your edit photo logic here
+                    onPressed: () async {
+                      await widget.navigatorKey.currentState?.push(
+                        MaterialPageRoute<Widget>(
+                          builder: (BuildContext context) => PicturePreviewPage(
+                            navigatorKey: widget.navigatorKey,
+                            maxPictures: 1,
+                            callback: (List<XFile> pics) async {
+                              final ImageManagementProvider
+                                  imageManagementProvider =
+                                  context.read<ImageManagementProvider>();
+                              final AuthProvider authProvider =
+                                  context.read<AuthProvider>();
+                              final String? path = await authProvider
+                                  .editProfilePicture(pics.first.name);
+                              await imageManagementProvider.uploadXFileToS3(
+                                pics.first,
+                                path!,
+                              );
+                              imageManagementProvider.clearImageUrls();
+                              await authProvider.fetchUserInfo();
+                              await authProvider.notify();
+                            },
+                          ),
+                        ),
+                      );
                     },
                   ),
                 ),
