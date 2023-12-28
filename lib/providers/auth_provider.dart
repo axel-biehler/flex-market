@@ -45,14 +45,10 @@ class AuthProvider extends ChangeNotifier {
   Credentials? get credentials => _credentials;
 
   /// Init Auth0Web for web-based authentication.
-  Future<Credentials?> initWebAuth() async {
+  Future<void> initWebAuth() async {
     if (kIsWeb) {
-      final Credentials? credentials = await auth0Web.onLoad();
-      _credentials = credentials;
-      _user = credentials?.user;
-      return credentials;
+      await auth0Web.onLoad();
     }
-    return null;
   }
 
   /// Sets the current user and notifies listeners about the change.
@@ -81,6 +77,16 @@ class AuthProvider extends ChangeNotifier {
       if (kIsWeb) {
         final Credentials credentials = await auth0Web.loginWithPopup(
           audience: dotenv.env['AUTH0_AUDIENCE'],
+          scopes: <String>{
+            'openid',
+            'profile',
+            'email',
+            'offline_access',
+            'admin',
+          },
+          parameters: <String, String>{
+            'initial_screen': 'login',
+          },
         );
         _user = credentials.user;
         _credentials = credentials;
@@ -122,6 +128,16 @@ class AuthProvider extends ChangeNotifier {
       if (kIsWeb) {
         final Credentials credentials = await auth0Web.loginWithPopup(
           audience: dotenv.env['AUTH0_AUDIENCE'],
+          scopes: <String>{
+            'openid',
+            'profile',
+            'email',
+            'offline_access',
+            'admin',
+          },
+          parameters: <String, String>{
+            'initial_screen': 'login',
+          },
         );
         _user = credentials.user;
         _credentials = credentials;
