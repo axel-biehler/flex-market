@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flex_market/components/image_viewer.dart';
 import 'package:flex_market/models/item.dart';
 import 'package:flex_market/providers/cart_provider.dart';
 import 'package:flex_market/providers/item_provider.dart';
@@ -94,10 +95,11 @@ class CartItemsWidget extends StatelessWidget {
                           if (item.imagesUrl.isNotEmpty)
                             Padding(
                               padding: const EdgeInsets.all(margin),
-                              child: Image.asset(
-                                item.imagesUrl[0],
-                                width: 130,
-                                height: 130,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(23),
+                                child: ImageViewerWidget(
+                                  url: item.imagesUrl.first,
+                                ),
                               ),
                             ),
                           Expanded(

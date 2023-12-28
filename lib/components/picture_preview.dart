@@ -3,6 +3,7 @@ import 'package:flex_market/components/camera_picker.dart';
 import 'package:flex_market/components/image_picker.dart';
 import 'package:flex_market/providers/image_management_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 /// Build the image item
@@ -52,7 +53,7 @@ class PicturePreviewPage extends StatelessWidget {
   final int maxPictures;
 
   /// Callback function to be executed when the user presses the check button
-  final Future<void> Function() callback;
+  final Future<void> Function(List<XFile> pics) callback;
 
   @override
   Widget build(BuildContext context) {
@@ -81,10 +82,7 @@ class PicturePreviewPage extends StatelessWidget {
             child: Center(
               child: SizedBox(
                 height: imageSize,
-                child: context
-                        .watch<ImageManagementProvider>()
-                        .imageFiles
-                        .isEmpty
+                child: context.watch<ImageManagementProvider>().imageFiles.isEmpty
                     ? Flex(
                         mainAxisAlignment: MainAxisAlignment.center,
                         direction: Axis.vertical,
@@ -105,17 +103,9 @@ class PicturePreviewPage extends StatelessWidget {
                       )
                     : ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: context
-                                .watch<ImageManagementProvider>()
-                                .imageFiles
-                                .length +
-                            1,
+                        itemCount: context.watch<ImageManagementProvider>().imageFiles.length + 1,
                         itemBuilder: (BuildContext context, int index) {
-                          if (index ==
-                              context
-                                  .watch<ImageManagementProvider>()
-                                  .imageFiles
-                                  .length) {
+                          if (index == context.watch<ImageManagementProvider>().imageFiles.length) {
                             return CameraPickerWidget(
                               navigatorKey: navigatorKey,
                               maxPictures: maxPictures,
@@ -143,12 +133,9 @@ class PicturePreviewPage extends StatelessWidget {
               ),
               const SizedBox(width: 24),
               ElevatedButton(
-                onPressed: context
-                        .watch<ImageManagementProvider>()
-                        .imageFiles
-                        .isNotEmpty
+                onPressed: context.watch<ImageManagementProvider>().imageFiles.isNotEmpty
                     ? () async {
-                        await callback();
+                        await callback(context.read<ImageManagementProvider>().imageFiles);
                         navigatorKey.currentState?.pop();
                       }
                     : null,

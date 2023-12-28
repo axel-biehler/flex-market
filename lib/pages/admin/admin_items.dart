@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:flex_market/components/admin_items.dart';
+import 'package:flex_market/components/admin_items_list.dart';
 import 'package:flex_market/pages/admin/admin_item_form.dart';
 import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/utils/constants.dart';
