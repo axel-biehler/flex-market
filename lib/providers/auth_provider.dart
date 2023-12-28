@@ -105,6 +105,7 @@ class AuthProvider extends ChangeNotifier {
       );
       _user = credentials.user;
       _credentials = credentials;
+      print(credentials.accessToken);
       await fetchUserInfo(credentials);
       notifyListeners();
     } catch (e) {
@@ -249,5 +250,52 @@ class AuthProvider extends ChangeNotifier {
       }
     }
     return 'user';
+  }
+
+  /// Edits the current user's profile.
+  Future<bool> editUser(Map<String, dynamic> updates) async {
+    if (_user == null || _credentials == null) {
+      return false;
+    }
+
+    final Uri url = Uri.parse('${dotenv.env['API_URL']}/me');
+    try {
+      final http.Response response = await http.patch(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer ${credentials!.accessToken}',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'name': updates['name'],
+          'nickname': updates['nickname'],
+        }),
+      );
+
+      print(response);
+      print(response.statusCode);
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        // Update local user profile with new details
+        final String role = await fetchUserRoles(credentials!);
+        setCustomUser(
+          User.fromJson(jsonDecode(response.body)['profile']),
+          isAdmin: role == 'admin',
+        );
+        _isAuthenticated = true;
+        notifyListeners();
+        return true;
+      } else {
+        if (kDebugMode) {
+          print('Request failed with status: ${response.statusCode}.');
+        }
+        return false;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+      return false;
+    }
   }
 }

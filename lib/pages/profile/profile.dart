@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flex_market/components/picture_preview.dart';
 import 'package:flex_market/models/user_profile.dart';
 import 'package:flex_market/pages/admin/admin_items.dart';
+import 'package:flex_market/pages/profile/edit_profile.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/foundation.dart';
@@ -186,7 +187,16 @@ class UserWidget extends StatelessWidget {
                         Icon(Icons.arrow_forward_ios, color: Colors.white),
                       ],
                     ),
-                    onTap: () => print('hello'),
+                    onTap: () {
+                      unawaited(
+                        navigatorKey.currentState?.push(
+                          MaterialPageRoute<Widget>(
+                            builder: (BuildContext context) =>
+                                const EditProfilePage(),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 if (user!.isAdmin == true)
