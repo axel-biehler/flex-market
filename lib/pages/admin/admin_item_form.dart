@@ -70,7 +70,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
   late Map<ItemSize, TextEditingController> _stockControllers;
   List<String> imagesUrl = <String>[];
   ItemCategory? selectedCategory;
-  Gender? selectedGender;
+  ItemGender? selectedGender;
   List<Map<String, TextEditingController>> specs = <Map<String, TextEditingController>>[];
   bool _isSubmitting = false;
 
@@ -518,17 +518,17 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: margin),
-                    child: DropdownButtonFormField<Gender>(
+                    child: DropdownButtonFormField<ItemGender>(
                       value: selectedGender,
-                      onChanged: (Gender? newValue) {
+                      onChanged: (ItemGender? newValue) {
                         setState(() {
                           if (!_isSubmitting) {
                             selectedGender = newValue;
                           }
                         });
                       },
-                      items: Gender.values.map((Gender gender) {
-                        return DropdownMenuItem<Gender>(
+                      items: ItemGender.values.map((ItemGender gender) {
+                        return DropdownMenuItem<ItemGender>(
                           value: gender,
                           child: Text(gender.name),
                         );
@@ -537,7 +537,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                         labelText: 'Gender',
                         border: OutlineInputBorder(),
                       ),
-                      validator: (Gender? value) {
+                      validator: (ItemGender? value) {
                         if (value == null) {
                           return 'Please select a category';
                         }

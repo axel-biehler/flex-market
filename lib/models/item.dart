@@ -44,7 +44,7 @@ class Item {
     Map<String, int?> stocks,
     Map<String, dynamic> specs,
     double price,
-    Gender gender,
+    ItemGender gender,
     List<String> imagesUrl,
     String? id,
   ) {

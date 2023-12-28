@@ -3,8 +3,10 @@ import 'dart:convert';
 
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flex_market/models/item.dart';
+import 'package:flex_market/models/search_query.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/constants.dart';
+import 'package:flex_market/utils/enums.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -65,6 +67,28 @@ class ItemProvider extends ChangeNotifier {
   void updateWithAuthProvider(AuthProvider authProvider) {
     this.authProvider = authProvider;
     notifyListeners();
+  }
+
+  /// Method to filter items based on the gender
+  bool matchesGender(SearchPageGender toMatch, String strGender) {
+    final ItemGender? gender = stringToGender(strGender);
+    if (gender == null) {
+      return true;
+    } else if (toMatch == SearchPageGender.all || gender == ItemGender.unisex) {
+      return true;
+    } else if (toMatch.name == gender.name) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /// Method to get a list of items filtered with a [SearchQuery] object.
+  List<Item> getFilteredItems(SearchQuery query) {
+    final Iterable<Item> genderFiltered = items.where((Item item) => matchesGender(query.gender, item.gender));
+    final Iterable<Item> categoryFiltered =
+        genderFiltered.where((Item item) => query.categories.isEmpty || query.categories.contains(stringToItemCategory(item.category)));
+    return categoryFiltered.where((Item item) => item.name.toLowerCase().contains(query.query.toLowerCase())).toList();
   }
 
   /// Fetch all products from the API

@@ -7,3 +7,8 @@ ItemSize? getAvailableSize(Map<String, int> stock) {
   }
   return null;
 }
+
+/// Capitalize the first letter of a string
+String capitalize(String str) {
+  return '${str[0].toUpperCase()}${str.substring(1).toLowerCase()}';
+}
