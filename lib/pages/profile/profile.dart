@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flex_market/components/picture_preview.dart';
 import 'package:flex_market/models/user_profile.dart';
 import 'package:flex_market/pages/admin/admin_items.dart';
+import 'package:flex_market/pages/admin/admin_orders.dart';
+import 'package:flex_market/pages/orders.dart';
 import 'package:flex_market/pages/profile/edit_profile.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/constants.dart';
@@ -131,7 +133,17 @@ class UserWidget extends StatelessWidget {
                         Icon(Icons.arrow_forward_ios, color: Colors.white),
                       ],
                     ),
-                    onTap: () => print('hello'),
+                    onTap: () {
+                      unawaited(
+                        navigatorKey.currentState?.push(
+                          MaterialPageRoute<Widget>(
+                            builder: (BuildContext context) => OrdersWidget(
+                              navigatorKey: navigatorKey,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 26),
@@ -307,7 +319,18 @@ class UserWidget extends StatelessWidget {
                               ),
                             ],
                           ),
-                          onTap: () => print('hello'),
+                          onTap: () {
+                            unawaited(
+                              navigatorKey.currentState?.push(
+                                MaterialPageRoute<Widget>(
+                                  builder: (BuildContext context) =>
+                                      AdminOrdersWidget(
+                                    navigatorKey: navigatorKey,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ],

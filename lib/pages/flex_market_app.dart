@@ -169,6 +169,7 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
               currentIndex: _currentIndex,
               onTap: onItemTapped,
               type: BottomNavigationBarType.fixed,
+              enableFeedback: false,
               showSelectedLabels: false,
               showUnselectedLabels: false,
               selectedIconTheme: const IconThemeData(
@@ -189,19 +190,23 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
                         MapEntry<int, BottomNavigationBarItem>(
                       index,
                       BottomNavigationBarItem(
-                        icon: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: _currentIndex == index
-                              ? BoxDecoration(
-                                  border: Border.all(
-                                    color: const Color(0xFFFF8E26),
-                                    width: 2,
-                                  ),
-                                  color: const Color(0xFF3D3D3B),
-                                  borderRadius: BorderRadius.circular(10),
-                                )
-                              : null,
-                          child: item.icon,
+                        icon: InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: _currentIndex == index
+                                ? BoxDecoration(
+                                    border: Border.all(
+                                      color: const Color(0xFFFF8E26),
+                                      width: 2,
+                                    ),
+                                    color: const Color(0xFF3D3D3B),
+                                    borderRadius: BorderRadius.circular(10),
+                                  )
+                                : null,
+                            child: item.icon,
+                          ),
                         ),
                         label: item.label,
                       ),
