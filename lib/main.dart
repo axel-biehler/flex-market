@@ -78,7 +78,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  if (!kIsWeb) {
+  if (!kIsWeb && !kDebugMode) {
     FlutterError.onError = (FlutterErrorDetails errorDetails) {
       FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
     };
