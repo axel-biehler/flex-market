@@ -3,6 +3,7 @@ import 'package:flex_market/models/item.dart';
 import 'package:flex_market/pages/item.dart';
 import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/utils/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -42,6 +43,9 @@ class ProductSliderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width * 0.6;
+    final ScrollController scrollController = ScrollController();
+    final double cardWidth = screenWidth * 0.4 > 200 ? 200 : screenWidth * 0.4;
+    final double totalItemsWidth = cardWidth * items.length;
 
     return Container(
       width: screenWidth,
@@ -70,15 +74,41 @@ class ProductSliderWidget extends StatelessWidget {
               ],
             ),
           ),
+          if (kIsWeb && totalItemsWidth > screenWidth)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () async {
+                    await scrollController.animateTo(
+                      scrollController.position.pixels - 150,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOut,
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.arrow_forward),
+                  onPressed: () async {
+                    await scrollController.animateTo(
+                      scrollController.position.pixels + 150,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOut,
+                    );
+                  },
+                ),
+              ],
+            ),
           SizedBox(
             height: 200,
             child: ListView.builder(
+              controller: scrollController,
               scrollDirection: Axis.horizontal,
               itemCount: items.length,
               itemBuilder: (BuildContext context, int index) {
                 final Item item = items[index];
                 final bool isFav = context.watch<ItemProvider>().isFavorite(item.id!);
-                final double cardWidth = screenWidth * 0.4 > 200 ? 200 : screenWidth * 0.4;
 
                 return InkWell(
                   onTap: () async {
