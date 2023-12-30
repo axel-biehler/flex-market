@@ -36,10 +36,7 @@ class CartWidget extends StatelessWidget {
                 },
                 child: Text(
                   'OK',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: const Color(0xFF247100)),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: const Color(0xFF247100)),
                 ),
               ),
             ],
@@ -100,11 +97,17 @@ class CartWidget extends StatelessWidget {
                   padding: const EdgeInsets.only(
                     left: 9,
                   ),
-                  child: Text(
-                    '\$${context.watch<CartProvider>().cartPrice}',
-                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontStyle: FontStyle.italic,
-                        ),
+                  child: SizedBox(
+                    width: screenWidth * 0.45,
+                    child: Text(
+                      '\$${context.watch<CartProvider>().cartPrice}',
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            fontStyle: FontStyle.italic,
+                            fontSize: 24,
+                          ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
                   ),
                 ),
                 Container(

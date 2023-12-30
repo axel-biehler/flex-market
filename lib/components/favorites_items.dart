@@ -23,6 +23,9 @@ class FavoritesItemsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
+    const int crossAxisCount = 2;
+    const double crossAxisSpacing = 40;
+    final double cardWidth = (screenWidth - (crossAxisCount - 1) * crossAxisSpacing) / crossAxisCount;
 
     return Container(
       margin: const EdgeInsets.only(top: margin, left: margin / 2),
@@ -53,75 +56,78 @@ class FavoritesItemsWidget extends StatelessWidget {
           Center(
             child: SizedBox(
               height: screenHeight * 0.7,
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 50,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: (screenWidth * 0.5) / (screenHeight * 0.7 / 2.5),
-                ),
-                itemCount: context.watch<ItemProvider>().favorites.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final Item item = context.watch<ItemProvider>().favorites[index];
-                  final bool isFav = context.watch<ItemProvider>().isFavorite(item.id!);
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: margin),
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: crossAxisSpacing,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: cardWidth / (screenHeight * 0.7 / 2.5),
+                  ),
+                  itemCount: context.watch<ItemProvider>().favorites.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final Item item = context.watch<ItemProvider>().favorites[index];
+                    final bool isFav = context.watch<ItemProvider>().isFavorite(item.id!);
 
-                  return InkWell(
-                    onTap: () async {
-                      await navigatorKey.currentState?.push(
-                        MaterialPageRoute<Widget>(
-                          builder: (BuildContext context) => ItemWidget(item: item),
-                        ),
-                      );
-                    },
-                    child: Card(
-                      color: Theme.of(context).primaryColor,
-                      child: Stack(
-                        alignment: Alignment.bottomCenter,
-                        children: <Widget>[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              if (item.imagesUrl.isNotEmpty)
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(23),
-                                  child: ImageViewerWidget(
-                                    url: item.imagesUrl.first,
-                                  ),
-                                ),
-                              Text(
-                                '\$${item.price.toString()}',
-                                style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                      fontStyle: FontStyle.italic,
+                    return InkWell(
+                      onTap: () async {
+                        await navigatorKey.currentState?.push(
+                          MaterialPageRoute<Widget>(
+                            builder: (BuildContext context) => ItemWidget(item: item),
+                          ),
+                        );
+                      },
+                      child: Card(
+                        color: Theme.of(context).primaryColor,
+                        child: Stack(
+                          alignment: Alignment.bottomCenter,
+                          children: <Widget>[
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                if (item.imagesUrl.isNotEmpty)
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(23),
+                                    child: ImageViewerWidget(
+                                      url: item.imagesUrl.first,
                                     ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                              Text(
-                                item.name,
-                                style: Theme.of(context).textTheme.bodySmall,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ],
-                          ),
-                          Positioned(
-                            top: 3,
-                            left: 3,
-                            child: IconButton(
-                              icon: SvgPicture.asset(
-                                isFav ? 'assets/fav-filled.svg' : 'assets/fav.svg',
-                                height: isFav ? 25 : 40,
-                              ),
-                              color: isFav ? Colors.red : null,
-                              onPressed: () async => context.read<ItemProvider>().toggleFavorites(item.id!),
-                              highlightColor: Theme.of(context).colorScheme.secondary,
+                                  ),
+                                Text(
+                                  '\$${item.price.toString()}',
+                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                                Text(
+                                  item.name,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                            Positioned(
+                              top: 3,
+                              left: 3,
+                              child: IconButton(
+                                icon: SvgPicture.asset(
+                                  isFav ? 'assets/fav-filled.svg' : 'assets/fav.svg',
+                                  height: isFav ? 25 : 40,
+                                ),
+                                color: isFav ? Colors.red : null,
+                                onPressed: () async => context.read<ItemProvider>().toggleFavorites(item.id!),
+                                highlightColor: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),
