@@ -3,6 +3,7 @@ import 'package:flex_market/pages/search/search_results.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flex_market/utils/enums.dart';
 import 'package:flex_market/utils/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Search page with query options
@@ -58,14 +59,14 @@ class SearchPageWidgetState extends State<SearchPageWidget> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
           Container(
             height: screenHeight * 0.10,
-            width: double.infinity,
+            width: screenWidth,
             decoration: const BoxDecoration(
               border: Border(
                 bottom: BorderSide(
@@ -108,6 +109,9 @@ class SearchPageWidgetState extends State<SearchPageWidget> {
                         )
                       : null,
                   border: InputBorder.none,
+                ),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
             ),
@@ -166,30 +170,38 @@ class SearchPageWidgetState extends State<SearchPageWidget> {
               }).toList(),
             ),
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: ItemCategory.values.length,
-            itemBuilder: (BuildContext context, int index) {
-              final ItemCategory category = ItemCategory.values[index];
-              return Container(
-                height: 50,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: selectedCategories.contains(category) ? const Color(0xFF3D3D3B) : Theme.of(context).primaryColor,
-                  border: const Border(bottom: BorderSide(color: Color(0xFF3D3D3B))),
-                ),
-                child: InkWell(
-                  onTap: () => _toggleCategory(category),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      left: 29,
-                      top: 13,
-                    ),
-                    child: Text(capitalize(category.name)),
+          SizedBox(
+            width: screenWidth,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: ItemCategory.values.length,
+              itemBuilder: (BuildContext context, int index) {
+                final ItemCategory category = ItemCategory.values[index];
+                return Container(
+                  height: 50,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: selectedCategories.contains(category) ? const Color(0xFF3D3D3B) : Theme.of(context).primaryColor,
+                    border: const Border(bottom: BorderSide(color: Color(0xFF3D3D3B))),
                   ),
-                ),
-              );
-            },
+                  child: InkWell(
+                    onTap: () => _toggleCategory(category),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 29,
+                        top: 13,
+                      ),
+                      child: Text(
+                        capitalize(category.name),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
           Padding(
             padding: const EdgeInsets.only(
