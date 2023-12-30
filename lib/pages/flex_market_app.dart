@@ -96,17 +96,6 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
     ),
     NavigationItem(
       navigatorKey: GlobalKey<NavigatorState>(),
-      pageBuilder: (GlobalKey<NavigatorState> key) => CartWidget(navigatorKey: key),
-      icon: Image.asset(
-        'assets/profile.png',
-        height: 22,
-        width: 22,
-      ),
-      label: 'Profile',
-    ),
-    /*
-    NavigationItem(
-      navigatorKey: GlobalKey<NavigatorState>(),
       pageBuilder: (GlobalKey<NavigatorState> key) => UserWidget(navigatorKey: key),
       icon: Image.asset(
         'assets/profile.png',
@@ -115,7 +104,6 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
       ),
       label: 'Profile',
     ),
-     */
   ];
 
   void onItemTapped(int index) {
