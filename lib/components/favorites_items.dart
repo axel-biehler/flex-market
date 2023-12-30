@@ -83,34 +83,31 @@ class FavoritesItemsWidget extends StatelessWidget {
                         child: Stack(
                           alignment: Alignment.bottomCenter,
                           children: <Widget>[
-                            SizedBox(
-                              width: cardWidth,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  if (item.imagesUrl.isNotEmpty)
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(23),
-                                      child: ImageViewerWidget(
-                                        url: item.imagesUrl.first,
-                                      ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                if (item.imagesUrl.isNotEmpty)
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(23),
+                                    child: ImageViewerWidget(
+                                      url: item.imagesUrl.first,
                                     ),
-                                  Text(
-                                    '\$${item.price.toString()}',
-                                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
                                   ),
-                                  Text(
-                                    item.name,
-                                    style: Theme.of(context).textTheme.bodySmall,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                ],
-                              ),
+                                Text(
+                                  '\$${item.price.toString()}',
+                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                                Text(
+                                  item.name,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ],
                             ),
                             Positioned(
                               top: 3,

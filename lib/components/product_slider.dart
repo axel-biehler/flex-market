@@ -41,6 +41,8 @@ class ProductSliderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
       margin: const EdgeInsets.only(top: margin, left: margin / 2),
       child: Column(
@@ -84,46 +86,56 @@ class ProductSliderWidget extends StatelessWidget {
                       ),
                     );
                   },
-                  child: Card(
-                    color: Theme.of(context).primaryColor,
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            if (item.imagesUrl.isNotEmpty)
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(23),
-                                child: ImageViewerWidget(
-                                  url: item.imagesUrl.first,
-                                ),
-                              ),
-                            Text(
-                              '\$${item.price.toString()}',
-                              style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                    fontStyle: FontStyle.italic,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: margin / 2),
+                    child: Card(
+                      color: Theme.of(context).primaryColor,
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: <Widget>[
+                          SizedBox(
+                            width: screenWidth * 0.4,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                if (item.imagesUrl.isNotEmpty)
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(23),
+                                    child: ImageViewerWidget(
+                                      url: item.imagesUrl.first,
+                                    ),
                                   ),
+                                Text(
+                                  '\$${item.price.toString()}',
+                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                                Text(
+                                  item.name,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ],
                             ),
-                            Text(
-                              item.name,
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                        Positioned(
-                          left: 3,
-                          top: 3,
-                          child: IconButton(
-                            icon: SvgPicture.asset(
-                              isFav ? 'assets/fav-filled.svg' : 'assets/fav.svg',
-                              height: isFav ? 25 : 40,
-                            ),
-                            onPressed: () async => context.read<ItemProvider>().toggleFavorites(item.id!),
-                            highlightColor: Theme.of(context).colorScheme.secondary,
                           ),
-                        ),
-                      ],
+                          Positioned(
+                            left: 3,
+                            top: 3,
+                            child: IconButton(
+                              icon: SvgPicture.asset(
+                                isFav ? 'assets/fav-filled.svg' : 'assets/fav.svg',
+                                height: isFav ? 25 : 40,
+                              ),
+                              onPressed: () async => context.read<ItemProvider>().toggleFavorites(item.id!),
+                              highlightColor: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
