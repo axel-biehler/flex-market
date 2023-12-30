@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import 'package:flex_market/components/image_viewer.dart';
 import 'package:flex_market/components/picture_preview.dart';
+import 'package:flex_market/models/add_pics_response.dart';
 import 'package:flex_market/models/item.dart';
 import 'package:flex_market/providers/image_management_provider.dart';
 import 'package:flex_market/providers/item_provider.dart';
@@ -70,7 +72,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
   late Map<ItemSize, TextEditingController> _stockControllers;
   List<String> imagesUrl = <String>[];
   ItemCategory? selectedCategory;
-  Gender? selectedGender;
+  ItemGender? selectedGender;
   List<Map<String, TextEditingController>> specs = <Map<String, TextEditingController>>[];
   bool _isSubmitting = false;
 
@@ -108,6 +110,9 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
         'value': TextEditingController(text: value),
       });
     });
+    if (widget.isEdit && widget.item != null) {
+      imagesUrl = widget.item!.imagesUrl.isNotEmpty ? widget.item!.imagesUrl : <String>[];
+    }
   }
 
   @override
@@ -184,11 +189,11 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
         if (status || urls.length == imagesUrl.length) {
           showDialogBoxAdd();
         }
-
         setState(() {
           _isSubmitting = false;
         });
       }
+      imageManagementProvider.clearImages();
     }
   }
 
@@ -352,19 +357,74 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         children: <Widget>[
-                          ...context.watch<ImageManagementProvider>().imageFiles.map((XFile file) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: margin),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(23),
-                                child: Image.file(
-                                  File(file.path),
-                                  width: screenWidth - 120,
-                                  fit: BoxFit.cover,
+                          if (widget.isEdit && widget.item != null)
+                            ...imagesUrl.map((String url) {
+                              return Padding(
+                                padding: const EdgeInsets.only(right: margin),
+                                child: Stack(
+                                  children: <Widget>[
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(23),
+                                      child: SizedBox(
+                                        width: MediaQuery.of(context).size.width * 0.9,
+                                        height: screenWidth - 120,
+                                        child: ImageViewerWidget(
+                                          url: url,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 3,
+                                      left: 3,
+                                      child: IconButton(
+                                        icon: const Icon(Icons.delete),
+                                        color: Colors.white,
+                                        onPressed: () {
+                                          setState(() {
+                                            imagesUrl.remove(url);
+                                          });
+                                        },
+                                        highlightColor: Theme.of(context).colorScheme.secondary,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            );
-                          }),
+                              );
+                            }),
+                          if (!widget.isEdit)
+                            ...context.watch<ImageManagementProvider>().imageFiles.map((XFile file) {
+                              return Padding(
+                                padding: const EdgeInsets.only(right: margin),
+                                child: Stack(
+                                  children: <Widget>[
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(23),
+                                      child: SizedBox(
+                                        width: MediaQuery.of(context).size.width * 0.9,
+                                        height: screenWidth - 120,
+                                        child: Image.file(
+                                          File(file.path),
+                                          width: screenWidth - 120,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 3,
+                                      left: 3,
+                                      child: IconButton(
+                                        icon: const Icon(Icons.delete),
+                                        color: Colors.white,
+                                        onPressed: () {
+                                          context.read<ImageManagementProvider>().removeImage(file);
+                                        },
+                                        highlightColor: Theme.of(context).colorScheme.secondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
                           SizedBox(
                             height: screenWidth - 120,
                             width: screenWidth - 120,
@@ -384,10 +444,29 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                                         navigatorKey: widget.navigatorKey,
                                         maxPictures: 5,
                                         callback: (List<XFile> pics) async {
-                                          imagesUrl = pics.map((XFile e) => e.name).toList();
-                                          if (kDebugMode) {
-                                            print(imagesUrl);
-                                            print(pics);
+                                          if (!widget.isEdit) {
+                                            setState(() {
+                                              imagesUrl = pics.map((XFile e) => e.name).toList();
+                                            });
+                                            if (kDebugMode) {
+                                              print(imagesUrl);
+                                              print(pics);
+                                            }
+                                          } else if (widget.isEdit && widget.item != null && widget.item!.id != null) {
+                                            final ImageManagementProvider imageManagementProvider = context.read<ImageManagementProvider>();
+                                            final AddPicsResponse addPicsResponse =
+                                                await context.read<ItemProvider>().getPresignedUrls(pics, widget.item!.id!);
+                                            for (int i = 0; i < pics.length; i++) {
+                                              await imageManagementProvider.uploadXFileToS3(pics[i], addPicsResponse.presignedUrls[i]);
+                                            }
+                                            setState(() {
+                                              imagesUrl.addAll(addPicsResponse.imageUrls);
+                                            });
+                                            imageManagementProvider.clearImages();
+                                            if (kDebugMode) {
+                                              print(addPicsResponse.presignedUrls);
+                                              print(addPicsResponse.imageUrls);
+                                            }
                                           }
                                         },
                                       ),
@@ -518,17 +597,17 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: margin),
-                    child: DropdownButtonFormField<Gender>(
+                    child: DropdownButtonFormField<ItemGender>(
                       value: selectedGender,
-                      onChanged: (Gender? newValue) {
+                      onChanged: (ItemGender? newValue) {
                         setState(() {
                           if (!_isSubmitting) {
                             selectedGender = newValue;
                           }
                         });
                       },
-                      items: Gender.values.map((Gender gender) {
-                        return DropdownMenuItem<Gender>(
+                      items: ItemGender.values.map((ItemGender gender) {
+                        return DropdownMenuItem<ItemGender>(
                           value: gender,
                           child: Text(gender.name),
                         );
@@ -537,7 +616,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                         labelText: 'Gender',
                         border: OutlineInputBorder(),
                       ),
-                      validator: (Gender? value) {
+                      validator: (ItemGender? value) {
                         if (value == null) {
                           return 'Please select a category';
                         }
@@ -576,6 +655,7 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                               child: TextFormField(
                                 enabled: !_isSubmitting,
                                 controller: _stockControllers[size],
+                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                   labelText: size.name.toUpperCase(),
                                   border: const OutlineInputBorder(),

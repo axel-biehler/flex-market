@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flex_market/pages/cart.dart';
 import 'package:flex_market/pages/favorites.dart';
 import 'package:flex_market/pages/hero.dart';
@@ -113,6 +115,16 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(initializeAuth());
+  }
+
+  Future<void> initializeAuth() async {
+    await context.read<AuthProvider>().initWebAuth();
   }
 
   @override

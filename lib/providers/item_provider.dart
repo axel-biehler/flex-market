@@ -2,11 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:auth0_flutter/auth0_flutter.dart';
+import 'package:flex_market/models/add_pics_response.dart';
 import 'package:flex_market/models/item.dart';
+import 'package:flex_market/models/search_query.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/constants.dart';
+import 'package:flex_market/utils/enums.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 /// Manages the application state including user authentication,
 /// product data, and shopping cart functionality.
@@ -65,6 +69,28 @@ class ItemProvider extends ChangeNotifier {
   void updateWithAuthProvider(AuthProvider authProvider) {
     this.authProvider = authProvider;
     notifyListeners();
+  }
+
+  /// Method to filter items based on the gender
+  bool matchesGender(SearchPageGender toMatch, String strGender) {
+    final ItemGender? gender = stringToGender(strGender);
+    if (gender == null) {
+      return true;
+    } else if (toMatch == SearchPageGender.all || gender == ItemGender.unisex) {
+      return true;
+    } else if (toMatch.name == gender.name) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /// Method to get a list of items filtered with a [SearchQuery] object.
+  List<Item> getFilteredItems(SearchQuery query) {
+    final Iterable<Item> genderFiltered = items.where((Item item) => matchesGender(query.gender, item.gender));
+    final Iterable<Item> categoryFiltered =
+        genderFiltered.where((Item item) => query.categories.isEmpty || query.categories.contains(stringToItemCategory(item.category)));
+    return categoryFiltered.where((Item item) => item.name.toLowerCase().contains(query.query.toLowerCase())).toList();
   }
 
   /// Fetch all products from the API
@@ -363,6 +389,54 @@ class ItemProvider extends ChangeNotifier {
         print('Error: $e');
       }
       throw Exception('Failed to load product');
+    }
+  }
+
+  /// Get an array of presigned urls used to upload pictures
+  Future<AddPicsResponse> getPresignedUrls(List<XFile> pictures, String productId) async {
+    final Uri url = Uri.parse(
+      '$apiUrl/products/$productId',
+    );
+    final List<String> picsNames = pictures.map((XFile e) => e.name).toList();
+
+    final Credentials? credentials = authProvider.credentials;
+    if (credentials == null) {
+      throw Exception('No credentials available. User must be logged in.');
+    }
+
+    try {
+      final http.Response response = await http.post(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer ${credentials.accessToken}',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'imagesUrl': picsNames,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic data = json.decode(response.body);
+        final List<String> presignedUrls = List<String>.from(data['presignedUrls']);
+        final List<String> imageUrls = List<String>.from(data['imageUrls']);
+        if (kDebugMode) {
+          print('Add pictures data: $data');
+        }
+        return AddPicsResponse(
+          presignedUrls: presignedUrls,
+          imageUrls: imageUrls,
+        );
+      } else {
+        if (kDebugMode) {
+          print('Request failed with status: ${response.statusCode}.');
+        }
+        throw Exception('Failed to add pictures');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+      throw Exception('Failed to add pictures');
     }
   }
 }

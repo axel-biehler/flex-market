@@ -1,5 +1,8 @@
+import 'package:flex_market/models/search_query.dart';
+import 'package:flex_market/pages/search_results.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flex_market/utils/enums.dart';
+import 'package:flex_market/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 /// Search page with query options
@@ -16,28 +19,46 @@ class SearchPageWidget extends StatefulWidget {
 
 /// Search page state
 class SearchPageWidgetState extends State<SearchPageWidget> {
-  /// Search query text input value
-  String searchText = '';
+  /// Controller for the query text input
+  final TextEditingController _searchController = TextEditingController();
 
   /// Search query gender parameter
-  SearchPageGender? selectedGender = SearchPageGender.all;
+  SearchPageGender selectedGender = SearchPageGender.all;
+
+  /// Search query categories parameter
+  List<ItemCategory> selectedCategories = <ItemCategory>[];
+
+  void _toggleCategory(ItemCategory category) {
+    setState(() {
+      if (selectedCategories.contains(category)) {
+        selectedCategories.remove(category);
+      } else {
+        selectedCategories.add(category);
+      }
+    });
+  }
+
+  /// Trigger search action
+  Future<void> search() async {
+    final SearchQuery searchQuery = SearchQuery(
+      query: _searchController.text,
+      gender: selectedGender,
+      categories: selectedCategories,
+    );
+    await widget.navigatorKey.currentState?.push(
+      MaterialPageRoute<Widget>(
+        builder: (BuildContext context) => SearchResultsWidget(
+          navigatorKey: widget.navigatorKey,
+          searchQuery: searchQuery,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
-    final List<String> categories = <String>[
-      'Tops',
-      'Bottoms',
-      'Dresses',
-      'Outer Wear',
-      'Under Wear',
-      'Foot Wear',
-      'Accessories',
-      'Sleep Wear',
-      'Athletic',
-      'Swimm Wear',
-    ];
 
     return SingleChildScrollView(
       child: Column(
@@ -54,6 +75,7 @@ class SearchPageWidgetState extends State<SearchPageWidget> {
             ),
             child: Center(
               child: TextField(
+                controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Search...',
                   hintStyle: TextStyle(
@@ -75,23 +97,18 @@ class SearchPageWidgetState extends State<SearchPageWidget> {
                       ),
                     ),
                   ),
-                  suffixIcon: searchText.isNotEmpty
+                  suffixIcon: _searchController.text.isNotEmpty
                       ? IconButton(
                           icon: const Icon(Icons.close),
                           onPressed: () {
                             setState(() {
-                              searchText = '';
+                              _searchController.text = '';
                             });
                           },
                         )
                       : null,
                   border: InputBorder.none,
                 ),
-                onChanged: (String text) {
-                  setState(() {
-                    searchText = text;
-                  });
-                },
               ),
             ),
           ),
@@ -149,54 +166,47 @@ class SearchPageWidgetState extends State<SearchPageWidget> {
               }).toList(),
             ),
           ),
-          ...categories.map((String category) {
-            return Container(
-              height: 50,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                border: const Border(bottom: BorderSide(color: Color(0xFF3D3D3B))),
-              ),
-              child: InkWell(
-                onTap: () {
-                  // Handle category selection
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 29,
-                    top: 13,
-                  ),
-                  child: Text(category),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: ItemCategory.values.length,
+            itemBuilder: (BuildContext context, int index) {
+              final ItemCategory category = ItemCategory.values[index];
+              return Container(
+                height: 50,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: selectedCategories.contains(category) ? const Color(0xFF3D3D3B) : Theme.of(context).primaryColor,
+                  border: const Border(bottom: BorderSide(color: Color(0xFF3D3D3B))),
                 ),
-              ),
-            );
-          }),
-          Container(
-            margin: const EdgeInsets.only(top: margin),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: const Color(0xFF3D3D3B),
-              ),
-              borderRadius: const BorderRadius.all(Radius.circular(12)),
-              color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => _toggleCategory(category),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 29,
+                      top: 13,
+                    ),
+                    child: Text(capitalize(category.name)),
+                  ),
+                ),
+              );
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              top: margin,
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 3),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Handle search action
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF3D3D3B),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+            child: ElevatedButton(
+              onPressed: search,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF3D3D3B),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Text(
-                  'Search',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
+              ),
+              child: Text(
+                'Search',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
             ),

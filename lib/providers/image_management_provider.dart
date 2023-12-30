@@ -51,4 +51,16 @@ class ImageManagementProvider with ChangeNotifier {
       }
     }
   }
+
+  /// Remove an image from the array [_imageFiles]
+  void removeImage(XFile file) {
+    _imageFiles.remove(file);
+    notifyListeners();
+  }
+
+  /// Clear the images loaded in [_imageFiles]
+  void clearImages() {
+    _imageFiles.clear();
+    notifyListeners();
+  }
 }

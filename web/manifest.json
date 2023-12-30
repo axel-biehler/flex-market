@@ -1,11 +1,11 @@
 {
-    "name": "flex_market",
-    "short_name": "flex_market",
+    "name": "flex-market",
+    "short_name": "flex-market",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Flex market online clothing store.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

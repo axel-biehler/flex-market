@@ -1,11 +1,16 @@
 import 'dart:async';
+import 'dart:ui';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flex_market/firebase_options.dart';
 import 'package:flex_market/pages/flex_market_app.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/providers/cart_provider.dart';
 import 'package:flex_market/providers/image_management_provider.dart';
 import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/providers/order_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:nested/nested.dart';
@@ -77,6 +82,20 @@ class App extends StatelessWidget {
 /// It initializes environment variables and sets up the provider for state management.
 void main() async {
   await dotenv.load();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  if (!kIsWeb && !kDebugMode) {
+    FlutterError.onError = (FlutterErrorDetails errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+    };
+    // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+    PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+  }
 
   runApp(
     MultiProvider(

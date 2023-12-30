@@ -1,5 +1,7 @@
+import 'dart:math';
 import 'package:flex_market/components/image_viewer.dart';
 import 'package:flex_market/models/item.dart';
+import 'package:flex_market/models/search_query.dart';
 import 'package:flex_market/pages/item.dart';
 import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/utils/constants.dart';
@@ -7,22 +9,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-/// A widget that displays the items marked as favorites vertically.
-///
-/// This widget creates a vertical list of item cards, each card displaying
-/// a product image, its price, and title. Each item card also includes an
-/// option to add or remove the product from favorites.
-class FavoritesItemsWidget extends StatelessWidget {
-  /// Creates a [FavoritesItemsWidget].
-  const FavoritesItemsWidget({required this.navigatorKey, super.key});
+/// Search page with query options
+class SearchResultsWidget extends StatefulWidget {
+  /// Creates a new [SearchResultsWidget].
+  const SearchResultsWidget({
+    required this.navigatorKey,
+    required this.searchQuery,
+    super.key,
+  });
 
   /// Key used for custom navigation flow inside each app section
   final GlobalKey<NavigatorState> navigatorKey;
 
+  /// [SearchQuery] object containing the query parameters
+  final SearchQuery searchQuery;
+
+  @override
+  SearchResultsWidgetState createState() => SearchResultsWidgetState();
+}
+
+/// Search page state
+class SearchResultsWidgetState extends State<SearchResultsWidget> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
+    final List<Item> searchResults = context.read<ItemProvider>().getFilteredItems(widget.searchQuery);
 
     return Container(
       margin: const EdgeInsets.only(top: margin, left: margin / 2),
@@ -30,22 +42,46 @@ class FavoritesItemsWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            margin: const EdgeInsets.only(left: margin),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Text>[
-                Text(
-                  'Your favorites',
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontStyle: FontStyle.italic,
+            margin: const EdgeInsets.only(left: margin / 3),
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(right: margin),
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      color: Color(0xFF3D3D3B),
+                    ),
+                    child: IconButton(
+                      icon: Transform.rotate(
+                        angle: pi,
+                        child: SvgPicture.asset(
+                          'assets/arrow.svg',
+                          height: 20,
+                        ),
                       ),
+                      onPressed: () => widget.navigatorKey.currentState?.pop(),
+                      highlightColor: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
                 ),
-                Text(
-                  '${context.watch<ItemProvider>().favorites.length.toString()} items',
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        fontSize: 14,
-                        fontStyle: FontStyle.italic,
-                      ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Text>[
+                    Text(
+                      'Results',
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                            fontStyle: FontStyle.italic,
+                          ),
+                    ),
+                    Text(
+                      '${searchResults.length} items',
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                            fontSize: 14,
+                            fontStyle: FontStyle.italic,
+                          ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -60,14 +96,12 @@ class FavoritesItemsWidget extends StatelessWidget {
                   mainAxisSpacing: 10,
                   childAspectRatio: (screenWidth * 0.5) / (screenHeight * 0.7 / 2.5),
                 ),
-                itemCount: context.watch<ItemProvider>().favorites.length,
+                itemCount: searchResults.length,
                 itemBuilder: (BuildContext context, int index) {
-                  final Item item = context.watch<ItemProvider>().favorites[index];
-                  final bool isFav = context.watch<ItemProvider>().isFavorite(item.id!);
-
+                  final Item item = searchResults[index];
                   return InkWell(
                     onTap: () async {
-                      await navigatorKey.currentState?.push(
+                      await widget.navigatorKey.currentState?.push(
                         MaterialPageRoute<Widget>(
                           builder: (BuildContext context) => ItemWidget(item: item),
                         ),
@@ -103,19 +137,6 @@ class FavoritesItemsWidget extends StatelessWidget {
                                 maxLines: 1,
                               ),
                             ],
-                          ),
-                          Positioned(
-                            top: 3,
-                            left: 3,
-                            child: IconButton(
-                              icon: SvgPicture.asset(
-                                isFav ? 'assets/fav-filled.svg' : 'assets/fav.svg',
-                                height: isFav ? 25 : 40,
-                              ),
-                              color: isFav ? Colors.red : null,
-                              onPressed: () async => context.read<ItemProvider>().toggleFavorites(item.id!),
-                              highlightColor: Theme.of(context).colorScheme.secondary,
-                            ),
                           ),
                         ],
                       ),

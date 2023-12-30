@@ -1,5 +1,5 @@
 /// Enum for the genders
-enum Gender {
+enum ItemGender {
   /// Men
   men,
 
@@ -10,13 +10,13 @@ enum Gender {
   unisex,
 }
 
-/// Returns a [Gender] enum value corresponding to the given string
-Gender? stringToGender(String? genderString) {
+/// Returns a [ItemGender] enum value corresponding to the given string
+ItemGender? stringToGender(String? genderString) {
   if (genderString == null) {
     return null;
   }
-  return Gender.values.firstWhere(
-    (Gender e) => e.name == genderString.toLowerCase(),
+  return ItemGender.values.firstWhere(
+    (ItemGender e) => e.name == genderString.toLowerCase(),
     orElse: () => throw ArgumentError('Invalid gender string: $genderString'),
   );
 }
