@@ -41,9 +41,10 @@ class ProductSliderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(context).size.width * 0.6;
 
     return Container(
+      width: screenWidth,
       margin: const EdgeInsets.only(top: margin, left: margin / 2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,6 +78,7 @@ class ProductSliderWidget extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 final Item item = items[index];
                 final bool isFav = context.watch<ItemProvider>().isFavorite(item.id!);
+                final double cardWidth = screenWidth * 0.4 > 200 ? 200 : screenWidth * 0.4;
 
                 return InkWell(
                   onTap: () async {
@@ -94,7 +96,7 @@ class ProductSliderWidget extends StatelessWidget {
                         alignment: Alignment.bottomCenter,
                         children: <Widget>[
                           SizedBox(
-                            width: screenWidth * 0.4,
+                            width: cardWidth,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[

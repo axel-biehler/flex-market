@@ -1,6 +1,7 @@
 import 'package:flex_market/components/product_slider.dart';
 import 'package:flex_market/models/item.dart';
 import 'package:flex_market/providers/item_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +27,7 @@ class HomeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
     final Map<String, List<Item>> items = context.watch<ItemProvider>().itemsByCategory;
 
     return SingleChildScrollView(
