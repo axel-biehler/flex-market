@@ -60,13 +60,13 @@ class SearchPageWidgetState extends State<SearchPageWidget> {
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
+    final double textFieldPadding = kIsWeb ? MediaQuery.of(context).size.width * 0.2 : 0;
 
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
           Container(
             height: screenHeight * 0.10,
-            width: screenWidth,
             decoration: const BoxDecoration(
               border: Border(
                 bottom: BorderSide(
@@ -74,44 +74,47 @@ class SearchPageWidgetState extends State<SearchPageWidget> {
                 ),
               ),
             ),
-            child: Center(
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary.withAlpha(127),
-                    fontWeight: FontWeight.w300,
-                  ),
-                  prefixIcon: Container(
-                    margin: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xFF3D3D3B),
+            child: Padding(
+              padding: EdgeInsets.only(left: textFieldPadding),
+              child: Center(
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search...',
+                    hintStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary.withAlpha(127),
+                      fontWeight: FontWeight.w300,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Image.asset(
-                        'assets/search.png',
-                        width: 22,
-                        height: 22,
+                    prefixIcon: Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFF3D3D3B),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Image.asset(
+                          'assets/search.png',
+                          width: 22,
+                          height: 22,
+                        ),
                       ),
                     ),
+                    suffixIcon: _searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              setState(() {
+                                _searchController.text = '';
+                              });
+                            },
+                          )
+                        : null,
+                    border: InputBorder.none,
                   ),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            setState(() {
-                              _searchController.text = '';
-                            });
-                          },
-                        )
-                      : null,
-                  border: InputBorder.none,
-                ),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
               ),
             ),

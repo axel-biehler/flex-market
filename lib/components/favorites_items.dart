@@ -3,6 +3,7 @@ import 'package:flex_market/models/item.dart';
 import 'package:flex_market/pages/item.dart';
 import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/utils/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -22,10 +23,11 @@ class FavoritesItemsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
     const int crossAxisCount = 2;
     const double crossAxisSpacing = 40;
     final double cardWidth = (screenWidth - (crossAxisCount - 1) * crossAxisSpacing) / crossAxisCount;
+    final double headerLeftMargin = kIsWeb ? MediaQuery.of(context).size.width * 0.2 + margin : margin;
 
     return Container(
       margin: const EdgeInsets.only(top: margin, left: margin / 2),
@@ -33,7 +35,8 @@ class FavoritesItemsWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            margin: const EdgeInsets.only(left: margin),
+            width: cardWidth,
+            margin: EdgeInsets.only(left: headerLeftMargin),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Text>[
@@ -55,6 +58,7 @@ class FavoritesItemsWidget extends StatelessWidget {
           ),
           Center(
             child: SizedBox(
+              width: screenWidth,
               height: screenHeight * 0.7,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: margin),
