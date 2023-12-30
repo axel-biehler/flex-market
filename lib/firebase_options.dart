@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart'
 /// );
 /// ```
 class DefaultFirebaseOptions {
+  /// Returns the [FirebaseOptions] for the current platform.
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
       return web;
@@ -39,6 +40,7 @@ class DefaultFirebaseOptions {
           'DefaultFirebaseOptions have not been configured for linux - '
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
+      // ignore: no_default_cases
       default:
         throw UnsupportedError(
           'DefaultFirebaseOptions are not supported for this platform.',
@@ -46,6 +48,7 @@ class DefaultFirebaseOptions {
     }
   }
 
+  /// Returns the [FirebaseOptions] for the web platform.
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyBAWRfBpGFUg4cFy7ADnRWB6tREeeEt1oo',
     appId: '1:1022222703700:web:915bb286a6ec9426c6a1c1',
@@ -56,6 +59,7 @@ class DefaultFirebaseOptions {
     measurementId: 'G-RBET60YJDK',
   );
 
+  /// Returns the [FirebaseOptions] for the android platform.
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCFGk9neS9kC4Q8tyUGqqc3QFSVSVcA2vg',
     appId: '1:1022222703700:android:f376d35738aa7a06c6a1c1',
@@ -64,6 +68,7 @@ class DefaultFirebaseOptions {
     storageBucket: 'flex-market-cc177.appspot.com',
   );
 
+  /// Returns the [FirebaseOptions] for the iOS platform.
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBQWfTw4tuSWAHdZLnTsSl8mDqPIGZuBEY',
     appId: '1:1022222703700:ios:e78db21aff43dd57c6a1c1',
