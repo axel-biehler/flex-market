@@ -77,7 +77,6 @@ class OrderItem {
   OrderItem({
     required this.itemId,
     required this.quantity,
-    required this.price,
     required this.size,
   });
 
@@ -86,19 +85,17 @@ class OrderItem {
     return OrderItem(
       itemId: json['itemId'],
       quantity: json['quantity'],
-      price: json['price'].toDouble(),
       size: stringToSize(json['size'])!,
     );
   }
 
   /// Returns a JSON String from the OrderItem object
-  String toJson() {
-    return jsonEncode(<String, dynamic>{
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
       'itemId': itemId,
       'quantity': quantity,
-      'price': price,
-      'size': size,
-    });
+      'size': sizeToString(size),
+    };
   }
 
   /// id of the item in the order.
@@ -106,9 +103,6 @@ class OrderItem {
 
   /// Quantity of the item ordered.
   final int quantity;
-
-  /// Price of the item.
-  final double price;
 
   /// Size of the item.
   final ItemSize size;
@@ -131,11 +125,11 @@ class CreateOrderDto {
   }
 
   /// Returns a JSON String from the CreateOrderDto object
-  String toJson() {
-    return jsonEncode(<String, dynamic>{
-      'items': items.map((OrderItem x) => x.toJson()).toList(),
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'items': items.map((OrderItem item) => item.toJson()).toList(),
       'shippingAddress': shippingAddress,
-    });
+    };
   }
 
   /// List of items in the order.

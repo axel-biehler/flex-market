@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flex_market/models/order.dart';
+import 'package:flex_market/pages/order_details.dart';
 import 'package:flex_market/providers/order_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +39,16 @@ class OrdersListWidget extends StatelessWidget {
                   context.watch<OrderProvider>().myOrders[index];
               return InkWell(
                 onTap: () {
-                  // Navigate to order details or edit page
+                  unawaited(
+                    navigatorKey.currentState?.push(
+                      MaterialPageRoute<Widget>(
+                        builder: (BuildContext context) => OrderDetailPage(
+                          order: order,
+                          navigatorKey: navigatorKey,
+                        ),
+                      ),
+                    ),
+                  );
                 },
                 child: Card(
                   color: Theme.of(context).primaryColor,

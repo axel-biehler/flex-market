@@ -118,7 +118,7 @@ class OrderProvider extends ChangeNotifier {
   }
 
   /// Create an order
-  Future<void> createOrder(CreateOrderDto order) async {
+  Future<bool> createOrder(CreateOrderDto order) async {
     final Uri url = Uri.parse('$apiUrl/orders');
 
     final Credentials? credentials = authProvider.credentials;
@@ -132,7 +132,7 @@ class OrderProvider extends ChangeNotifier {
         headers: <String, String>{
           'Authorization': 'Bearer ${credentials.accessToken}',
         },
-        body: order.toJson(),
+        body: jsonEncode(order.toJson()),
       );
 
       if (response.statusCode == 200) {
@@ -142,19 +142,20 @@ class OrderProvider extends ChangeNotifier {
         if (kDebugMode) {
           print('Request failed with status: ${response.statusCode}.');
         }
-        throw Exception('Failed to create order');
+        return false;
       }
     } catch (e) {
       if (kDebugMode) {
         print('Error: $e');
       }
-      throw Exception('Failed to create order');
+      return false;
     }
+    return true;
   }
 
   /// Update the status of an order
-  Future<void> updateOrderStatus(String orderId, String newStatus) async {
-    final Uri url = Uri.parse('$apiUrl/orders/$orderId');
+  Future<bool> updateOrderStatus(String orderId, String newStatus) async {
+    final Uri url = Uri.parse('$apiUrl/orders');
 
     final Credentials? credentials = authProvider.credentials;
     if (credentials == null) {
@@ -167,22 +168,27 @@ class OrderProvider extends ChangeNotifier {
         headers: <String, String>{
           'Authorization': 'Bearer ${credentials.accessToken}',
         },
-        body: jsonEncode(<String, String>{'status': newStatus}),
+        body: jsonEncode(<String, String>{
+          'orderId': orderId,
+          'status': newStatus,
+        }),
       );
 
       if (response.statusCode == 200) {
         unawaited(fetchAllOrders());
+        unawaited(fetchMyOrders());
       } else {
         if (kDebugMode) {
           print('Request failed with status: ${response.statusCode}.');
         }
-        throw Exception('Failed to update order status');
+        return false;
       }
     } catch (e) {
       if (kDebugMode) {
         print('Error: $e');
       }
-      throw Exception('Failed to update order status');
+      return false;
     }
+    return true;
   }
 }
