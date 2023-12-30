@@ -63,13 +63,6 @@ class App extends StatelessWidget {
             fontFamily: 'Jost',
             letterSpacing: 3,
           ),
-          labelLarge: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w400,
-            color: Color(0xFFC2C2C2),
-            fontFamily: 'Jost',
-            letterSpacing: 3,
-          ),
         ),
       ),
       home: const FlexMarketApp(),
@@ -105,8 +98,7 @@ void main() async {
           create: (_) => ImageManagementProvider(),
         ),
         ChangeNotifierProxyProvider<AuthProvider, CartProvider>(
-          create: (BuildContext context) =>
-              CartProvider(Provider.of<AuthProvider>(context, listen: false)),
+          create: (BuildContext context) => CartProvider(Provider.of<AuthProvider>(context, listen: false)),
           update: (
             BuildContext context,
             AuthProvider authProvider,
@@ -115,8 +107,7 @@ void main() async {
               previousDataProvider!..updateWithAuthProvider(authProvider),
         ),
         ChangeNotifierProxyProvider<AuthProvider, ItemProvider>(
-          create: (BuildContext context) =>
-              ItemProvider(Provider.of<AuthProvider>(context, listen: false)),
+          create: (BuildContext context) => ItemProvider(Provider.of<AuthProvider>(context, listen: false)),
           update: (
             BuildContext context,
             AuthProvider authProvider,
@@ -125,8 +116,7 @@ void main() async {
               previousDataProvider!..updateWithAuthProvider(authProvider),
         ),
         ChangeNotifierProxyProvider<AuthProvider, OrderProvider>(
-          create: (BuildContext context) =>
-              OrderProvider(Provider.of<AuthProvider>(context, listen: false)),
+          create: (BuildContext context) => OrderProvider(Provider.of<AuthProvider>(context, listen: false)),
           update: (
             BuildContext context,
             AuthProvider authProvider,
