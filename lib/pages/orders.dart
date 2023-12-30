@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'package:flex_market/components/admin_orders_list.dart'; // Assuming this exists
 import 'package:flex_market/components/orders_list.dart';
 import 'package:flex_market/providers/order_provider.dart'; // Assuming this exists
 import 'package:flex_market/utils/constants.dart';
@@ -7,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-/// A widget that displays the orders for admin.
+/// A widget that displays the orders for the user.
 ///
-/// It presents a scrollable list of orders that allows the admin to manage them.
+/// It presents a scrollable list of orders.
 class OrdersWidget extends StatelessWidget {
   /// Creates a [AdminOrdersWidget].
   const OrdersWidget({required this.navigatorKey, super.key});

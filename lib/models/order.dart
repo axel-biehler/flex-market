@@ -73,7 +73,7 @@ class Order {
 
 /// Represents an item in an order with itemId, quantity, and price
 class OrderItem {
-  /// Creates an [OrderItem] with the given [itemId], [quantity], and [price].
+  /// Creates an [OrderItem] with the given [itemId], [quantity], [price] and [size].
   OrderItem({
     required this.itemId,
     required this.quantity,
@@ -116,7 +116,7 @@ class OrderItem {
 
 /// Represents an order with items and shippingAddress
 class CreateOrderDto {
-  /// Creates an [CreateOrderDto] with the given [userId], [items], [totalAmount], [orderDate], [status], and [shippingAddress].
+  /// Creates an [CreateOrderDto] with the given [items] and [shippingAddress].
   CreateOrderDto({
     required this.items,
     required this.shippingAddress,

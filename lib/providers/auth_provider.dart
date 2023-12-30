@@ -105,7 +105,6 @@ class AuthProvider extends ChangeNotifier {
       );
       _user = credentials.user;
       _credentials = credentials;
-      print(credentials.accessToken);
       await fetchUserInfo();
       notifyListeners();
     } catch (e) {

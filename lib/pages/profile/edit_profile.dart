@@ -25,19 +25,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _lastNameController;
   late TextEditingController _birthDateController;
 
-  String _selectedGender = 'Male';
-
   @override
   void initState() {
     super.initState();
-    // Initialize controllers with current user data
+
     final User? user =
         Provider.of<AuthProvider>(context, listen: false).userCustom;
     _firstNameController = TextEditingController(text: user?.name ?? '');
     _lastNameController = TextEditingController(text: user?.nickname ?? '');
-    _birthDateController =
-        TextEditingController(text: '07/11/2001'); // Placeholder for birthdate
-    _selectedGender = 'Male'; // Placeholder for gender
   }
 
   @override
@@ -130,35 +125,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   decoration: _buildInputDecoration('Nickname'),
                   validator: (String? value) =>
                       value!.isEmpty ? 'Please enter your last name' : null,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _birthDateController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: _buildInputDecoration('Birth date'),
-                  validator: (String? value) =>
-                      value!.isEmpty ? 'Please enter your birth date' : null,
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  value: _selectedGender,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: _buildInputDecoration('Gender'),
-                  items:
-                      <String>['Male', 'Female', 'Other'].map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedGender = newValue!;
-                    });
-                  },
                 ),
                 const Spacer(),
                 Row(

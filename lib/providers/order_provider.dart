@@ -48,8 +48,6 @@ class OrderProvider extends ChangeNotifier {
         },
       );
 
-      print(response.body);
-
       if (response.statusCode == 200) {
         final dynamic data = json.decode(response.body);
         final List<dynamic> jsonOrders = data['orders'] as List<dynamic>;
@@ -92,8 +90,6 @@ class OrderProvider extends ChangeNotifier {
           'Authorization': 'Bearer ${credentials.accessToken}',
         },
       );
-
-      print(response.body);
 
       if (response.statusCode == 200) {
         final dynamic data = json.decode(response.body);
