@@ -54,7 +54,7 @@ class CartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
       child: Column(
@@ -78,6 +78,7 @@ class CartWidget extends StatelessWidget {
           ),
           const CartItemsWidget(),
           SizedBox(
+            width: screenWidth,
             height: screenHeight * 0.07,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
