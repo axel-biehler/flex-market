@@ -34,6 +34,7 @@ class ImageManagementProvider with ChangeNotifier {
         Uri.parse(presignedUrl),
         body: await xFile.readAsBytes(),
       );
+      notifyListeners();
 
       if (response.statusCode == 200) {
         if (kDebugMode) {

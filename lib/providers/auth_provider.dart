@@ -58,8 +58,9 @@ class AuthProvider extends ChangeNotifier {
   }
 
   /// Sets the current user custom and notifies listeners about the change.
-  void setCustomUser(User? user) {
+  void setCustomUser(User? user, {bool isAdmin = false}) {
     _userCustom = user;
+    _userCustom!.isAdmin = isAdmin;
     notifyListeners();
   }
 
@@ -90,7 +91,6 @@ class AuthProvider extends ChangeNotifier {
         );
         _user = credentials.user;
         _credentials = credentials;
-        await fetchUserInfo(credentials);
         notifyListeners();
         return;
       }
@@ -111,7 +111,7 @@ class AuthProvider extends ChangeNotifier {
       );
       _user = credentials.user;
       _credentials = credentials;
-      await fetchUserInfo(credentials);
+      await fetchUserInfo();
       notifyListeners();
     } catch (e) {
       if (kDebugMode) {
@@ -141,7 +141,7 @@ class AuthProvider extends ChangeNotifier {
         );
         _user = credentials.user;
         _credentials = credentials;
-        await fetchUserInfo(credentials);
+        await fetchUserInfo();
         notifyListeners();
         return;
       }
@@ -163,7 +163,7 @@ class AuthProvider extends ChangeNotifier {
       _user = credentials.user;
       _credentials = credentials;
       notifyListeners();
-      await fetchUserInfo(credentials);
+      await fetchUserInfo();
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -193,9 +193,45 @@ class AuthProvider extends ChangeNotifier {
   }
 
   /// Fetches user information from a specified API endpoint and handles the response.
-  Future<void> fetchUserInfo(Credentials credentials) async {
+  Future<void> fetchUserInfo() async {
     final Uri url = Uri.parse(
       '${dotenv.env['API_URL']}/me',
+    );
+
+    try {
+      final http.Response response = await http.get(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer ${_credentials?.accessToken}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        if (kDebugMode) {
+          print('Response data: ${response.body}');
+        }
+        final String role = await fetchUserRoles(_credentials!);
+        setCustomUser(
+          User.fromJson(jsonDecode(response.body)['profile']),
+          isAdmin: role == 'admin',
+        );
+        _isAuthenticated = true;
+      } else {
+        if (kDebugMode) {
+          print('Request failed with status: ${response.statusCode}.');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+    }
+  }
+
+  /// Fetches user roles from a specified API endpoint and handles the response.
+  Future<String> fetchUserRoles(Credentials credentials) async {
+    final Uri url = Uri.parse(
+      '${dotenv.env['API_URL']}/me/roles',
     );
 
     try {
@@ -210,8 +246,90 @@ class AuthProvider extends ChangeNotifier {
         if (kDebugMode) {
           print('Response data: ${response.body}');
         }
-        setCustomUser(User.fromJson(jsonDecode(response.body)['profile']));
+
+        final String role = (jsonDecode(response.body)['profile'] != null &&
+                jsonDecode(response.body)['profile'].isNotEmpty)
+            ? 'admin'
+            : 'user';
+
+        return role;
+      } else {
+        if (kDebugMode) {
+          print('Request failed with status: ${response.statusCode}.');
+        }
+        return 'user';
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+    }
+    return 'user';
+  }
+
+  /// Edits the current user's profile.
+  Future<bool> editUser(Map<String, dynamic> updates) async {
+    if (_user == null || _credentials == null) {
+      return false;
+    }
+
+    final Uri url = Uri.parse('${dotenv.env['API_URL']}/me');
+    try {
+      final http.Response response = await http.patch(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer ${credentials!.accessToken}',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'name': updates['name'],
+          'nickname': updates['nickname'],
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Update local user profile with new details
+        final String role = await fetchUserRoles(credentials!);
+        setCustomUser(
+          User.fromJson(jsonDecode(response.body)['profile']),
+          isAdmin: role == 'admin',
+        );
         _isAuthenticated = true;
+        notifyListeners();
+        return true;
+      } else {
+        if (kDebugMode) {
+          print('Request failed with status: ${response.statusCode}.');
+        }
+        return false;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+      return false;
+    }
+  }
+
+  /// Edits profile picture of the current user.
+  Future<String?> editProfilePicture(String imageUrl) async {
+    if (_user == null || _credentials == null) {
+      return null;
+    }
+
+    final Uri url = Uri.parse('${dotenv.env['API_URL']}/me');
+    try {
+      final http.Response response = await http.post(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer ${credentials!.accessToken}',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'key': imageUrl,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body)['url'];
       } else {
         if (kDebugMode) {
           print('Request failed with status: ${response.statusCode}.');
@@ -222,5 +340,11 @@ class AuthProvider extends ChangeNotifier {
         print('Error: $e');
       }
     }
+    return null;
+  }
+
+  /// Notifies listeners about a change in the state.
+  Future<void> notify() async {
+    notifyListeners();
   }
 }

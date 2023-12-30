@@ -9,6 +9,7 @@ import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/providers/cart_provider.dart';
 import 'package:flex_market/providers/image_management_provider.dart';
 import 'package:flex_market/providers/item_provider.dart';
+import 'package:flex_market/providers/order_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -58,6 +59,13 @@ class App extends StatelessWidget {
           labelMedium: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
+            color: Color(0xFFC2C2C2),
+            fontFamily: 'Jost',
+            letterSpacing: 3,
+          ),
+          labelLarge: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w400,
             color: Color(0xFFC2C2C2),
             fontFamily: 'Jost',
             letterSpacing: 3,
@@ -113,6 +121,16 @@ void main() async {
             BuildContext context,
             AuthProvider authProvider,
             ItemProvider? previousDataProvider,
+          ) =>
+              previousDataProvider!..updateWithAuthProvider(authProvider),
+        ),
+        ChangeNotifierProxyProvider<AuthProvider, OrderProvider>(
+          create: (BuildContext context) =>
+              OrderProvider(Provider.of<AuthProvider>(context, listen: false)),
+          update: (
+            BuildContext context,
+            AuthProvider authProvider,
+            OrderProvider? previousDataProvider,
           ) =>
               previousDataProvider!..updateWithAuthProvider(authProvider),
         ),

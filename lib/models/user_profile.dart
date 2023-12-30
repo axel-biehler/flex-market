@@ -8,6 +8,7 @@ class User {
     required this.picture,
     required this.name,
     required this.nickname,
+    this.isAdmin,
   });
 
   /// Used to convert from json to UserProfile.
@@ -39,4 +40,7 @@ class User {
 
   /// Nickname from the user
   final String nickname;
+
+  /// Role from the user
+  bool? isAdmin;
 }
