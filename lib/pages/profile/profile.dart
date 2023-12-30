@@ -25,7 +25,8 @@ class UserWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final User? user = context.watch<AuthProvider>().userCustom;
-    final String? pictureUrl = context.watch<AuthProvider>().userCustom?.picture.toString();
+    final String? pictureUrl =
+        context.watch<AuthProvider>().userCustom?.picture.toString();
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -213,7 +214,7 @@ class UserWidget extends StatelessWidget {
                     },
                   ),
                 ),
-                if (user?.isAdmin != null && user!.isAdmin == true)
+                if (user!.isAdmin == true)
                   Column(
                     children: <Widget>[
                       const SizedBox(height: 26),
@@ -276,7 +277,8 @@ class UserWidget extends StatelessWidget {
                             unawaited(
                               navigatorKey.currentState?.push(
                                 MaterialPageRoute<Widget>(
-                                  builder: (BuildContext context) => AdminItemsWidget(
+                                  builder: (BuildContext context) =>
+                                      AdminItemsWidget(
                                     navigatorKey: navigatorKey,
                                   ),
                                 ),
@@ -324,7 +326,8 @@ class UserWidget extends StatelessWidget {
                             unawaited(
                               navigatorKey.currentState?.push(
                                 MaterialPageRoute<Widget>(
-                                  builder: (BuildContext context) => AdminOrdersWidget(
+                                  builder: (BuildContext context) =>
+                                      AdminOrdersWidget(
                                     navigatorKey: navigatorKey,
                                   ),
                                 ),

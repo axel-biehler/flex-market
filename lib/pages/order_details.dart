@@ -43,8 +43,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   @override
   Widget build(BuildContext context) {
     final bool isAdmin =
-        Provider.of<AuthProvider>(context, listen: false).userCustom!.isAdmin ??
-            false;
+        Provider.of<AuthProvider>(context, listen: false).userCustom!.isAdmin;
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
