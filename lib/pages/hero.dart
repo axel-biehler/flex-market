@@ -38,13 +38,15 @@ class HeroWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text(
-                  'Flex Market',
-                  style: GoogleFonts.spaceGrotesk(
-                    foreground: Paint()..shader = linearGradient,
-                    fontSize: 80,
-                    height: 0.8,
-                    fontWeight: FontWeight.w800,
+                Center(
+                  child: Text(
+                    'Flex Market',
+                    style: GoogleFonts.spaceGrotesk(
+                      foreground: Paint()..shader = linearGradient,
+                      fontSize: 80,
+                      height: 0.8,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ),
                 Center(

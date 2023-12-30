@@ -5,6 +5,7 @@ import 'package:flex_market/providers/cart_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flex_market/utils/enums.dart';
 import 'package:flex_market/utils/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -39,6 +40,9 @@ class _ItemWidgetState extends State<ItemWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
+    final double bodyPadding = MediaQuery.of(context).size.width * 0.2 + margin;
+
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
@@ -55,7 +59,7 @@ class _ItemWidgetState extends State<ItemWidget> {
             if (widget.item.imagesUrl.isNotEmpty)
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.35,
-                width: MediaQuery.of(context).size.width - margin * 2,
+                width: screenWidth - margin * 2,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: <Widget>[
@@ -65,7 +69,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(23),
                           child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.9,
+                            width: kIsWeb ? screenWidth * 0.3 : screenWidth * 0.9,
                             child: ImageViewerWidget(
                               url: url,
                             ),
@@ -77,7 +81,14 @@ class _ItemWidgetState extends State<ItemWidget> {
                 ),
               ),
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: kIsWeb
+                  ? EdgeInsets.symmetric(
+                      vertical: margin,
+                      horizontal: bodyPadding,
+                    )
+                  : const EdgeInsets.all(
+                      margin,
+                    ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[

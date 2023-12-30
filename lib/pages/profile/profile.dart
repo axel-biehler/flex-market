@@ -213,7 +213,7 @@ class UserWidget extends StatelessWidget {
                     },
                   ),
                 ),
-                if (user!.isAdmin == true)
+                if (user?.isAdmin != null && user!.isAdmin == true)
                   Column(
                     children: <Widget>[
                       const SizedBox(height: 26),
