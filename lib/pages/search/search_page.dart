@@ -1,5 +1,5 @@
 import 'package:flex_market/models/search_query.dart';
-import 'package:flex_market/pages/search_results.dart';
+import 'package:flex_market/pages/search/search_results.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flex_market/utils/enums.dart';
 import 'package:flex_market/utils/utils.dart';
