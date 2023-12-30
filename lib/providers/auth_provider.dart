@@ -91,6 +91,7 @@ class AuthProvider extends ChangeNotifier {
         );
         _user = credentials.user;
         _credentials = credentials;
+        await fetchUserInfo();
         notifyListeners();
         return;
       }
@@ -162,8 +163,8 @@ class AuthProvider extends ChangeNotifier {
       );
       _user = credentials.user;
       _credentials = credentials;
-      notifyListeners();
       await fetchUserInfo();
+      notifyListeners();
     } catch (e) {
       if (kDebugMode) {
         print(e);
