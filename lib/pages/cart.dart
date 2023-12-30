@@ -1,5 +1,8 @@
 import 'package:flex_market/components/cart_items.dart';
+import 'package:flex_market/models/cart_item.dart';
+import 'package:flex_market/models/order.dart';
 import 'package:flex_market/providers/cart_provider.dart';
+import 'package:flex_market/providers/order_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,40 +12,69 @@ import 'package:provider/provider.dart';
 /// A widget that displays the user's shopping cart.
 ///
 /// It presents a scrollable list of items that the user has added to their cart.
-class CartWidget extends StatelessWidget {
+class CartWidget extends StatefulWidget {
   /// Creates a [CartWidget].
   const CartWidget({required this.navigatorKey, super.key});
 
   /// Key used for custom navigation flow inside each app section
   final GlobalKey<NavigatorState> navigatorKey;
 
+  @override
+  CartWidgetState createState() => CartWidgetState();
+}
+
+/// State for [CartWidget].
+class CartWidgetState extends State<CartWidget> {
   /// Simulate the order processing
   Future<void> order(BuildContext context) async {
     try {
-      await context.read<CartProvider>().emptyCart();
-
-      // ignore: use_build_context_synchronously
-      await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Success'),
-            content: const Text('Order placed successfully.'),
-            backgroundColor: Theme.of(context).primaryColor,
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  'OK',
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: const Color(0xFF247100)),
-                ),
+      final CreateOrderDto order = CreateOrderDto(
+        items: context
+            .read<CartProvider>()
+            .cart
+            .map(
+              (CartItem item) => OrderItem(
+                itemId: item.itemId,
+                quantity: item.quantity,
+                size: item.size,
               ),
-            ],
-          );
-        },
+            )
+            .toList(),
+        shippingAddress: 'la beuh',
       );
+
+      await context.read<OrderProvider>().createOrder(order);
+
+      if (mounted) {
+        await context.read<CartProvider>().emptyCart();
+      }
+
+      if (mounted) {
+        await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Success'),
+              content: const Text('Order placed successfully.'),
+              backgroundColor: Theme.of(context).primaryColor,
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(
+                    'OK',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: const Color(0xFF247100)),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      }
     } catch (e) {
       if (kDebugMode) {
         print('Error: $e');

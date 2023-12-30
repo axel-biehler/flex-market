@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 ///
 /// It presents a scrollable list of orders.
 class OrdersWidget extends StatelessWidget {
-  /// Creates a [AdminOrdersWidget].
+  /// Creates a [OrdersWidget].
   const OrdersWidget({required this.navigatorKey, super.key});
 
   /// Key used for custom navigation flow inside each app section

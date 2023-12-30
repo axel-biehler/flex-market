@@ -1,34 +1,35 @@
+import 'dart:math';
+
 import 'package:flex_market/components/picture_preview.dart';
 import 'package:flex_market/models/user_profile.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/providers/image_management_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 /// Edit profile page.
 class EditProfilePage extends StatefulWidget {
-  /// Creates an instance of [EditProfilePage].
+  /// Creates a [EditProfilePage].
   const EditProfilePage({required this.navigatorKey, super.key});
-
-  @override
-  State<EditProfilePage> createState() => _EditProfilePageState();
 
   /// Key used for custom navigation flow inside each app section
   final GlobalKey<NavigatorState> navigatorKey;
+
+  @override
+  State<EditProfilePage> createState() => _EditProfilePageState();
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
-  late TextEditingController _birthDateController;
 
   @override
   void initState() {
     super.initState();
-
     final User? user =
         Provider.of<AuthProvider>(context, listen: false).userCustom;
     _firstNameController = TextEditingController(text: user?.name ?? '');
@@ -37,122 +38,138 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Account'),
-        backgroundColor: Colors.black,
-        leading: const BackButton(color: Colors.white),
-      ),
-      body: ColoredBox(
-        color: Colors.black,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Center(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: margin),
-                    alignment: Alignment.center,
-                    child: CircleAvatar(
-                      radius: 70,
-                      backgroundImage: NetworkImage(
-                        context
-                            .watch<AuthProvider>()
-                            .userCustom!
-                            .picture
-                            .toString(),
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: IconButton(
-                    icon: const Icon(Icons.edit),
-                    color: Colors.white,
-                    onPressed: () async {
-                      await widget.navigatorKey.currentState?.push(
-                        MaterialPageRoute<Widget>(
-                          builder: (BuildContext context) => PicturePreviewPage(
-                            navigatorKey: widget.navigatorKey,
-                            maxPictures: 1,
-                            callback: (List<XFile> pics) async {
-                              final ImageManagementProvider
-                                  imageManagementProvider =
-                                  context.read<ImageManagementProvider>();
-                              final AuthProvider authProvider =
-                                  context.read<AuthProvider>();
-                              final String? path = await authProvider
-                                  .editProfilePicture(pics.first.name);
-                              await imageManagementProvider.uploadXFileToS3(
-                                pics.first,
-                                path!,
-                              );
-                              imageManagementProvider.clearImageUrls();
-                              await authProvider.fetchUserInfo();
-                              await authProvider.notify();
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Text(
-                      'Maxime Frechard', // Placeholder for user's full name
-                      style: TextStyle(color: Colors.white, fontSize: 24),
-                    ),
-                  ),
-                ),
-                TextFormField(
-                  controller: _firstNameController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: _buildInputDecoration('Name'),
-                  validator: (String? value) =>
-                      value!.isEmpty ? 'Please enter your first name' : null,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _lastNameController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: _buildInputDecoration('Nickname'),
-                  validator: (String? value) =>
-                      value!.isEmpty ? 'Please enter your last name' : null,
-                ),
-                const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                      child: const Text('CANCEL'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          await _saveProfile();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                      ),
-                      child: const Text('SAVE'),
-                    ),
-                  ],
-                ),
-              ],
+      backgroundColor: const Color(0xFF121212),
+      body: Column(
+        children: <Widget>[
+          _buildHeader(context, screenHeight),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: _buildForm(context),
             ),
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context, double screenHeight) {
+    return SizedBox(
+      height: screenHeight * 0.1,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: margin),
+              child: Row(
+                children: <Widget>[
+                  DecoratedBox(
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      color: Color(0xFF3D3D3B),
+                    ),
+                    child: IconButton(
+                      icon: Transform.rotate(
+                        angle: pi,
+                        child: SvgPicture.asset('assets/arrow.svg', height: 20),
+                      ),
+                      onPressed: () => widget.navigatorKey.currentState?.pop(),
+                      highlightColor: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: margin),
+                    child: Text(
+                      'MY ACCOUNT',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Form _buildForm(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Center(
+            child: Container(
+              margin: const EdgeInsets.only(top: margin),
+              alignment: Alignment.center,
+              child: CircleAvatar(
+                radius: 70,
+                backgroundImage: NetworkImage(
+                  context.watch<AuthProvider>().userCustom!.picture.toString(),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: IconButton(
+              icon: const Icon(Icons.edit),
+              color: Colors.white,
+              onPressed: () async {
+                await widget.navigatorKey.currentState?.push(
+                  MaterialPageRoute<Widget>(
+                    builder: (BuildContext context) => PicturePreviewPage(
+                      navigatorKey: widget.navigatorKey,
+                      maxPictures: 1,
+                      callback: (List<XFile> pics) async {
+                        final ImageManagementProvider imageManagementProvider =
+                            context.read<ImageManagementProvider>();
+                        final AuthProvider authProvider =
+                            context.read<AuthProvider>();
+                        final String? path = await authProvider
+                            .editProfilePicture(pics.first.name);
+                        await imageManagementProvider.uploadXFileToS3(
+                          pics.first,
+                          path!,
+                        );
+                        imageManagementProvider.clearImageUrls();
+                        await authProvider.fetchUserInfo();
+                        await authProvider.notify();
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          TextFormField(
+            controller: _firstNameController,
+            style: const TextStyle(color: Colors.white),
+            decoration: _buildInputDecoration('Name'),
+            validator: (String? value) =>
+                value!.isEmpty ? 'Please enter your first name' : null,
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _lastNameController,
+            style: const TextStyle(color: Colors.white),
+            decoration: _buildInputDecoration('Nickname'),
+            validator: (String? value) =>
+                value!.isEmpty ? 'Please enter your last name' : null,
+          ),
+          // Add other fields as necessary
+          const SizedBox(height: 16),
+          _buildSaveCancelButtons(context),
+        ],
       ),
     );
   }
@@ -172,6 +189,50 @@ class _EditProfilePageState extends State<EditProfilePage> {
       focusedErrorBorder:
           const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
       errorStyle: const TextStyle(color: Colors.red),
+    );
+  }
+
+  Widget _buildSaveCancelButtons(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        ElevatedButton(
+          onPressed: () => Navigator.pop(context),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.errorContainer,
+            fixedSize: const Size(120, 30),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(
+            'CANCEL',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            if (_formKey.currentState!.validate()) {
+              await _saveProfile();
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF247100),
+            fixedSize: const Size(120, 30),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          child: Text(
+            'SAVE',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -239,7 +300,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
-    _birthDateController.dispose();
     super.dispose();
   }
 }

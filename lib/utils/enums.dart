@@ -65,6 +65,11 @@ ItemSize? stringToSize(String? sizeString) {
   );
 }
 
+/// Returns a string corresponding to the given [size]
+String sizeToString(ItemSize size) {
+  return size.name.toUpperCase();
+}
+
 /// Enum that contains the available categories
 enum ItemCategory {
   /// Tops
