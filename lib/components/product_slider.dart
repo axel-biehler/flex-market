@@ -42,7 +42,7 @@ class ProductSliderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width * 0.6;
+    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
     final ScrollController scrollController = ScrollController();
     final double cardWidth = screenWidth * 0.4 > 200 ? 200 : screenWidth * 0.4;
     final double totalItemsWidth = cardWidth * items.length;
