@@ -29,6 +29,8 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+apply plugin: 'com.google.firebase.crashlytics'
+
 android {
     namespace "com.example.flexmarket"
     compileSdkVersion flutter.compileSdkVersion
