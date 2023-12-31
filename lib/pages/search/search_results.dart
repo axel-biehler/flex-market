@@ -168,7 +168,7 @@ class SearchResultsWidgetState extends State<SearchResultsWidget> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
