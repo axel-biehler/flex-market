@@ -10,6 +10,7 @@ This project is a market application with a specific focus on the sale of clothi
 - **User Authentication:** The application includes secure user authentication, ensuring a safe and personalized shopping experience.
 - **Shopping Cart Functionality:** Users can add items to a shopping cart, review their selections, and make modifications as needed before proceeding to checkout.
 - **Order Management:** The app allows users to place orders, track the status of their purchases, and view past order history.
+- **Admin Functionalities:** The app allows the admins to manage the app items by adding and editing them and they can also manage the orders status.
 
 As a scholarly project, the application is not only a practical tool but also serves to demonstrate various technologies and programming concepts in a real-world scenario. The project is designed to showcase skills in mobile application development, user interface design, state management, and integration with external libraries and APIs.
 
@@ -20,6 +21,8 @@ This project is developed using a variety of powerful and efficient technologies
 **Flutter:** The primary framework used for creating the UI and logic of the application. Flutter is a popular UI toolkit by Google for building natively compiled applications in our case for mobile and web devices, from a single codebase.
 
 **Firebase Core (firebase_core):** This package is used to initialize Firebase in the Flutter project. Firebase provides a suite of cloud services like authentication, databases, analytics, etc.
+
+**Firebase Crashlytics (firebase_crashlytics):**: Provides real-time crash reporting and analytics, helping in monitoring and fixing stability issues.
 
 **Auth0 Flutter (auth0_flutter):** Auth0 is used for implementing robust and secure user authentication and authorization. It simplifies managing user identity and access controls.
 
@@ -32,6 +35,12 @@ This project is developed using a variety of powerful and efficient technologies
 **Flutter SVG (flutter_svg):** This package provides SVG rendering support, allowing the application to use scalable vector graphics for icons and other graphical elements.
 
 **Provider (provider):** A popular state management solution in Flutter used to efficiently manage the state of the application. It helps in making the app more reactive and managing data flow.
+
+**Camera (camera):** Provides access to the device's cameras, enabling photo and video capturing within the app.
+
+**Image Picker (image_picker):** Allows users to pick images from their device gallery or take new pictures with the camera.
+
+**Nested (nested):** Facilitates building more complex and nested widget trees, enhancing the organizational structure of the UI components. In our case it is used to implement the MultiProvider.
 
 These libraries and frameworks are chosen for their reliability, wide community support, and ability to make the development process more efficient and effective.
 
@@ -61,7 +70,7 @@ flutter pub get
 
 ```bash
 # run on chrome
-flutter run -d chrome
+flutter run -d chrome --web-port 3000
 
 
 # To run on android start your emulator and then find you device like this:
@@ -80,21 +89,26 @@ lib/
 ├── main.dart                       # App entry point
 ├── pages/                          # App pages
 │   └── ...
+├── models/                         # Models used to handle data
+│   └── ...
 ├── components/                     # Custom reusable components
 │   └── ...
+├── providers/                      # App data state management and API calls
+│   └── ...
 ├── utils/                          # Contains utility classes
-│   ├── data_provider.dart          # Application state and business logic
 │   ├── constants.dart              # Global constants used across the app
-│   └── models/                     # Models used to handle data
-│       └── ...
+│   ├── enums.dart                  # Enums and their conversion functions
+│   ├── messenger.dart              # Utils to give feedback to user
+│   └── utils.dart                  # Various functions used across the app
 assets/
 └── ...                             # Assets like images and SVG files
+.env                                # Environment variables
 ```
 
 **State Management Approach:**
 
 The project uses the Provider package for state management, following a simple yet effective approach to managing the application's state.
-The DataProvider class in `utils/data_provider.dart` acts as a central place for the app's state and logic, ensuring a clean separation between the presentation and business logic.
+The providers used to manage state across the app and provide data are in `lib/providers`. They act as a central place for the app's state and logic, ensuring a clean separation between the presentation and the data management with the corresponding API calls. They ensure a good propagation of the information across the widgets depending on it.
 
 **Architectural Pattern:**
 
@@ -102,20 +116,21 @@ The project loosely follows the MVVM (Model-View-ViewModel) architectural patter
 
 - Models: Represented by classes like Product in product.dart, encapsulating the data structure.
 - Views: UI pages in `pages/` and widgets in `components/` that render the UI.
-- ViewModel: The `DataProvider` class serves as the ViewModel, handling the business logic and state management, independent of the UI.
+- ViewModel: The providers in `lib/providers` serves as the ViewModel, handling the business logic and state management, independent of the UI.
 
 **Database Schema:**
 
 - **flex-market-cart**  
-PK: userId  
+  PK: userId
+
 ```ts
 export enum ItemSize {
-  XS = 'XS',
-  S = 'S',
-  M = 'M',
-  L = 'L',
-  XL = 'XL',
-  XXL = 'XXL',
+  XS = "XS",
+  S = "S",
+  M = "M",
+  L = "L",
+  XL = "XL",
+  XXL = "XXL",
 }
 
 export interface CartItem {
@@ -132,9 +147,10 @@ export interface Cart {
 ```
 
 - **flex-market-favorites**  
-PK: userId  
+  PK: userId
+
 ```ts
-import { ItemSize } from './Product';
+import { ItemSize } from "./Product";
 
 export interface FavoriteItem {
   itemId: string;
@@ -148,15 +164,16 @@ export interface Favorite {
 ```
 
 - **flex-market-orders**  
-PK: orderId
+  PK: orderId
+
 ```ts
-import { ItemSize } from './Product';
+import { ItemSize } from "./Product";
 
 export enum OrderStatus {
-  PENDING = 'PENDING',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
-  SENT = 'SENT',
+  PENDING = "PENDING",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED",
+  SENT = "SENT",
 }
 
 export interface Order {
@@ -178,34 +195,35 @@ export interface OrderItem {
 ```
 
 - **flex-market-products**  
-PK: id
+  PK: id
+
 ```ts
 export enum ItemSize {
-  XS = 'XS',
-  S = 'S',
-  M = 'M',
-  L = 'L',
-  XL = 'XL',
-  XXL = 'XXL',
+  XS = "XS",
+  S = "S",
+  M = "M",
+  L = "L",
+  XL = "XL",
+  XXL = "XXL",
 }
 
 export enum ItemGender {
-  MEN = 'MEN',
-  WOMEN = 'WOMEN',
-  UNISEX = 'UNISEX',
+  MEN = "MEN",
+  WOMEN = "WOMEN",
+  UNISEX = "UNISEX",
 }
 
 export enum Category {
-  TOPS = 'TOPS',
-  BOTTOMS = 'BOTTOMS',
-  DRESSES = 'DRESSES',
-  OUTERWEAR = 'OUTERWEAR',
-  UNDERWEAR = 'UNDERWEAR',
-  FOOTWEAR = 'FOOTWEAR',
-  ACCESSORIES = 'ACCESSORIES',
-  ATHLETIC = 'ATHLETIC',
-  SLEEPWEAR = 'SLEEPWEAR',
-  SWIMWEAR = 'SWIMWEAR',
+  TOPS = "TOPS",
+  BOTTOMS = "BOTTOMS",
+  DRESSES = "DRESSES",
+  OUTERWEAR = "OUTERWEAR",
+  UNDERWEAR = "UNDERWEAR",
+  FOOTWEAR = "FOOTWEAR",
+  ACCESSORIES = "ACCESSORIES",
+  ATHLETIC = "ATHLETIC",
+  SLEEPWEAR = "SLEEPWEAR",
+  SWIMWEAR = "SWIMWEAR",
 }
 
 export interface InputSearchProducts {
@@ -222,7 +240,7 @@ export interface Product {
   specs: { [key: string]: string };
   stock: { [key: string]: number };
   imagesUrl: string[];
-  gender: ItemGender,
+  gender: ItemGender;
   createdAt: string;
   category: Category;
   searchName: string;
@@ -230,6 +248,7 @@ export interface Product {
 ```
 
 - **profile**
+
 ```ts
 interface Identity {
   connection: string;
