@@ -137,12 +137,16 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
           bottomNavigationBar: NavigationBar(
             selectedIndex: _currentIndex,
             onDestinationSelected: onItemTapped,
+            height: 60,
             backgroundColor: Theme.of(context).primaryColor,
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
             destinations: navbarPages.map((NavigationItem item) {
               return NavigationDestination(
                 icon: SvgPicture.asset(
                   item.iconPath,
-                  color: const Color(0xFFC2C2C2),
+                  color: _currentIndex == navbarPages.indexOf(item)
+                      ? const Color(0xFFFF8E26)
+                      : const Color(0xFFC2C2C2),
                   height: 22,
                   width: 22,
                 ),
