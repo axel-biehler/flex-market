@@ -35,13 +35,13 @@ class FavoritesItemsWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            width: cardWidth,
+            width: screenWidth,
             margin: EdgeInsets.only(left: headerLeftMargin),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Text>[
                 Text(
-                  'Your favorites',
+                  'YOUR FAVORITES',
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
                         fontStyle: FontStyle.italic,
                       ),
