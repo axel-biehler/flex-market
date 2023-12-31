@@ -344,6 +344,28 @@ class AuthProvider extends ChangeNotifier {
     return null;
   }
 
+  /// Deletes the current user's account.
+  Future<void> deleteAccount() async {
+    if (_user == null || _credentials == null) {
+      return Future<void>.value();
+    }
+
+    final Uri url = Uri.parse('${dotenv.env['API_URL']}/me');
+    try {
+      await http.delete(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer ${credentials!.accessToken}',
+        },
+      );
+      await logout();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+    }
+  }
+
   /// Notifies listeners about a change in the state.
   Future<void> notify() async {
     notifyListeners();

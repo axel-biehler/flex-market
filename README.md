@@ -106,7 +106,175 @@ The project loosely follows the MVVM (Model-View-ViewModel) architectural patter
 
 **Database Schema:**
 
-// TODO
+- **flex-market-cart**  
+PK: userId  
+```ts
+export enum ItemSize {
+  XS = 'XS',
+  S = 'S',
+  M = 'M',
+  L = 'L',
+  XL = 'XL',
+  XXL = 'XXL',
+}
+
+export interface CartItem {
+  itemId: string;
+  quantity: number;
+  size: ItemSize;
+}
+
+export interface Cart {
+  userId: string;
+  items: CartItem[];
+  totalAmount: number;
+}
+```
+
+- **flex-market-favorites**  
+PK: userId  
+```ts
+import { ItemSize } from './Product';
+
+export interface FavoriteItem {
+  itemId: string;
+  size: ItemSize;
+}
+
+export interface Favorite {
+  userId: string;
+  items: FavoriteItem[];
+}
+```
+
+- **flex-market-orders**  
+PK: orderId
+```ts
+import { ItemSize } from './Product';
+
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+  SENT = 'SENT',
+}
+
+export interface Order {
+  orderId: string;
+  userId: string;
+  items: OrderItem[];
+  totalAmount: number;
+  orderDate: Date;
+  status: string;
+  shippingAddress: string;
+}
+
+export interface OrderItem {
+  itemId: string;
+  quantity: number;
+  size: ItemSize;
+  price: number;
+}
+```
+
+- **flex-market-products**  
+PK: id
+```ts
+export enum ItemSize {
+  XS = 'XS',
+  S = 'S',
+  M = 'M',
+  L = 'L',
+  XL = 'XL',
+  XXL = 'XXL',
+}
+
+export enum ItemGender {
+  MEN = 'MEN',
+  WOMEN = 'WOMEN',
+  UNISEX = 'UNISEX',
+}
+
+export enum Category {
+  TOPS = 'TOPS',
+  BOTTOMS = 'BOTTOMS',
+  DRESSES = 'DRESSES',
+  OUTERWEAR = 'OUTERWEAR',
+  UNDERWEAR = 'UNDERWEAR',
+  FOOTWEAR = 'FOOTWEAR',
+  ACCESSORIES = 'ACCESSORIES',
+  ATHLETIC = 'ATHLETIC',
+  SLEEPWEAR = 'SLEEPWEAR',
+  SWIMWEAR = 'SWIMWEAR',
+}
+
+export interface InputSearchProducts {
+  gender?: ItemGender;
+  category?: string[];
+  name?: string;
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  specs: { [key: string]: string };
+  stock: { [key: string]: number };
+  imagesUrl: string[];
+  gender: ItemGender,
+  createdAt: string;
+  category: Category;
+  searchName: string;
+}
+```
+
+- **profile**
+```ts
+interface Identity {
+  connection: string;
+  user_id: string;
+  provider: string;
+  isSocial: boolean;
+  access_token?: string;
+  access_token_secret?: string;
+  refresh_token?: string;
+  profileData: {
+    email: string;
+    email_verified: boolean;
+    name: string;
+    username: string;
+    given_name: string;
+    phone_number: string;
+    phone_verified: boolean;
+    family_name: string;
+  };
+}
+
+export interface UserProfile {
+  user_id: string;
+  email: string;
+  email_verified: boolean;
+  username: string;
+  phone_number: string;
+  phone_verified: boolean;
+  created_at: string | Date;
+  updated_at: string | Date;
+  identities: Identity[];
+  app_metadata: any;
+  user_metadata: any;
+  picture: string;
+  name: string;
+  nickname: string;
+  multifactor: string[];
+  last_ip: string;
+  last_login: string | Date;
+  logins_count: number;
+  blocked: boolean;
+  given_name: string;
+  family_name: string;
+}
+```
 
 Adoption of Flutter's native capabilities for cross-platform compatibility.
 This architecture is designed to support the scalability of the application, with each component serving a distinct purpose, promoting clean code practices, and easing future enhancements.

@@ -31,7 +31,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-    final User? user = Provider.of<AuthProvider>(context, listen: false).userCustom;
+    final User? user =
+        Provider.of<AuthProvider>(context, listen: false).userCustom;
     _firstNameController = TextEditingController(text: user?.name ?? '');
     _lastNameController = TextEditingController(text: user?.nickname ?? '');
   }
@@ -39,7 +40,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
+    final double screenWidth = kIsWeb
+        ? MediaQuery.of(context).size.width * 0.6
+        : MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
@@ -57,7 +60,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, double screenHeight, double screenWidth) {
+  Widget _buildHeader(
+    BuildContext context,
+    double screenHeight,
+    double screenWidth,
+  ) {
     return SizedBox(
       height: screenHeight * 0.1,
       width: screenWidth,
@@ -87,7 +94,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     padding: const EdgeInsets.only(left: margin),
                     child: Text(
                       'MY ACCOUNT',
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(fontStyle: FontStyle.italic),
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(fontStyle: FontStyle.italic),
                     ),
                   ),
                 ],
@@ -114,7 +124,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 child: CircleAvatar(
                   radius: 70,
                   backgroundImage: NetworkImage(
-                    context.watch<AuthProvider>().userCustom!.picture.toString(),
+                    context
+                        .watch<AuthProvider>()
+                        .userCustom!
+                        .picture
+                        .toString(),
                   ),
                 ),
               ),
@@ -132,9 +146,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         navigatorKey: widget.navigatorKey,
                         maxPictures: 1,
                         callback: (List<XFile> pics) async {
-                          final ImageManagementProvider imageManagementProvider = context.read<ImageManagementProvider>();
-                          final AuthProvider authProvider = context.read<AuthProvider>();
-                          final String? path = await authProvider.editProfilePicture(pics.first.name);
+                          final ImageManagementProvider
+                              imageManagementProvider =
+                              context.read<ImageManagementProvider>();
+                          final AuthProvider authProvider =
+                              context.read<AuthProvider>();
+                          final String? path = await authProvider
+                              .editProfilePicture(pics.first.name);
                           await imageManagementProvider.uploadXFileToS3(
                             pics.first,
                             path!,
@@ -153,16 +171,67 @@ class _EditProfilePageState extends State<EditProfilePage> {
               controller: _firstNameController,
               style: const TextStyle(color: Colors.white),
               decoration: _buildInputDecoration('Name'),
-              validator: (String? value) => value!.isEmpty ? 'Please enter your first name' : null,
+              validator: (String? value) =>
+                  value!.isEmpty ? 'Please enter your first name' : null,
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _lastNameController,
               style: const TextStyle(color: Colors.white),
               decoration: _buildInputDecoration('Nickname'),
-              validator: (String? value) => value!.isEmpty ? 'Please enter your last name' : null,
+              validator: (String? value) =>
+                  value!.isEmpty ? 'Please enter your last name' : null,
             ),
             const SizedBox(height: 16),
+            Center(
+              child: ElevatedButton(
+                // ignore: always_specify_types
+                onPressed: () async => <Future>{
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Confirm'),
+                        content: const Text(
+                          'Are you sure you want to delete your account?',
+                        ),
+                        backgroundColor: Theme.of(context).primaryColor,
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.grey,
+                              foregroundColor: Colors.white,
+                            ),
+                            child: const Text('No'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context)
+                                  // ignore: always_specify_types
+                                  .popUntil((Route route) => route.isFirst);
+                              context.read<AuthProvider>().deleteAccount();
+                            },
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                            ),
+                            child: const Text('Yes'),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Delete Account'),
+              ),
+            ),
             _buildSaveCancelButtons(context),
           ],
         ),
@@ -180,8 +249,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
       focusedBorder: const UnderlineInputBorder(
         borderSide: BorderSide(color: Colors.white),
       ),
-      errorBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-      focusedErrorBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+      errorBorder:
+          const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+      focusedErrorBorder:
+          const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
       errorStyle: const TextStyle(color: Colors.red),
     );
   }
@@ -238,7 +309,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       };
 
       // Call the AuthProvider to update the user data
-      final bool success = await context.read<AuthProvider>().editUser(updatedUserData);
+      final bool success =
+          await context.read<AuthProvider>().editUser(updatedUserData);
 
       if (success) {
         await _showSuccessDialog();
