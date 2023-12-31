@@ -8,42 +8,24 @@ import 'package:flex_market/pages/profile/profile.dart';
 import 'package:flex_market/pages/search/search_page.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-/// Represents an item in the navigation bar of the application.
 class NavigationItem {
-  /// Constructs a [NavigationItem] with the given [navigatorKey], [pageBuilder],
-  /// [page], [icon], and [label].
   NavigationItem({
     required this.navigatorKey,
     required this.pageBuilder,
-    // required this.page,
-    required this.icon,
+    required this.iconPath,
     required this.label,
   });
 
-  /// Key used for custom navigation flow inside each app section
   final GlobalKey<NavigatorState> navigatorKey;
-
-  /// Page builder to pass the navigatorKey to its child
   final Widget Function(GlobalKey<NavigatorState>) pageBuilder;
-
-  /// The page to navigate to when this item is tapped.
-  // final Widget page;
-
-  /// The icon representing this navigation item.
-  final Widget icon;
-
-  /// The label text for this navigation item.
+  final String iconPath;
   final String label;
 }
 
-/// The main application widget for FlexMarket.
-///
-/// This class manages the navigation and layout of the main screens
-/// in the application, including home, search, favorites, cart, and user profile.
 class FlexMarketApp extends StatefulWidget {
-  /// Constructs a [FlexMarketApp] Widget.
   const FlexMarketApp({super.key});
 
   @override
@@ -56,52 +38,37 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
   late final List<NavigationItem> navbarPages = <NavigationItem>[
     NavigationItem(
       navigatorKey: GlobalKey<NavigatorState>(),
-      pageBuilder: (GlobalKey<NavigatorState> key) => HomeWidget(navigatorKey: key),
-      icon: Image.asset(
-        'assets/home.png',
-        height: 22,
-        width: 22,
-      ),
+      pageBuilder: (GlobalKey<NavigatorState> key) =>
+          HomeWidget(navigatorKey: key),
+      iconPath: 'assets/svg/home.svg',
       label: 'Home',
     ),
     NavigationItem(
       navigatorKey: GlobalKey<NavigatorState>(),
-      pageBuilder: (GlobalKey<NavigatorState> key) => SearchPageWidget(navigatorKey: key),
-      icon: Image.asset(
-        'assets/search.png',
-        height: 22,
-        width: 22,
-      ),
+      pageBuilder: (GlobalKey<NavigatorState> key) =>
+          SearchPageWidget(navigatorKey: key),
+      iconPath: 'assets/svg/search.svg',
       label: 'Search',
     ),
     NavigationItem(
       navigatorKey: GlobalKey<NavigatorState>(),
-      pageBuilder: (GlobalKey<NavigatorState> key) => FavoritesWidget(navigatorKey: key),
-      icon: Image.asset(
-        'assets/fav.png',
-        height: 22,
-        width: 22,
-      ),
+      pageBuilder: (GlobalKey<NavigatorState> key) =>
+          FavoritesWidget(navigatorKey: key),
+      iconPath: 'assets/svg/fav.svg',
       label: 'Favorites',
     ),
     NavigationItem(
       navigatorKey: GlobalKey<NavigatorState>(),
-      pageBuilder: (GlobalKey<NavigatorState> key) => CartWidget(navigatorKey: key),
-      icon: Image.asset(
-        'assets/cart.png',
-        height: 22,
-        width: 22,
-      ),
+      pageBuilder: (GlobalKey<NavigatorState> key) =>
+          CartWidget(navigatorKey: key),
+      iconPath: 'assets/svg/cart.svg',
       label: 'Cart',
     ),
     NavigationItem(
       navigatorKey: GlobalKey<NavigatorState>(),
-      pageBuilder: (GlobalKey<NavigatorState> key) => UserWidget(navigatorKey: key),
-      icon: Image.asset(
-        'assets/profile.png',
-        height: 22,
-        width: 22,
-      ),
+      pageBuilder: (GlobalKey<NavigatorState> key) =>
+          UserWidget(navigatorKey: key),
+      iconPath: 'assets/svg/profile.svg',
       label: 'Profile',
     ),
   ];
@@ -125,14 +92,17 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    if (context.watch<AuthProvider>().user == null && context.watch<AuthProvider>().isAuthenticated == false) {
+
+    if (context.watch<AuthProvider>().user == null &&
+        context.watch<AuthProvider>().isAuthenticated == false) {
       return Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
         body: const Center(
           child: CircularProgressIndicator(),
         ),
       );
-    } else if (context.watch<AuthProvider>().user == null && context.watch<AuthProvider>().isAuthenticated == null) {
+    } else if (context.watch<AuthProvider>().user == null &&
+        context.watch<AuthProvider>().isAuthenticated == null) {
       return Scaffold(
         backgroundColor: Theme.of(context).primaryColor,
         body: const HeroWidget(),
@@ -153,7 +123,8 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
                         key: item.navigatorKey,
                         onGenerateRoute: (RouteSettings settings) {
                           return MaterialPageRoute<Widget>(
-                            builder: (BuildContext context) => item.pageBuilder(item.navigatorKey),
+                            builder: (BuildContext context) =>
+                                item.pageBuilder(item.navigatorKey),
                           );
                         },
                       );
@@ -163,61 +134,27 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
               ),
             ],
           ),
-          bottomNavigationBar: DecoratedBox(
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(color: Color(0xFF3D3D3B)),
-              ),
-            ),
-            child: BottomNavigationBar(
-              currentIndex: _currentIndex,
-              onTap: onItemTapped,
-              type: BottomNavigationBarType.fixed,
-              enableFeedback: false,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              selectedIconTheme: const IconThemeData(
-                color: Color(0xFFFF8E26),
-                fill: 1,
-                size: 24,
-              ),
-              unselectedIconTheme: const IconThemeData(
-                size: 24,
-              ),
-              backgroundColor: Theme.of(context).primaryColor,
-              elevation: 0,
-              selectedItemColor: const Color(0xFFFF8E26),
-              items: navbarPages
-                  .asMap()
-                  .map(
-                    (int index, NavigationItem item) => MapEntry<int, BottomNavigationBarItem>(
-                      index,
-                      BottomNavigationBarItem(
-                        icon: InkWell(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: _currentIndex == index
-                                ? BoxDecoration(
-                                    border: Border.all(
-                                      color: const Color(0xFFFF8E26),
-                                      width: 2,
-                                    ),
-                                    color: const Color(0xFF3D3D3B),
-                                    borderRadius: BorderRadius.circular(10),
-                                  )
-                                : null,
-                            child: item.icon,
-                          ),
-                        ),
-                        label: item.label,
-                      ),
-                    ),
-                  )
-                  .values
-                  .toList(),
-            ),
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: _currentIndex,
+            onDestinationSelected: onItemTapped,
+            backgroundColor: Theme.of(context).primaryColor,
+            destinations: navbarPages.map((NavigationItem item) {
+              return NavigationDestination(
+                icon: SvgPicture.asset(
+                  item.iconPath,
+                  color: const Color(0xFFC2C2C2),
+                  height: 22,
+                  width: 22,
+                ),
+                selectedIcon: SvgPicture.asset(
+                  item.iconPath,
+                  color: const Color(0xFFFF8E26),
+                  height: 22,
+                  width: 22,
+                ),
+                label: item.label,
+              );
+            }).toList(),
           ),
         ),
       );
