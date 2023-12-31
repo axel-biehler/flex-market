@@ -97,7 +97,7 @@ class PicturePreviewPage extends StatelessWidget {
                           const SizedBox(height: 16),
                           Text(
                             'No images selected',
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Theme.of(context).colorScheme.secondary),
                           ),
                         ],
                       )

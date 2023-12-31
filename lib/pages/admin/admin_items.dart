@@ -4,6 +4,7 @@ import 'package:flex_market/components/admin_items_list.dart';
 import 'package:flex_market/pages/admin/admin_item_form.dart';
 import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/utils/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -22,12 +23,14 @@ class AdminItemsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
           SizedBox(
             height: screenHeight * 0.1,
+            width: screenWidth,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[

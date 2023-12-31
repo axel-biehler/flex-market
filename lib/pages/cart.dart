@@ -54,8 +54,14 @@ class CartWidgetState extends State<CartWidget> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Success'),
-              content: const Text('Order placed successfully.'),
+              title: Text(
+                'Success',
+                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+              ),
+              content: Text(
+                'Order placed successfully.',
+                style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+              ),
               backgroundColor: Theme.of(context).primaryColor,
               actions: <Widget>[
                 TextButton(
@@ -64,10 +70,7 @@ class CartWidgetState extends State<CartWidget> {
                   },
                   child: Text(
                     'OK',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(color: const Color(0xFF247100)),
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: const Color(0xFF247100)),
                   ),
                 ),
               ],

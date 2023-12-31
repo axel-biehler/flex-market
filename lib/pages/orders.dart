@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flex_market/components/orders_list.dart';
 import 'package:flex_market/providers/order_provider.dart'; // Assuming this exists
 import 'package:flex_market/utils/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -19,12 +20,14 @@ class OrdersWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenwidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
           SizedBox(
             height: screenHeight * 0.1,
+            width: screenwidth,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -47,8 +50,7 @@ class OrdersWidget extends StatelessWidget {
                               ),
                             ),
                             onPressed: () => navigatorKey.currentState?.pop(),
-                            highlightColor:
-                                Theme.of(context).colorScheme.secondary,
+                            highlightColor: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                         Padding(
@@ -59,10 +61,7 @@ class OrdersWidget extends StatelessWidget {
                             children: <Widget>[
                               Text(
                                 'ORDERS',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(fontStyle: FontStyle.italic),
+                                style: Theme.of(context).textTheme.titleMedium!.copyWith(fontStyle: FontStyle.italic),
                               ),
                               Text(
                                 '${context.watch<OrderProvider>().myOrders.length} orders',

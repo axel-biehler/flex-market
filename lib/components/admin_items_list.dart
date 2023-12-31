@@ -5,6 +5,7 @@ import 'package:flex_market/models/item.dart';
 import 'package:flex_market/pages/admin/admin_item_form.dart';
 import 'package:flex_market/providers/item_provider.dart';
 import 'package:flex_market/utils/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,7 @@ class AdminItemsListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
 
     if (context.watch<ItemProvider>().items.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -34,6 +36,7 @@ class AdminItemsListWidget extends StatelessWidget {
       children: <Widget>[
         SizedBox(
           height: screenHeight * 0.77,
+          width: screenWidth,
           child: ListView.builder(
             itemCount: context.watch<ItemProvider>().items.length,
             itemBuilder: (BuildContext context, int index) {
@@ -97,22 +100,27 @@ class AdminItemsListWidget extends StatelessWidget {
                               ],
                             ),
                           ),
-                          IconButton(
-                            icon: SvgPicture.asset('assets/arrow.svg', height: 40),
-                            onPressed: () {
-                              unawaited(
-                                navigatorKey.currentState?.push(
-                                  MaterialPageRoute<Widget>(
-                                    builder: (BuildContext context) => AdminItemFormWidget(
-                                      navigatorKey: navigatorKey,
-                                      isEdit: true,
-                                      item: item,
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              right: kIsWeb ? margin : 0,
+                            ),
+                            child: IconButton(
+                              icon: SvgPicture.asset('assets/arrow.svg', height: 40),
+                              onPressed: () {
+                                unawaited(
+                                  navigatorKey.currentState?.push(
+                                    MaterialPageRoute<Widget>(
+                                      builder: (BuildContext context) => AdminItemFormWidget(
+                                        navigatorKey: navigatorKey,
+                                        isEdit: true,
+                                        item: item,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
-                            highlightColor: Theme.of(context).colorScheme.secondary,
+                                );
+                              },
+                              highlightColor: Theme.of(context).colorScheme.secondary,
+                            ),
                           ),
                         ],
                       ),

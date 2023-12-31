@@ -5,6 +5,7 @@ import 'package:flex_market/models/user_profile.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/providers/image_management_provider.dart';
 import 'package:flex_market/utils/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,8 +31,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-    final User? user =
-        Provider.of<AuthProvider>(context, listen: false).userCustom;
+    final User? user = Provider.of<AuthProvider>(context, listen: false).userCustom;
     _firstNameController = TextEditingController(text: user?.name ?? '');
     _lastNameController = TextEditingController(text: user?.nickname ?? '');
   }
@@ -39,16 +39,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       body: Column(
         children: <Widget>[
-          _buildHeader(context, screenHeight),
-          Expanded(
+          _buildHeader(context, screenHeight, screenWidth),
+          Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
-              child: _buildForm(context),
+              child: _buildForm(context, screenWidth),
             ),
           ),
         ],
@@ -56,9 +57,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, double screenHeight) {
+  Widget _buildHeader(BuildContext context, double screenHeight, double screenWidth) {
     return SizedBox(
       height: screenHeight * 0.1,
+      width: screenWidth,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -85,10 +87,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     padding: const EdgeInsets.only(left: margin),
                     child: Text(
                       'MY ACCOUNT',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(fontStyle: FontStyle.italic),
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(fontStyle: FontStyle.italic),
                     ),
                   ),
                 ],
@@ -100,76 +99,73 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Form _buildForm(BuildContext context) {
+  Form _buildForm(BuildContext context, double screenWidth) {
     return Form(
       key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Center(
-            child: Container(
-              margin: const EdgeInsets.only(top: margin),
-              alignment: Alignment.center,
-              child: CircleAvatar(
-                radius: 70,
-                backgroundImage: NetworkImage(
-                  context.watch<AuthProvider>().userCustom!.picture.toString(),
+      child: SizedBox(
+        width: screenWidth,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Center(
+              child: Container(
+                margin: const EdgeInsets.only(top: margin),
+                alignment: Alignment.center,
+                child: CircleAvatar(
+                  radius: 70,
+                  backgroundImage: NetworkImage(
+                    context.watch<AuthProvider>().userCustom!.picture.toString(),
+                  ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: IconButton(
-              icon: const Icon(Icons.edit),
-              color: Colors.white,
-              onPressed: () async {
-                await widget.navigatorKey.currentState?.push(
-                  MaterialPageRoute<Widget>(
-                    builder: (BuildContext context) => PicturePreviewPage(
-                      navigatorKey: widget.navigatorKey,
-                      maxPictures: 1,
-                      callback: (List<XFile> pics) async {
-                        final ImageManagementProvider imageManagementProvider =
-                            context.read<ImageManagementProvider>();
-                        final AuthProvider authProvider =
-                            context.read<AuthProvider>();
-                        final String? path = await authProvider
-                            .editProfilePicture(pics.first.name);
-                        await imageManagementProvider.uploadXFileToS3(
-                          pics.first,
-                          path!,
-                        );
-                        imageManagementProvider.clearImageUrls();
-                        await authProvider.fetchUserInfo();
-                        await authProvider.notify();
-                      },
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: IconButton(
+                icon: const Icon(Icons.edit),
+                color: Colors.white,
+                onPressed: () async {
+                  await widget.navigatorKey.currentState?.push(
+                    MaterialPageRoute<Widget>(
+                      builder: (BuildContext context) => PicturePreviewPage(
+                        navigatorKey: widget.navigatorKey,
+                        maxPictures: 1,
+                        callback: (List<XFile> pics) async {
+                          final ImageManagementProvider imageManagementProvider = context.read<ImageManagementProvider>();
+                          final AuthProvider authProvider = context.read<AuthProvider>();
+                          final String? path = await authProvider.editProfilePicture(pics.first.name);
+                          await imageManagementProvider.uploadXFileToS3(
+                            pics.first,
+                            path!,
+                          );
+                          imageManagementProvider.clearImageUrls();
+                          await authProvider.fetchUserInfo();
+                          await authProvider.notify();
+                        },
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-          TextFormField(
-            controller: _firstNameController,
-            style: const TextStyle(color: Colors.white),
-            decoration: _buildInputDecoration('Name'),
-            validator: (String? value) =>
-                value!.isEmpty ? 'Please enter your first name' : null,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _lastNameController,
-            style: const TextStyle(color: Colors.white),
-            decoration: _buildInputDecoration('Nickname'),
-            validator: (String? value) =>
-                value!.isEmpty ? 'Please enter your last name' : null,
-          ),
-          // Add other fields as necessary
-          const SizedBox(height: 16),
-          _buildSaveCancelButtons(context),
-        ],
+            TextFormField(
+              controller: _firstNameController,
+              style: const TextStyle(color: Colors.white),
+              decoration: _buildInputDecoration('Name'),
+              validator: (String? value) => value!.isEmpty ? 'Please enter your first name' : null,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _lastNameController,
+              style: const TextStyle(color: Colors.white),
+              decoration: _buildInputDecoration('Nickname'),
+              validator: (String? value) => value!.isEmpty ? 'Please enter your last name' : null,
+            ),
+            const SizedBox(height: 16),
+            _buildSaveCancelButtons(context),
+          ],
+        ),
       ),
     );
   }
@@ -184,10 +180,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       focusedBorder: const UnderlineInputBorder(
         borderSide: BorderSide(color: Colors.white),
       ),
-      errorBorder:
-          const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-      focusedErrorBorder:
-          const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+      errorBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+      focusedErrorBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
       errorStyle: const TextStyle(color: Colors.red),
     );
   }
@@ -244,8 +238,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       };
 
       // Call the AuthProvider to update the user data
-      final bool success =
-          await context.read<AuthProvider>().editUser(updatedUserData);
+      final bool success = await context.read<AuthProvider>().editUser(updatedUserData);
 
       if (success) {
         await _showSuccessDialog();
@@ -281,8 +274,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Profile Saved'),
-          content: const Text('Your profile has been updated successfully!'),
+          title: Text(
+            'Profile Saved',
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+          ),
+          content: Text(
+            'Your profile has been updated successfully!',
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+          ),
           actions: <Widget>[
             TextButton(
               child: const Text('OK'),
