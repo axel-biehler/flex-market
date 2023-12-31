@@ -189,8 +189,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             const SizedBox(height: 16),
             Center(
               child: ElevatedButton(
-                // ignore: always_specify_types
-                onPressed: () async => <Future>{
+                onPressed: () async => <Future<void>>{
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -226,9 +225,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context)
-                                  // ignore: always_specify_types
-                                  .popUntil((Route route) => route.isFirst);
+                              Navigator.of(context).popUntil(
+                                (Route<dynamic> route) => route.isFirst,
+                              );
                               context.read<AuthProvider>().deleteAccount();
                             },
                             style: TextButton.styleFrom(

@@ -34,12 +34,18 @@ class SearchResultsWidgetState extends State<SearchResultsWidget> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
-    final List<Item> searchResults = context.read<ItemProvider>().getFilteredItems(widget.searchQuery);
+    final double screenWidth = kIsWeb
+        ? MediaQuery.of(context).size.width * 0.6
+        : MediaQuery.of(context).size.width;
+    final List<Item> searchResults =
+        context.read<ItemProvider>().getFilteredItems(widget.searchQuery);
     const int crossAxisCount = 2;
     const double crossAxisSpacing = 40;
-    final double cardWidth = (screenWidth - (crossAxisCount - 1) * crossAxisSpacing) / crossAxisCount;
-    final double headerMargin = kIsWeb ? MediaQuery.of(context).size.width * 0.2 + margin : margin / 3;
+    final double cardWidth =
+        (screenWidth - (crossAxisCount - 1) * crossAxisSpacing) /
+            crossAxisCount;
+    final double headerMargin =
+        kIsWeb ? MediaQuery.of(context).size.width * 0.2 + margin : margin / 3;
 
     return Container(
       margin: const EdgeInsets.only(top: margin, left: margin / 2),
@@ -92,66 +98,73 @@ class SearchResultsWidgetState extends State<SearchResultsWidget> {
               ],
             ),
           ),
-          Center(
-            child: SizedBox(
-              height: screenHeight * 0.79,
-              width: screenWidth,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: margin),
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: crossAxisCount,
-                    crossAxisSpacing: crossAxisSpacing,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: cardWidth / (screenHeight * 0.7 / 2.5),
-                  ),
-                  itemCount: searchResults.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final Item item = searchResults[index];
-                    return InkWell(
-                      onTap: () async {
-                        await widget.navigatorKey.currentState?.push(
-                          MaterialPageRoute<Widget>(
-                            builder: (BuildContext context) => ItemWidget(item: item),
-                          ),
-                        );
-                      },
-                      child: Card(
-                        color: Theme.of(context).primaryColor,
-                        child: Stack(
-                          alignment: Alignment.bottomCenter,
-                          children: <Widget>[
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                if (item.imagesUrl.isNotEmpty)
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(23),
-                                    child: ImageViewerWidget(
-                                      url: item.imagesUrl.first,
-                                    ),
-                                  ),
-                                Text(
-                                  '\$${item.price.toString()}',
-                                  style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                                Text(
-                                  item.name,
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                              ],
+          Expanded(
+            child: Center(
+              child: SizedBox(
+                height: screenHeight * 0.79,
+                width: screenWidth,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: margin),
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      crossAxisSpacing: crossAxisSpacing,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: cardWidth / (screenHeight * 0.7 / 2.5),
+                    ),
+                    itemCount: searchResults.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final Item item = searchResults[index];
+                      return InkWell(
+                        onTap: () async {
+                          await widget.navigatorKey.currentState?.push(
+                            MaterialPageRoute<Widget>(
+                              builder: (BuildContext context) =>
+                                  ItemWidget(item: item),
                             ),
-                          ],
+                          );
+                        },
+                        child: Card(
+                          color: Theme.of(context).primaryColor,
+                          child: Stack(
+                            alignment: Alignment.bottomCenter,
+                            children: <Widget>[
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  if (item.imagesUrl.isNotEmpty)
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(23),
+                                      child: ImageViewerWidget(
+                                        url: item.imagesUrl.first,
+                                      ),
+                                    ),
+                                  Text(
+                                    '\$${item.price.toString()}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium!
+                                        .copyWith(
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                  Text(
+                                    item.name,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
             ),

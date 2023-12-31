@@ -186,7 +186,6 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
                   indicatorColor: Colors.transparent,
                   backgroundColor: Theme.of(context).primaryColor,
                   surfaceTintColor: Colors.transparent,
-                  height: screenHeight * 0.10,
                   shadowColor: Colors.transparent,
                 ),
               ),
