@@ -192,7 +192,7 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
               child: NavigationBar(
                 selectedIndex: _currentIndex,
                 onDestinationSelected: onItemTapped,
-                height: screenHeight * 0.09,
+                height: screenHeight * 0.10,
                 backgroundColor: Theme.of(context).primaryColor,
                 labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
                 destinations: navbarPages.map((NavigationItem item) {

@@ -43,9 +43,13 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isAdmin = Provider.of<AuthProvider>(context, listen: false).userCustom!.isAdmin;
-    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
-    final double bodyPadding = kIsWeb ? MediaQuery.of(context).size.width * 0.2 : 0;
+    final bool isAdmin =
+        Provider.of<AuthProvider>(context, listen: false).userCustom!.isAdmin;
+    final double screenWidth = kIsWeb
+        ? MediaQuery.of(context).size.width * 0.6
+        : MediaQuery.of(context).size.width;
+    final double bodyPadding =
+        kIsWeb ? MediaQuery.of(context).size.width * 0.2 : 0;
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
@@ -67,9 +71,6 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                       'Order Date: ${widget.order.orderDate.toLocal()}',
                     ),
                     _orderDetailText('Status: $_currentStatus'),
-                    _orderDetailText(
-                      'Shipping Address: ${widget.order.shippingAddress}',
-                    ),
                     _buildOrderItemsList(context),
                     if (isAdmin) ...<Widget>[
                       const SizedBox(height: 20),
@@ -97,7 +98,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                         },
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: margin * 2),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: margin * 2),
                         child: ElevatedButton(
                           onPressed: () async {
                             await _updateOrderStatus();
@@ -159,7 +161,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                       padding: const EdgeInsets.only(left: margin),
                       child: Text(
                         'Order ID: ${widget.order.orderId}',
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(fontStyle: FontStyle.italic),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(fontStyle: FontStyle.italic),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -187,11 +192,15 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: widget.order.items.map((OrderItem orderItem) {
-        final Item? item = context.read<ItemProvider>().getById(orderItem.itemId);
+        final Item? item =
+            context.read<ItemProvider>().getById(orderItem.itemId);
         return ListTile(
           title: Text(
             item?.name ?? '',
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(fontStyle: FontStyle.italic),
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(fontStyle: FontStyle.italic),
           ),
           subtitle: Text(
             'Quantity: ${orderItem.quantity}, Size: ${sizeToString(orderItem.size)}',
@@ -216,7 +225,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
   Future<void> _updateOrderStatus() async {
     if (_currentStatus != widget.order.status) {
-      final bool success = await Provider.of<OrderProvider>(context, listen: false).updateOrderStatus(widget.order.orderId, _currentStatus);
+      final bool success =
+          await Provider.of<OrderProvider>(context, listen: false)
+              .updateOrderStatus(widget.order.orderId, _currentStatus);
 
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
