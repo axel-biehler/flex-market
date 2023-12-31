@@ -26,9 +26,12 @@ class UserWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final User? user = context.watch<AuthProvider>().userCustom;
-    final String? pictureUrl = context.watch<AuthProvider>().userCustom?.picture.toString();
+    final String? pictureUrl =
+        context.watch<AuthProvider>().userCustom?.picture.toString();
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
+    final double screenWidth = kIsWeb
+        ? MediaQuery.of(context).size.width * 0.6
+        : MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
       child: Column(
@@ -276,7 +279,8 @@ class UserWidget extends StatelessWidget {
                             unawaited(
                               navigatorKey.currentState?.push(
                                 MaterialPageRoute<Widget>(
-                                  builder: (BuildContext context) => AdminItemsWidget(
+                                  builder: (BuildContext context) =>
+                                      AdminItemsWidget(
                                     navigatorKey: navigatorKey,
                                   ),
                                 ),
@@ -323,7 +327,8 @@ class UserWidget extends StatelessWidget {
                             unawaited(
                               navigatorKey.currentState?.push(
                                 MaterialPageRoute<Widget>(
-                                  builder: (BuildContext context) => AdminOrdersWidget(
+                                  builder: (BuildContext context) =>
+                                      AdminOrdersWidget(
                                     navigatorKey: navigatorKey,
                                   ),
                                 ),
@@ -334,6 +339,57 @@ class UserWidget extends StatelessWidget {
                       ),
                     ],
                   ),
+                const SizedBox(height: 26),
+                Center(
+                  child: ElevatedButton(
+                    // ignore: always_specify_types
+                    onPressed: () async => <Future>{
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Confirm'),
+                            content: const Text(
+                              'Are you sure you want to log out?',
+                            ),
+                            backgroundColor: Theme.of(context).primaryColor,
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.grey,
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: const Text('No'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).popUntil(
+                                    // ignore: always_specify_types
+                                    (Route route) => route.isFirst,
+                                  );
+                                  context.read<AuthProvider>().logout();
+                                },
+                                style: TextButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: const Text('Yes'),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Log out'),
+                  ),
+                ),
               ],
             ),
           ),
