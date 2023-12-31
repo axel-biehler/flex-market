@@ -118,53 +118,55 @@ class _EditProfilePageState extends State<EditProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Center(
-              child: Container(
-                margin: const EdgeInsets.only(top: margin),
+              child: Stack(
                 alignment: Alignment.center,
-                child: CircleAvatar(
-                  radius: 70,
-                  backgroundImage: NetworkImage(
-                    context
-                        .watch<AuthProvider>()
-                        .userCustom!
-                        .picture
-                        .toString(),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: IconButton(
-                icon: const Icon(Icons.edit),
-                color: Colors.white,
-                onPressed: () async {
-                  await widget.navigatorKey.currentState?.push(
-                    MaterialPageRoute<Widget>(
-                      builder: (BuildContext context) => PicturePreviewPage(
-                        navigatorKey: widget.navigatorKey,
-                        maxPictures: 1,
-                        callback: (List<XFile> pics) async {
-                          final ImageManagementProvider
-                              imageManagementProvider =
-                              context.read<ImageManagementProvider>();
-                          final AuthProvider authProvider =
-                              context.read<AuthProvider>();
-                          final String? path = await authProvider
-                              .editProfilePicture(pics.first.name);
-                          await imageManagementProvider.uploadXFileToS3(
-                            pics.first,
-                            path!,
-                          );
-                          imageManagementProvider.clearImageUrls();
-                          await authProvider.fetchUserInfo();
-                          await authProvider.notify();
-                        },
-                      ),
+                children: <Widget>[
+                  CircleAvatar(
+                    radius: 70,
+                    backgroundImage: NetworkImage(
+                      context
+                          .watch<AuthProvider>()
+                          .userCustom!
+                          .picture
+                          .toString(),
                     ),
-                  );
-                },
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.edit),
+                      color: Colors.white,
+                      onPressed: () async {
+                        await widget.navigatorKey.currentState?.push(
+                          MaterialPageRoute<Widget>(
+                            builder: (BuildContext context) =>
+                                PicturePreviewPage(
+                              navigatorKey: widget.navigatorKey,
+                              maxPictures: 1,
+                              callback: (List<XFile> pics) async {
+                                final ImageManagementProvider
+                                    imageManagementProvider =
+                                    context.read<ImageManagementProvider>();
+                                final AuthProvider authProvider =
+                                    context.read<AuthProvider>();
+                                final String? path = await authProvider
+                                    .editProfilePicture(pics.first.name);
+                                await imageManagementProvider.uploadXFileToS3(
+                                  pics.first,
+                                  path!,
+                                );
+                                imageManagementProvider.clearImageUrls();
+                                await authProvider.fetchUserInfo();
+                                await authProvider.notify();
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
             TextFormField(
@@ -183,6 +185,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   value!.isEmpty ? 'Please enter your last name' : null,
             ),
             const SizedBox(height: 16),
+            _buildSaveCancelButtons(context),
+            const SizedBox(height: 16),
             Center(
               child: ElevatedButton(
                 // ignore: always_specify_types
@@ -191,9 +195,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text('Confirm'),
-                        content: const Text(
+                        title: Text(
+                          'Confirm',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                        content: Text(
                           'Are you sure you want to delete your account?',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
                         ),
                         backgroundColor: Theme.of(context).primaryColor,
                         actions: <Widget>[
@@ -205,7 +217,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               backgroundColor: Colors.grey,
                               foregroundColor: Colors.white,
                             ),
-                            child: const Text('No'),
+                            child: Text(
+                              'No',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
                           ),
                           TextButton(
                             onPressed: () {
@@ -218,7 +235,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               backgroundColor: Colors.red,
                               foregroundColor: Colors.white,
                             ),
-                            child: const Text('Yes'),
+                            child: Text(
+                              'Yes',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
                           ),
                         ],
                       );
@@ -226,13 +248,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: Theme.of(context).colorScheme.errorContainer,
                   foregroundColor: Colors.white,
+                  fixedSize: const Size(150, 30),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 child: const Text('Delete Account'),
               ),
             ),
-            _buildSaveCancelButtons(context),
           ],
         ),
       ),
