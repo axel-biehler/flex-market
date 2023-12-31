@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flex_market/models/cart_item.dart';
 import 'package:flex_market/models/item.dart';
-import 'package:flex_market/models/product.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flex_market/utils/enums.dart';
@@ -54,58 +53,6 @@ class CartProvider extends ChangeNotifier {
     this.authProvider = authProvider;
     notifyListeners();
   }
-
-  /// A list of mock products used for displaying in the UI.
-  List<Product> mockProducts = <Product>[
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.l,
-    ),
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.m,
-    ),
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.xl,
-    ),
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.s,
-    ),
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.xl,
-    ),
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.xxl,
-    ),
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.l,
-    ),
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.m,
-    ),
-  ];
 
   /// Fetch items in the cart
   Future<void> fetchCart() async {

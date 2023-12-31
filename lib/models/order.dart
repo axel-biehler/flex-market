@@ -17,8 +17,7 @@ class Order {
 
   /// Returns an [Order] from the given [json] map.
   factory Order.fromJson(Map<String, dynamic> json) {
-    final List<dynamic> itemsJson =
-        json['items'] as List<dynamic>; // Cast as List<dynamic>
+    final List<dynamic> itemsJson = json['items'] as List<dynamic>;
     final List<OrderItem> itemsList = itemsJson.map((dynamic itemJson) {
       return OrderItem.fromJson(
         itemJson as Map<String, dynamic>,
