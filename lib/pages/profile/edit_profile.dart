@@ -118,53 +118,55 @@ class _EditProfilePageState extends State<EditProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Center(
-              child: Container(
-                margin: const EdgeInsets.only(top: margin),
+              child: Stack(
                 alignment: Alignment.center,
-                child: CircleAvatar(
-                  radius: 70,
-                  backgroundImage: NetworkImage(
-                    context
-                        .watch<AuthProvider>()
-                        .userCustom!
-                        .picture
-                        .toString(),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: IconButton(
-                icon: const Icon(Icons.edit),
-                color: Colors.white,
-                onPressed: () async {
-                  await widget.navigatorKey.currentState?.push(
-                    MaterialPageRoute<Widget>(
-                      builder: (BuildContext context) => PicturePreviewPage(
-                        navigatorKey: widget.navigatorKey,
-                        maxPictures: 1,
-                        callback: (List<XFile> pics) async {
-                          final ImageManagementProvider
-                              imageManagementProvider =
-                              context.read<ImageManagementProvider>();
-                          final AuthProvider authProvider =
-                              context.read<AuthProvider>();
-                          final String? path = await authProvider
-                              .editProfilePicture(pics.first.name);
-                          await imageManagementProvider.uploadXFileToS3(
-                            pics.first,
-                            path!,
-                          );
-                          imageManagementProvider.clearImageUrls();
-                          await authProvider.fetchUserInfo();
-                          await authProvider.notify();
-                        },
-                      ),
+                children: <Widget>[
+                  CircleAvatar(
+                    radius: 70,
+                    backgroundImage: NetworkImage(
+                      context
+                          .watch<AuthProvider>()
+                          .userCustom!
+                          .picture
+                          .toString(),
                     ),
-                  );
-                },
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.edit),
+                      color: Colors.white,
+                      onPressed: () async {
+                        await widget.navigatorKey.currentState?.push(
+                          MaterialPageRoute<Widget>(
+                            builder: (BuildContext context) =>
+                                PicturePreviewPage(
+                              navigatorKey: widget.navigatorKey,
+                              maxPictures: 1,
+                              callback: (List<XFile> pics) async {
+                                final ImageManagementProvider
+                                    imageManagementProvider =
+                                    context.read<ImageManagementProvider>();
+                                final AuthProvider authProvider =
+                                    context.read<AuthProvider>();
+                                final String? path = await authProvider
+                                    .editProfilePicture(pics.first.name);
+                                await imageManagementProvider.uploadXFileToS3(
+                                  pics.first,
+                                  path!,
+                                );
+                                imageManagementProvider.clearImageUrls();
+                                await authProvider.fetchUserInfo();
+                                await authProvider.notify();
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
             TextFormField(
@@ -184,7 +186,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             const SizedBox(height: 16),
             _buildSaveCancelButtons(context),
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
             Center(
               child: ElevatedButton(
                 // ignore: always_specify_types

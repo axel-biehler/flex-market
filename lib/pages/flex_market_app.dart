@@ -157,22 +157,19 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
           body: Column(
             children: <Widget>[
               Expanded(
-                child: SizedBox(
-                  height: screenHeight * 0.87,
-                  child: IndexedStack(
-                    index: _currentIndex,
-                    children: navbarPages.map<Widget>((NavigationItem item) {
-                      return Navigator(
-                        key: item.navigatorKey,
-                        onGenerateRoute: (RouteSettings settings) {
-                          return MaterialPageRoute<Widget>(
-                            builder: (BuildContext context) =>
-                                item.pageBuilder(item.navigatorKey),
-                          );
-                        },
-                      );
-                    }).toList(),
-                  ),
+                child: IndexedStack(
+                  index: _currentIndex,
+                  children: navbarPages.map<Widget>((NavigationItem item) {
+                    return Navigator(
+                      key: item.navigatorKey,
+                      onGenerateRoute: (RouteSettings settings) {
+                        return MaterialPageRoute<Widget>(
+                          builder: (BuildContext context) =>
+                              item.pageBuilder(item.navigatorKey),
+                        );
+                      },
+                    );
+                  }).toList(),
                 ),
               ),
             ],
@@ -180,10 +177,7 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
           bottomNavigationBar: DecoratedBox(
             decoration: const BoxDecoration(
               border: Border(
-                top: BorderSide(
-                  color: Color(0xFF3D3D3B),
-                  width: 3,
-                ),
+                top: BorderSide(color: Color(0xFF3D3D3B), width: 3),
               ),
             ),
             child: Theme(
