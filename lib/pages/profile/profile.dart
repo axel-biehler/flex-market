@@ -342,8 +342,7 @@ class UserWidget extends StatelessWidget {
                 const SizedBox(height: 26),
                 Center(
                   child: ElevatedButton(
-                    // ignore: always_specify_types
-                    onPressed: () async => <Future>{
+                    onPressed: () async => <Future<void>>{
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -367,8 +366,7 @@ class UserWidget extends StatelessWidget {
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).popUntil(
-                                    // ignore: always_specify_types
-                                    (Route route) => route.isFirst,
+                                    (Route<dynamic> route) => route.isFirst,
                                   );
                                   context.read<AuthProvider>().logout();
                                 },
