@@ -226,7 +226,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).popUntil(
-                                  (Route<dynamic> route) => route.isFirst);
+                                (Route<dynamic> route) => route.isFirst,
+                              );
                               context.read<AuthProvider>().deleteAccount();
                             },
                             style: TextButton.styleFrom(
