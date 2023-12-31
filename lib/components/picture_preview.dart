@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flex_market/components/camera_picker.dart';
 import 'package:flex_market/components/image_picker.dart';
 import 'package:flex_market/providers/image_management_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -16,12 +17,22 @@ Widget buildImageItem(BuildContext context, int index, double imageSize) {
         SizedBox(
           width: imageSize,
           height: imageSize,
-          child: Image.file(
-            File(
-              context.watch<ImageManagementProvider>().imageFiles[index].path,
-            ),
-            fit: BoxFit.cover,
-          ),
+          child: !kIsWeb
+              ? Image.file(
+                  File(
+                    context
+                        .watch<ImageManagementProvider>()
+                        .imageFiles[index]
+                        .path,
+                  ),
+                  fit: BoxFit.cover,
+                )
+              : Image.network(
+                  context
+                      .watch<ImageManagementProvider>()
+                      .imageFiles[index]
+                      .path,
+                  fit: BoxFit.cover),
         ),
         IconButton(
           icon: const Icon(Icons.cancel, color: Colors.red),
@@ -82,7 +93,10 @@ class PicturePreviewPage extends StatelessWidget {
             child: Center(
               child: SizedBox(
                 height: imageSize,
-                child: context.watch<ImageManagementProvider>().imageFiles.isEmpty
+                child: context
+                        .watch<ImageManagementProvider>()
+                        .imageFiles
+                        .isEmpty
                     ? Flex(
                         mainAxisAlignment: MainAxisAlignment.center,
                         direction: Axis.vertical,
@@ -97,15 +111,29 @@ class PicturePreviewPage extends StatelessWidget {
                           const SizedBox(height: 16),
                           Text(
                             'No images selected',
-                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Theme.of(context).colorScheme.secondary),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary),
                           ),
                         ],
                       )
                     : ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: context.watch<ImageManagementProvider>().imageFiles.length + 1,
+                        itemCount: context
+                                .watch<ImageManagementProvider>()
+                                .imageFiles
+                                .length +
+                            1,
                         itemBuilder: (BuildContext context, int index) {
-                          if (index == context.watch<ImageManagementProvider>().imageFiles.length) {
+                          if (index ==
+                              context
+                                  .watch<ImageManagementProvider>()
+                                  .imageFiles
+                                  .length) {
                             return CameraPickerWidget(
                               navigatorKey: navigatorKey,
                               maxPictures: maxPictures,
@@ -133,9 +161,13 @@ class PicturePreviewPage extends StatelessWidget {
               ),
               const SizedBox(width: 24),
               ElevatedButton(
-                onPressed: context.watch<ImageManagementProvider>().imageFiles.isNotEmpty
+                onPressed: context
+                        .watch<ImageManagementProvider>()
+                        .imageFiles
+                        .isNotEmpty
                     ? () async {
-                        await callback(context.read<ImageManagementProvider>().imageFiles);
+                        await callback(
+                            context.read<ImageManagementProvider>().imageFiles);
                         navigatorKey.currentState?.pop();
                       }
                     : null,
