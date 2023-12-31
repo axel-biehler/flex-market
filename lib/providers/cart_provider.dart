@@ -55,58 +55,6 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// A list of mock products used for displaying in the UI.
-  List<Product> mockProducts = <Product>[
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.l,
-    ),
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.m,
-    ),
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.xl,
-    ),
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.s,
-    ),
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.xl,
-    ),
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.xxl,
-    ),
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.l,
-    ),
-    Product(
-      title: 'Air force one',
-      imageUrl: 'assets/shoes.png',
-      price: 189.90,
-      size: ItemSize.m,
-    ),
-  ];
-
   /// Fetch items in the cart
   Future<void> fetchCart() async {
     final Uri url = Uri.parse(

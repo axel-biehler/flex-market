@@ -17,7 +17,6 @@ class NavigationItem {
   NavigationItem({
     required this.navigatorKey,
     required this.pageBuilder,
-    // required this.page,
     required this.icon,
     required this.label,
   });
@@ -27,9 +26,6 @@ class NavigationItem {
 
   /// Page builder to pass the navigatorKey to its child
   final Widget Function(GlobalKey<NavigatorState>) pageBuilder;
-
-  /// The page to navigate to when this item is tapped.
-  // final Widget page;
 
   /// The icon representing this navigation item.
   final Widget icon;

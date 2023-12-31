@@ -237,13 +237,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         'nickname': _lastNameController.text,
       };
 
-      // Call the AuthProvider to update the user data
       final bool success = await context.read<AuthProvider>().editUser(updatedUserData);
 
       if (success) {
         await _showSuccessDialog();
       } else {
-        // If the update failed, show an error message
         await _showErrorDialog('Failed to update profile. Please try again.');
       }
     }
