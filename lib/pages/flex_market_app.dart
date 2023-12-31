@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+/// Navigation item model
 class NavigationItem {
+  /// Creates a new [NavigationItem]
   NavigationItem({
     required this.navigatorKey,
     required this.pageBuilder,
@@ -19,13 +21,22 @@ class NavigationItem {
     required this.label,
   });
 
+  /// Key used for custom navigation flow inside each app section
   final GlobalKey<NavigatorState> navigatorKey;
+
+  /// Page builder used to create the page
   final Widget Function(GlobalKey<NavigatorState>) pageBuilder;
+
+  /// Path to the icon
   final String iconPath;
+
+  /// Label of the item
   final String label;
 }
 
+/// FlexMarketApp component
 class FlexMarketApp extends StatefulWidget {
+  /// Creates a new [FlexMarketApp]
   const FlexMarketApp({super.key});
 
   @override
@@ -90,26 +101,33 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
   }
 
   Widget _buildIcon(NavigationItem item, bool isSelected) {
+    final double iconSize = isSelected ? 26 : 22;
+    const double borderSize = 2;
+    final double padding = isSelected ? 12 : 10;
+
     return Container(
-      width: 35, // Slightly increased size for the border
-      height: 35, // Slightly increased size for the border
-      padding:
-          const EdgeInsets.all(6), // Adjust the padding inside the container
+      width: iconSize + padding * 2,
+      height: iconSize + padding * 2,
+      padding: EdgeInsets.all(padding),
       decoration: isSelected
           ? BoxDecoration(
-              color: Colors.transparent, // Ensure the background is transparent
-              border: Border.all(
-                color: const Color(0xFFFF8E26), // Border color
-                width: 2, // Border width
+              color: const Color(
+                0xFF3D3D3B,
               ),
-              borderRadius: BorderRadius.circular(8), // Border radius
+              border: Border.all(
+                color: const Color(0xFFFF8E26),
+                width: borderSize,
+              ),
+              borderRadius: BorderRadius.circular(12),
             )
           : null,
       child: SvgPicture.asset(
         item.iconPath,
-        color: isSelected ? const Color(0xFFFF8E26) : Colors.white,
-        width: 22, // Set your SVG image width
-        height: 22, // Set your SVG image height
+        colorFilter: isSelected
+            ? const ColorFilter.mode(Color(0xFFFF8E26), BlendMode.srcIn)
+            : const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+        width: iconSize,
+        height: iconSize,
       ),
     );
   }
@@ -159,27 +177,39 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
               ),
             ],
           ),
-          bottomNavigationBar: Theme(
-            data: Theme.of(context).copyWith(
-              navigationBarTheme: const NavigationBarThemeData(
-                indicatorColor: Colors.transparent,
+          bottomNavigationBar: DecoratedBox(
+            decoration: const BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: Color(0xFF3D3D3B),
+                  width: 3,
+                ),
               ),
             ),
-            child: NavigationBar(
-              selectedIndex: _currentIndex,
-              onDestinationSelected: onItemTapped,
-              height: 60,
-              backgroundColor: const Color(0xFF121212), // Background color
-              labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-              destinations: navbarPages.map((NavigationItem item) {
-                final bool isSelected =
-                    _currentIndex == navbarPages.indexOf(item);
-                return NavigationDestination(
-                  icon: _buildIcon(item, false),
-                  selectedIcon: _buildIcon(item, true),
-                  label: item.label,
-                );
-              }).toList(),
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                navigationBarTheme: NavigationBarThemeData(
+                  indicatorColor: Colors.transparent,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  surfaceTintColor: Colors.transparent,
+                  height: screenHeight * 0.10,
+                  shadowColor: Colors.transparent,
+                ),
+              ),
+              child: NavigationBar(
+                selectedIndex: _currentIndex,
+                onDestinationSelected: onItemTapped,
+                height: screenHeight * 0.10,
+                backgroundColor: Theme.of(context).primaryColor,
+                labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+                destinations: navbarPages.map((NavigationItem item) {
+                  return NavigationDestination(
+                    icon: _buildIcon(item, false),
+                    selectedIcon: _buildIcon(item, true),
+                    label: item.label,
+                  );
+                }).toList(),
+              ),
             ),
           ),
         ),
