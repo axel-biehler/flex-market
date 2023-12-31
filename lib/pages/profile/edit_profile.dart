@@ -31,7 +31,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-    final User? user = Provider.of<AuthProvider>(context, listen: false).userCustom;
+    final User? user =
+        Provider.of<AuthProvider>(context, listen: false).userCustom;
     _firstNameController = TextEditingController(text: user?.name ?? '');
     _lastNameController = TextEditingController(text: user?.nickname ?? '');
   }
@@ -39,7 +40,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
+    final double screenWidth = kIsWeb
+        ? MediaQuery.of(context).size.width * 0.6
+        : MediaQuery.of(context).size.width;
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
@@ -91,7 +94,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     padding: const EdgeInsets.only(left: margin),
                     child: Text(
                       'MY ACCOUNT',
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(fontStyle: FontStyle.italic),
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(fontStyle: FontStyle.italic),
                     ),
                   ),
                 ],
@@ -115,14 +121,26 @@ class _EditProfilePageState extends State<EditProfilePage> {
               child: Stack(
                 alignment: Alignment.center,
                 children: <Widget>[
-                  if (!context.watch<AuthProvider>().userCustom!.picture.contains('gravatar'))
+                  if (!context
+                      .watch<AuthProvider>()
+                      .userCustom!
+                      .picture
+                      .contains('gravatar'))
                     CircleAvatar(
                       radius: 70,
                       backgroundImage: NetworkImage(
-                        context.watch<AuthProvider>().userCustom!.picture.toString(),
+                        context
+                            .watch<AuthProvider>()
+                            .userCustom!
+                            .picture
+                            .toString(),
                       ),
                     ),
-                  if (context.watch<AuthProvider>().userCustom!.picture.contains('gravatar'))
+                  if (context
+                      .watch<AuthProvider>()
+                      .userCustom!
+                      .picture
+                      .contains('gravatar'))
                     Icon(
                       Icons.account_circle,
                       size: 70,
@@ -137,13 +155,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       onPressed: () async {
                         await widget.navigatorKey.currentState?.push(
                           MaterialPageRoute<Widget>(
-                            builder: (BuildContext context) => PicturePreviewPage(
+                            builder: (BuildContext context) =>
+                                PicturePreviewPage(
                               navigatorKey: widget.navigatorKey,
                               maxPictures: 1,
                               callback: (List<XFile> pics) async {
-                                final ImageManagementProvider imageManagementProvider = context.read<ImageManagementProvider>();
-                                final AuthProvider authProvider = context.read<AuthProvider>();
-                                final String? path = await authProvider.editProfilePicture(pics.first.name);
+                                final ImageManagementProvider
+                                    imageManagementProvider =
+                                    context.read<ImageManagementProvider>();
+                                final AuthProvider authProvider =
+                                    context.read<AuthProvider>();
+                                final String? path = await authProvider
+                                    .editProfilePicture(pics.first.name);
                                 await imageManagementProvider.uploadXFileToS3(
                                   pics.first,
                                   path!,
@@ -165,14 +188,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
               controller: _firstNameController,
               style: const TextStyle(color: Colors.white),
               decoration: _buildInputDecoration('Name'),
-              validator: (String? value) => value!.isEmpty ? 'Please enter your first name' : null,
+              validator: (String? value) =>
+                  value!.isEmpty ? 'Please enter your first name' : null,
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _lastNameController,
               style: const TextStyle(color: Colors.white),
               decoration: _buildInputDecoration('Nickname'),
-              validator: (String? value) => value!.isEmpty ? 'Please enter your last name' : null,
+              validator: (String? value) =>
+                  value!.isEmpty ? 'Please enter your last name' : null,
             ),
             const SizedBox(height: 16),
             _buildSaveCancelButtons(context),
@@ -263,8 +288,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
       focusedBorder: const UnderlineInputBorder(
         borderSide: BorderSide(color: Colors.white),
       ),
-      errorBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
-      focusedErrorBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+      errorBorder:
+          const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+      focusedErrorBorder:
+          const UnderlineInputBorder(borderSide: BorderSide(color: Colors.red)),
       errorStyle: const TextStyle(color: Colors.red),
     );
   }
@@ -320,12 +347,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
         'nickname': _lastNameController.text,
       };
 
-      final bool success = await context.read<AuthProvider>().editUser(updatedUserData);
+      final bool success =
+          await context.read<AuthProvider>().editUser(updatedUserData);
 
       if (success) {
         await _showSuccessDialog();
       } else {
-        await _showErrorDialog('Failed to update profile. Please try again.');
+        await _showErrorDialog(
+          "Failed to update profile. google and apple can't be updated.",
+        );
       }
     }
   }
@@ -337,6 +367,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         return AlertDialog(
           title: const Text('Error'),
           content: Text(message),
+          backgroundColor: Colors.black,
           actions: <Widget>[
             TextButton(
               child: const Text('OK'),
@@ -359,6 +390,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             'Profile Saved',
             style: TextStyle(color: Theme.of(context).colorScheme.secondary),
           ),
+          backgroundColor: Colors.black,
           content: Text(
             'Your profile has been updated successfully!',
             style: TextStyle(color: Theme.of(context).colorScheme.secondary),
