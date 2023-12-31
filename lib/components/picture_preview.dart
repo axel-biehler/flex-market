@@ -32,7 +32,8 @@ Widget buildImageItem(BuildContext context, int index, double imageSize) {
                       .watch<ImageManagementProvider>()
                       .imageFiles[index]
                       .path,
-                  fit: BoxFit.cover),
+                  fit: BoxFit.cover,
+                ),
         ),
         IconButton(
           icon: const Icon(Icons.cancel, color: Colors.red),
@@ -115,9 +116,9 @@ class PicturePreviewPage extends StatelessWidget {
                                 .textTheme
                                 .bodyMedium!
                                 .copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondary),
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
                           ),
                         ],
                       )
@@ -167,7 +168,8 @@ class PicturePreviewPage extends StatelessWidget {
                         .isNotEmpty
                     ? () async {
                         await callback(
-                            context.read<ImageManagementProvider>().imageFiles);
+                          context.read<ImageManagementProvider>().imageFiles,
+                        );
                         navigatorKey.currentState?.pop();
                       }
                     : null,
