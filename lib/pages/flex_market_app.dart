@@ -89,6 +89,31 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
     await context.read<AuthProvider>().initWebAuth();
   }
 
+  Widget _buildIcon(NavigationItem item, bool isSelected) {
+    return Container(
+      width: 35, // Slightly increased size for the border
+      height: 35, // Slightly increased size for the border
+      padding:
+          const EdgeInsets.all(6), // Adjust the padding inside the container
+      decoration: isSelected
+          ? BoxDecoration(
+              color: Colors.transparent, // Ensure the background is transparent
+              border: Border.all(
+                color: const Color(0xFFFF8E26), // Border color
+                width: 2, // Border width
+              ),
+              borderRadius: BorderRadius.circular(8), // Border radius
+            )
+          : null,
+      child: SvgPicture.asset(
+        item.iconPath,
+        color: isSelected ? const Color(0xFFFF8E26) : Colors.white,
+        width: 22, // Set your SVG image width
+        height: 22, // Set your SVG image height
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -134,31 +159,28 @@ class _FlexMarketAppState extends State<FlexMarketApp> {
               ),
             ],
           ),
-          bottomNavigationBar: NavigationBar(
-            selectedIndex: _currentIndex,
-            onDestinationSelected: onItemTapped,
-            height: 60,
-            backgroundColor: Theme.of(context).primaryColor,
-            labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-            destinations: navbarPages.map((NavigationItem item) {
-              return NavigationDestination(
-                icon: SvgPicture.asset(
-                  item.iconPath,
-                  color: _currentIndex == navbarPages.indexOf(item)
-                      ? const Color(0xFFFF8E26)
-                      : const Color(0xFFC2C2C2),
-                  height: 22,
-                  width: 22,
-                ),
-                selectedIcon: SvgPicture.asset(
-                  item.iconPath,
-                  color: const Color(0xFFFF8E26),
-                  height: 22,
-                  width: 22,
-                ),
-                label: item.label,
-              );
-            }).toList(),
+          bottomNavigationBar: Theme(
+            data: Theme.of(context).copyWith(
+              navigationBarTheme: const NavigationBarThemeData(
+                indicatorColor: Colors.transparent,
+              ),
+            ),
+            child: NavigationBar(
+              selectedIndex: _currentIndex,
+              onDestinationSelected: onItemTapped,
+              height: 60,
+              backgroundColor: const Color(0xFF121212), // Background color
+              labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+              destinations: navbarPages.map((NavigationItem item) {
+                final bool isSelected =
+                    _currentIndex == navbarPages.indexOf(item);
+                return NavigationDestination(
+                  icon: _buildIcon(item, false),
+                  selectedIcon: _buildIcon(item, true),
+                  label: item.label,
+                );
+              }).toList(),
+            ),
           ),
         ),
       );
