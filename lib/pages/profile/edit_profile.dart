@@ -61,7 +61,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Widget _buildHeader(
-      BuildContext context, double screenHeight, double screenWidth) {
+    BuildContext context,
+    double screenHeight,
+    double screenWidth,
+  ) {
     return SizedBox(
       height: screenHeight * 0.1,
       width: screenWidth,
