@@ -26,12 +26,9 @@ class UserWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final User? user = context.watch<AuthProvider>().userCustom;
-    final String? pictureUrl =
-        context.watch<AuthProvider>().userCustom?.picture.toString();
+    final String? pictureUrl = context.watch<AuthProvider>().userCustom?.picture.toString();
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = kIsWeb
-        ? MediaQuery.of(context).size.width * 0.6
-        : MediaQuery.of(context).size.width;
+    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
       child: Column(
@@ -68,13 +65,23 @@ class UserWidget extends StatelessWidget {
                         ),
                   ),
                 ),
-                if (pictureUrl != null)
+                if (pictureUrl != null && !pictureUrl.contains('gravatar'))
                   Container(
                     margin: const EdgeInsets.only(top: margin),
                     alignment: Alignment.center,
                     child: CircleAvatar(
                       radius: 70,
                       backgroundImage: NetworkImage(pictureUrl.toString()),
+                    ),
+                  ),
+                if (pictureUrl == null || pictureUrl.contains('gravatar'))
+                  Container(
+                    margin: const EdgeInsets.only(top: margin),
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.account_circle,
+                      size: 70,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                 const SizedBox(height: 10),
@@ -279,8 +286,7 @@ class UserWidget extends StatelessWidget {
                             unawaited(
                               navigatorKey.currentState?.push(
                                 MaterialPageRoute<Widget>(
-                                  builder: (BuildContext context) =>
-                                      AdminItemsWidget(
+                                  builder: (BuildContext context) => AdminItemsWidget(
                                     navigatorKey: navigatorKey,
                                   ),
                                 ),
@@ -327,8 +333,7 @@ class UserWidget extends StatelessWidget {
                             unawaited(
                               navigatorKey.currentState?.push(
                                 MaterialPageRoute<Widget>(
-                                  builder: (BuildContext context) =>
-                                      AdminOrdersWidget(
+                                  builder: (BuildContext context) => AdminOrdersWidget(
                                     navigatorKey: navigatorKey,
                                   ),
                                 ),
