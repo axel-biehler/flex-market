@@ -298,7 +298,6 @@ class ItemProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         unawaited(fetchAllProducts());
-        // final data = json.decode(response.body);
         return true;
       } else {
         if (kDebugMode) {

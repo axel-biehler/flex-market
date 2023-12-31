@@ -25,12 +25,10 @@ class AuthProvider extends ChangeNotifier {
   bool? _isAuthenticated;
 
   /// Instance of Auth0 for user authentication.
-  final Auth0 auth0 =
-      Auth0(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_CLIENT_ID']!);
+  final Auth0 auth0 = Auth0(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_CLIENT_ID']!);
 
   /// Instance of Auth0Web for web-based authentication.
-  final Auth0Web auth0Web =
-      Auth0Web(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_WEB_CLIENT_ID']!);
+  final Auth0Web auth0Web = Auth0Web(dotenv.env['AUTH0_DOMAIN']!, dotenv.env['AUTH0_WEB_CLIENT_ID']!);
 
   /// Getter for the current user.
   UserProfile? get user => _user;
@@ -95,9 +93,7 @@ class AuthProvider extends ChangeNotifier {
         notifyListeners();
         return;
       }
-      final Credentials credentials = await auth0
-          .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
-          .login(
+      final Credentials credentials = await auth0.webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME']).login(
         audience: dotenv.env['AUTH0_AUDIENCE'],
         scopes: <String>{
           'openid',
@@ -146,9 +142,7 @@ class AuthProvider extends ChangeNotifier {
         notifyListeners();
         return;
       }
-      final Credentials credentials = await auth0
-          .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
-          .login(
+      final Credentials credentials = await auth0.webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME']).login(
         audience: dotenv.env['AUTH0_AUDIENCE'],
         scopes: <String>{
           'openid',
@@ -180,9 +174,7 @@ class AuthProvider extends ChangeNotifier {
       if (kIsWeb) {
         await auth0Web.logout(returnToUrl: dotenv.env['AUTH0_REDIRECT_URI']);
       } else {
-        await auth0
-            .webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME'])
-            .logout();
+        await auth0.webAuthentication(scheme: dotenv.env['AUTH0_CUSTOM_SCHEME']).logout();
         _user = null;
         notifyListeners();
       }
@@ -248,10 +240,7 @@ class AuthProvider extends ChangeNotifier {
           print('Response data: ${response.body}');
         }
 
-        final String role = (jsonDecode(response.body)['profile'] != null &&
-                jsonDecode(response.body)['profile'].isNotEmpty)
-            ? 'admin'
-            : 'user';
+        final String role = (jsonDecode(response.body)['profile'] != null && jsonDecode(response.body)['profile'].isNotEmpty) ? 'admin' : 'user';
 
         return role;
       } else {
@@ -288,7 +277,6 @@ class AuthProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        // Update local user profile with new details
         final String role = await fetchUserRoles(credentials!);
         setCustomUser(
           User.fromJson(jsonDecode(response.body)['profile']),
