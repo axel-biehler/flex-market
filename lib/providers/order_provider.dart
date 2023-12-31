@@ -12,7 +12,9 @@ import 'package:http/http.dart' as http;
 class OrderProvider extends ChangeNotifier {
   /// Constructor that receives the AuthProvider
   OrderProvider(this.authProvider) {
-    unawaited(fetchAllOrders());
+    if (authProvider.userCustom!.isAdmin) {
+      unawaited(fetchAllOrders());
+    }
     unawaited(fetchMyOrders());
   }
 
@@ -136,7 +138,9 @@ class OrderProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        unawaited(fetchAllOrders());
+        if (authProvider.userCustom!.isAdmin) {
+          unawaited(fetchAllOrders());
+        }
         unawaited(fetchMyOrders());
       } else {
         if (kDebugMode) {
