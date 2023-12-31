@@ -203,9 +203,13 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Success'),
+            title: Text(
+              'Success',
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            ),
             content: Text(
               'Item ${widget.isEdit ? 'updated' : 'created'} successfully.',
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
             ),
             backgroundColor: Theme.of(context).primaryColor,
             actions: <Widget>[
@@ -233,8 +237,14 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Success'),
-            content: const Text('Item deleted successfully.'),
+            title: Text(
+              'Success',
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            ),
+            content: Text(
+              'Item deleted successfully.',
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            ),
             backgroundColor: Theme.of(context).primaryColor,
             actions: <Widget>[
               TextButton(
@@ -273,7 +283,8 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
+    final double horizontalPadding = kIsWeb ? MediaQuery.of(context).size.width * 0.2 : 40;
 
     return SingleChildScrollView(
       child: Column(
@@ -285,7 +296,10 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
               children: <Widget>[
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: margin),
+                    padding: EdgeInsets.only(
+                      left: kIsWeb ? MediaQuery.of(context).size.width * 0.2 : margin,
+                      right: kIsWeb ? MediaQuery.of(context).size.width * 0.2 : 0,
+                    ),
                     child: Row(
                       children: <Widget>[
                         DecoratedBox(
@@ -328,9 +342,9 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
           Row(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 40,
-                  right: 40,
+                padding: EdgeInsets.only(
+                  left: kIsWeb ? MediaQuery.of(context).size.width * 0.2 : 40,
+                  right: kIsWeb ? MediaQuery.of(context).size.width * 0.2 : 40,
                   bottom: margin,
                 ),
                 child: Text(
@@ -346,14 +360,14 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
           Form(
             key: formKey,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(bottom: margin),
                     child: SizedBox(
-                      height: screenWidth - 120,
+                      height: kIsWeb ? screenWidth * 0.3 : screenWidth - 120,
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         children: <Widget>[
@@ -366,8 +380,8 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(23),
                                       child: SizedBox(
-                                        width: MediaQuery.of(context).size.width * 0.9,
-                                        height: screenWidth - 120,
+                                        width: kIsWeb ? screenWidth * 0.3 : screenWidth * 0.9,
+                                        height: kIsWeb ? screenWidth * 0.3 : screenWidth - 120,
                                         child: ImageViewerWidget(
                                           url: url,
                                         ),
@@ -400,11 +414,11 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(23),
                                       child: SizedBox(
-                                        width: MediaQuery.of(context).size.width * 0.9,
-                                        height: screenWidth - 120,
+                                        width: kIsWeb ? screenWidth * 0.3 : screenWidth * 0.9,
+                                        height: kIsWeb ? screenWidth * 0.3 : screenWidth - 120,
                                         child: Image.file(
                                           File(file.path),
-                                          width: screenWidth - 120,
+                                          width: kIsWeb ? screenWidth * 0.3 : screenWidth - 120,
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -426,8 +440,8 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                               );
                             }),
                           SizedBox(
-                            height: screenWidth - 120,
-                            width: screenWidth - 120,
+                            height: kIsWeb ? screenWidth * 0.3 : screenWidth - 120,
+                            width: kIsWeb ? screenWidth * 0.3 : screenWidth - 120,
                             child: DecoratedBox(
                               decoration: const BoxDecoration(
                                 color: Color(0xFF3D3D3B),
@@ -485,7 +499,9 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                     children: <Widget>[
                       Text(
                         'Name:',
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
                       ),
                       Expanded(
                         child: Padding(
@@ -493,6 +509,9 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                           child: SizedBox(
                             height: 50,
                             child: TextFormField(
+                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    color: Theme.of(context).colorScheme.secondary,
+                                  ),
                               enabled: !_isSubmitting,
                               controller: _nameController,
                               decoration: const InputDecoration(
@@ -521,10 +540,15 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                         ),
                         child: Text(
                           'Description:',
-                          style: Theme.of(context).textTheme.bodyMedium,
+                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
                         ),
                       ),
                       TextFormField(
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
                         enabled: !_isSubmitting,
                         controller: _descriptionController,
                         decoration: const InputDecoration(
@@ -547,6 +571,9 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                   Padding(
                     padding: const EdgeInsets.only(top: margin),
                     child: TextFormField(
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
                       enabled: !_isSubmitting,
                       controller: _priceController,
                       decoration: const InputDecoration(
@@ -579,7 +606,12 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                       items: ItemCategory.values.map((ItemCategory category) {
                         return DropdownMenuItem<ItemCategory>(
                           value: category,
-                          child: Text(category.name),
+                          child: Text(
+                            category.name,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
                         );
                       }).toList(),
                       decoration: const InputDecoration(
@@ -609,7 +641,12 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                       items: ItemGender.values.map((ItemGender gender) {
                         return DropdownMenuItem<ItemGender>(
                           value: gender,
-                          child: Text(gender.name),
+                          child: Text(
+                            gender.name,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
                         );
                       }).toList(),
                       decoration: const InputDecoration(
@@ -647,12 +684,17 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                           children: <Widget>[
                             Text(
                               '${size.name.toUpperCase()}:',
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                    color: Theme.of(context).colorScheme.secondary,
+                                  ),
                             ),
                             SizedBox(
                               height: 50,
                               width: screenWidth * 0.5,
                               child: TextFormField(
+                                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                      color: Theme.of(context).colorScheme.secondary,
+                                    ),
                                 enabled: !_isSubmitting,
                                 controller: _stockControllers[size],
                                 keyboardType: TextInputType.number,
@@ -688,6 +730,9 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                               children: <Widget>[
                                 Expanded(
                                   child: TextFormField(
+                                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                          color: Theme.of(context).colorScheme.secondary,
+                                        ),
                                     enabled: !_isSubmitting,
                                     controller: specs[i]['name'],
                                     decoration: const InputDecoration(
@@ -699,6 +744,9 @@ class _AdminItemFormWidgetState extends State<AdminItemFormWidget> {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: TextFormField(
+                                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                          color: Theme.of(context).colorScheme.secondary,
+                                        ),
                                     enabled: !_isSubmitting,
                                     controller: specs[i]['value'],
                                     decoration: const InputDecoration(

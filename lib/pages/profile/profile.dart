@@ -7,6 +7,7 @@ import 'package:flex_market/pages/orders.dart';
 import 'package:flex_market/pages/profile/edit_profile.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -25,10 +26,9 @@ class UserWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final User? user = context.watch<AuthProvider>().userCustom;
-    final String? pictureUrl =
-        context.watch<AuthProvider>().userCustom?.picture.toString();
+    final String? pictureUrl = context.watch<AuthProvider>().userCustom?.picture.toString();
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
       child: Column(
@@ -51,6 +51,7 @@ class UserWidget extends StatelessWidget {
             ),
           ),
           SizedBox(
+            width: screenWidth,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -170,7 +171,6 @@ class UserWidget extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  width: 430,
                   height: 45,
                   decoration: const BoxDecoration(
                     border: Border(
@@ -239,7 +239,6 @@ class UserWidget extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        width: 430,
                         height: 45,
                         decoration: const BoxDecoration(
                           border: Border(
@@ -277,8 +276,7 @@ class UserWidget extends StatelessWidget {
                             unawaited(
                               navigatorKey.currentState?.push(
                                 MaterialPageRoute<Widget>(
-                                  builder: (BuildContext context) =>
-                                      AdminItemsWidget(
+                                  builder: (BuildContext context) => AdminItemsWidget(
                                     navigatorKey: navigatorKey,
                                   ),
                                 ),
@@ -288,7 +286,6 @@ class UserWidget extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        width: 430,
                         height: 45,
                         decoration: const BoxDecoration(
                           border: Border(
@@ -326,8 +323,7 @@ class UserWidget extends StatelessWidget {
                             unawaited(
                               navigatorKey.currentState?.push(
                                 MaterialPageRoute<Widget>(
-                                  builder: (BuildContext context) =>
-                                      AdminOrdersWidget(
+                                  builder: (BuildContext context) => AdminOrdersWidget(
                                     navigatorKey: navigatorKey,
                                   ),
                                 ),

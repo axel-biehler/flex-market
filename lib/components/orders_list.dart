@@ -4,6 +4,7 @@ import 'package:flex_market/models/order.dart';
 import 'package:flex_market/pages/order_details.dart';
 import 'package:flex_market/providers/order_provider.dart';
 import 'package:flex_market/utils/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,9 +23,17 @@ class OrdersListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenwidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
 
     if (context.watch<OrderProvider>().myOrders.isEmpty) {
-      return const Center(child: Text('No orders yet'));
+      return Center(
+        child: Text(
+          'No orders yet',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+        ),
+      );
     }
 
     return Column(
@@ -32,11 +41,11 @@ class OrdersListWidget extends StatelessWidget {
       children: <Widget>[
         SizedBox(
           height: screenHeight * 0.77,
+          width: screenwidth,
           child: ListView.builder(
             itemCount: context.watch<OrderProvider>().myOrders.length,
             itemBuilder: (BuildContext context, int index) {
-              final Order order =
-                  context.watch<OrderProvider>().myOrders[index];
+              final Order order = context.watch<OrderProvider>().myOrders[index];
               return InkWell(
                 onTap: () {
                   unawaited(
@@ -59,10 +68,9 @@ class OrdersListWidget extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           'Order ID: ${order.orderId}',
-                          style:
-                              Theme.of(context).textTheme.labelMedium!.copyWith(
-                                    fontStyle: FontStyle.italic,
-                                  ),
+                          style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                fontStyle: FontStyle.italic,
+                              ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: margin),

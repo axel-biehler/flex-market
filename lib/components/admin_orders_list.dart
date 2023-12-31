@@ -4,6 +4,7 @@ import 'package:flex_market/models/order.dart';
 import 'package:flex_market/pages/order_details.dart';
 import 'package:flex_market/providers/order_provider.dart';
 import 'package:flex_market/utils/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +23,7 @@ class AdminOrdersListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
+    final double screenWidth = kIsWeb ? MediaQuery.of(context).size.width * 0.6 : MediaQuery.of(context).size.width;
 
     if (context.watch<OrderProvider>().orders.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -32,6 +34,7 @@ class AdminOrdersListWidget extends StatelessWidget {
       children: <Widget>[
         SizedBox(
           height: screenHeight * 0.77,
+          width: screenWidth,
           child: ListView.builder(
             itemCount: context.watch<OrderProvider>().orders.length,
             itemBuilder: (BuildContext context, int index) {
@@ -58,10 +61,9 @@ class AdminOrdersListWidget extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           'Order ID: ${order.orderId}',
-                          style:
-                              Theme.of(context).textTheme.labelMedium!.copyWith(
-                                    fontStyle: FontStyle.italic,
-                                  ),
+                          style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                                fontStyle: FontStyle.italic,
+                              ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: margin),

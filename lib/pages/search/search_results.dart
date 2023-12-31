@@ -39,7 +39,7 @@ class SearchResultsWidgetState extends State<SearchResultsWidget> {
     const int crossAxisCount = 2;
     const double crossAxisSpacing = 40;
     final double cardWidth = (screenWidth - (crossAxisCount - 1) * crossAxisSpacing) / crossAxisCount;
-    final double headerMargin = kIsWeb ? MediaQuery.of(context).size.width * 0.2 : margin / 3;
+    final double headerMargin = kIsWeb ? MediaQuery.of(context).size.width * 0.2 + margin : margin / 3;
 
     return Container(
       margin: const EdgeInsets.only(top: margin, left: margin / 2),
