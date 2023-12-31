@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:auth0_flutter/auth0_flutter.dart';
 import 'package:flex_market/models/cart_item.dart';
 import 'package:flex_market/models/item.dart';
-import 'package:flex_market/models/product.dart';
 import 'package:flex_market/providers/auth_provider.dart';
 import 'package:flex_market/utils/constants.dart';
 import 'package:flex_market/utils/enums.dart';
